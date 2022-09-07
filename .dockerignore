@@ -1,5 +1,6 @@
 *
 !target/*-runner
 !target/*-runner.jar
+!src/main/docker/bootstrap.sh
 !target/lib/*
 !target/quarkus-app/*
