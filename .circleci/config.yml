@@ -32,7 +32,7 @@ jobs:
           command: $GRAALVM_HOME/bin/gu install native-image
       - run:
           name: Build (Native)
-          command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true
+          command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
           no_output_timeout: 30m
       - run:
           name: Build and push Docker Image to Heroku
