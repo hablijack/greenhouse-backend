@@ -1,0 +1,7 @@
+influxdb:
+  connectionUrl: ${INFLUXDB_CONNECTION_STRING}
+  token: ${INFLUXDB_TOKEN}
+  orgId: ${INFLUXDB_ORG_ID}
+  data:
+    bucketId: ${INFLUXDB_DATA_BUCKET_ID}
+    bucketName: ${INFLUXDB_DATA_BUCKET_NAME}
