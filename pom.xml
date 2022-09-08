@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.acme</groupId>
+    <groupId>eu.hablijack</groupId>
     <artifactId>greenhouse-backend</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <properties>

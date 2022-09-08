@@ -1,4 +1,4 @@
-package org.acme;
+package eu.hablijack;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
