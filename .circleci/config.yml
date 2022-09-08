@@ -2,8 +2,7 @@ version: 2
 
 jobs:
   qualitygate:
-    machine:
-      image: ubuntu-2204:2022.07.1
+    machine: true
     resource_class: medium
     steps:
       - checkout
@@ -18,8 +17,7 @@ jobs:
           command: ./mvnw clean compile checkstyle:check
 
   build:
-    machine:
-      image: ubuntu-2204:2022.07.1
+    machine: true
     resource_class: medium
     working_directory: ~/repo
     environment:
