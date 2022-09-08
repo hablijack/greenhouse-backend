@@ -39,9 +39,9 @@ jobs:
       - run:
           name: Build and push Docker Image to Heroku
           command: |
-            docker build --build-arg AUTH0_CLIENT_ID --build-arg AUTH0_AUTH_SERVER --build-arg AUTH0_SECRET -f ./src/main/docker/Dockerfile.native -t hablijack/eilkurier-backend .
+            docker build --build-arg AUTH0_CLIENT_ID --build-arg AUTH0_AUTH_SERVER --build-arg AUTH0_SECRET -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push hablijack/eilkurier-backend:latest
+            docker push hablijack/greenhouse-backend:latest
 
 workflows:
   version: 2
