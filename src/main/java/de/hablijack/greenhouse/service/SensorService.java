@@ -1,4 +1,4 @@
-package eu.hablijack.service.data;
+package de.hablijack.greenhouse.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
@@ -16,7 +16,10 @@ public class SensorService implements AutoCloseable {
 
   @PostConstruct
   private void initializeInfluxDBClient() {
-    this.influxDBClient = InfluxDBClientFactory.create("", "token".toCharArray(), "orgId", "bucketId");
+    this.influxDBClient =
+        InfluxDBClientFactory.create("http://yggdrasil.fritz.box:8086",
+            "SAm8mju6EYr8vGlOBrqYQIMcrgwEID1Gxo8nBhCX4ucBigeM-XuHQSwCeA9xECVbB1rUC5dWIChEnDnVNRn_Yg==".toCharArray(),
+            "habel");
   }
 
   @Override
@@ -25,7 +28,7 @@ public class SensorService implements AutoCloseable {
   }
 
   public List<Data> getAllData() {
-    String temperatureByTimeQuery = Flux.from("bucketName").range(-14L, ChronoUnit.DAYS).toString();
+    String temperatureByTimeQuery = Flux.from("greenhouse").range(-14L, ChronoUnit.DAYS).toString();
     QueryApi queryApi = influxDBClient.getQueryApi();
     return queryApi.query(temperatureByTimeQuery, Data.class);
   }
