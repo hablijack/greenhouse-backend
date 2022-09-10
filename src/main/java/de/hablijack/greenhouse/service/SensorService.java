@@ -8,10 +8,9 @@ import javax.xml.stream.XMLStreamException;
 
 @ApplicationScoped
 public class SensorService {
-
   @Transactional
-  @ConsumeEvent(value = "fetch_feed_information", blocking = true)
-  public void fetchFeedInformation() throws IOException, XMLStreamException {
+  @ConsumeEvent(value = "get_current_values", blocking = true)
+  public void getCurrentValues() throws IOException, XMLStreamException {
 
   }
 }
