@@ -12,8 +12,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "sensor_value", schema = "greenhouse")
-public class SensorValue extends PanacheEntity {
+@Table(name = "measurement", schema = "greenhouse")
+public class Measurement extends PanacheEntity {
 
   @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
@@ -26,6 +26,6 @@ public class SensorValue extends PanacheEntity {
   @Temporal(TemporalType.TIMESTAMP)
   public Date timestamp;
 
-  public SensorValue() {
+  public Measurement() {
   }
 }

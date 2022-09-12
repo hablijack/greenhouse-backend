@@ -1,6 +1,5 @@
 package de.hablijack.greenhouse.api.sensor;
 
-
 import de.hablijack.greenhouse.service.SensorService;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -16,9 +15,9 @@ public class MeasurementResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/sensor/measurement/live")
+  @Path("/sensors/measurements/live")
   public String live() {
-    sensorService.getAllData();
+    sensorService.getCurrentValues();
     return "Hello from RESTEasy Reactive";
   }
 }

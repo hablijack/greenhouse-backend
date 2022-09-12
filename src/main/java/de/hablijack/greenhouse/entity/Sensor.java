@@ -30,6 +30,9 @@ public class Sensor extends PanacheEntity {
   @Column(name = "max_alarm_value", nullable = false)
   public Double maxAlarmValue;
 
+  public Sensor() {
+  }
+
   public Sensor(String name, String unit, Integer decimals, String description, String icon, Double minAlarmValue,
                 Double maxAlarmValue) {
     this.name = name;
