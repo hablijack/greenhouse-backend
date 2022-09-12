@@ -22,11 +22,6 @@ ARG DB_USER
 ARG DB_PASSWORD
 ARG DB_NAME
 
-ENV DB_HOST=${DB_HOST}
-ENV DB_USER=${DB_USER}
-ENV DB_PASSWORD=${DB_PASSWORD}
-ENV DB_NAME=${DB_NAME}
-
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
@@ -35,4 +30,9 @@ COPY --chown=1001:root target/*-runner /work/application
 EXPOSE 8080
 USER 1001
 
-CMD ["./application", "-Dquarkus.http.host=0.0.0.0" ]
+CMD ["./application", \
+     "-Dquarkus.http.host=0.0.0.0", \
+     "-Dquarkus.datasource.jdbc.url=jdbc:postgresql://${DB_HOST}:5432/greenhouse", \
+     "-Dquarkus.datasource.username=${DB_USER}", \
+     "-Dquarkus.datasource.password=${DB_PASSWORD}" \
+     ]
