@@ -15,8 +15,6 @@
 #
 ###
 
-ARG DB_PASSWORD
-
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6-902
 WORKDIR /work/
 
