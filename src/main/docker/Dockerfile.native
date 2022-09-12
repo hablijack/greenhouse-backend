@@ -14,16 +14,11 @@
 # docker run -i --rm -p 8080:8080 quarkus/greenhouse-backend
 #
 ###
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6-902
-WORKDIR /work/
 
-ARG DB_HOST
-ARG DB_USER
 ARG DB_PASSWORD
 
-ENV DB_HOST=${DB_HOST}
-ENV DB_USER=${DB_USER}
-ENV DB_PASSWORD=${DB_PASSWORD}
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6-902
+WORKDIR /work/
 
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
@@ -35,7 +30,5 @@ USER 1001
 
 CMD ["./application", \
      "-Dquarkus.http.host=0.0.0.0", \
-     "-Dquarkus.datasource.jdbc.url=jdbc:postgresql://${DB_HOST}:5432/greenhouse", \
-     "-Dquarkus.datasource.username=${DB_USER}", \
      "-Dquarkus.datasource.password=${DB_PASSWORD}" \
      ]
