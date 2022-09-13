@@ -30,5 +30,5 @@ CMD ["./application", \
      "-Dquarkus.http.host=0.0.0.0", \
      "-Dquarkus.datasource.jdbc.url=jdbc:postgresql://${DB_HOST}:5432/greenhouse", \
      "quarkus.datasource.username=${DB_USER}", \
-     "quarkus.datasource.password=${DB_PASSWORD} \
+     "quarkus.datasource.password=${DB_PASSWORD}" \
      ]
