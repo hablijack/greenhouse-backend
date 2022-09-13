@@ -45,11 +45,11 @@ public class Sensor extends PanacheEntity {
   }
 
   public Sensor persistIfNotExist() {
-    if (find("name = ?1", name).count() == 0) {
+    if (find("name = ?1 AND unit = ?2", name, unit).count() == 0) {
       this.persist();
       return this;
     } else {
-      return (Sensor) find("name = ?1", name).list().get(0);
+      return (Sensor) find("name = ?1 AND unit = ?2", name, unit).list().get(0);
     }
   }
 }
