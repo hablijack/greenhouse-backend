@@ -26,4 +26,9 @@ COPY --chown=1001:root target/*-runner /work/application
 EXPOSE 8080
 USER 1001
 
-CMD ["./application", "-Dquarkus.http.host=0.0.0.0" ]
+CMD ["./application", \
+     "-Dquarkus.http.host=0.0.0.0", \
+     "-Dquarkus.datasource.jdbc.url=jdbc:postgresql://${DB_HOST}:5432/greenhouse", \
+     "quarkus.datasource.username=${DB_USER}", \
+     "quarkus.datasource.password=${DB_PASSWORD} \
+     ]
