@@ -28,4 +28,10 @@ public class Measurement extends PanacheEntity {
 
   public Measurement() {
   }
+
+  public Measurement(Sensor sensor, Double value, Date timestamp) {
+    this.sensor = sensor;
+    this.value = value;
+    this.timestamp = timestamp;
+  }
 }

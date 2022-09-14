@@ -1,8 +1,10 @@
 package de.hablijack.greenhouse.lifecycle;
 
+import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Sensor;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
+import java.util.Date;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.transaction.Transactional;
@@ -31,9 +33,10 @@ public class DatabaseInitialLoad {
   private final Double MAX_SOIL_HUMIDITY_INSIDE = 40.0;
 
 
+  @SuppressWarnings("checkstyle:MagicNumber")
   @Transactional
   public void initializeWithBaseData(@Observes StartupEvent event) {
-    new Sensor(
+    Sensor airTempInside = new Sensor(
         "air_temp_inside",
         "Luft innen",
         "°C",
@@ -42,7 +45,9 @@ public class DatabaseInitialLoad {
         "mdi-thermometer",
         MIN_AIR_INSIDE_TEMP,
         MAX_AIR_INSIDE_TEMP).persistIfNotExist();
-    new Sensor(
+    new Measurement(airTempInside, 20.5, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor airTempOutside = new Sensor(
         "air_temp_outside",
         "Luft außen",
         "°C",
@@ -51,7 +56,9 @@ public class DatabaseInitialLoad {
         "mdi-thermometer",
         MIN_AIR_OUTSIDE_TEMP,
         MAX_AIR_OUTSIDE_TEMP).persistIfNotExist();
-    new Sensor(
+    new Measurement(airTempOutside, 18.2, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor soilTempInside = new Sensor(
         "soil_temp_inside",
         "Boden",
         "°C",
@@ -60,7 +67,9 @@ public class DatabaseInitialLoad {
         "mdi-thermometer",
         MIN_SOIL_TEMP,
         MAX_SOIL_TEMP).persistIfNotExist();
-    new Sensor(
+    new Measurement(soilTempInside, 14.2, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor battery = new Sensor(
         "battery",
         "Batterie",
         "%",
@@ -69,7 +78,9 @@ public class DatabaseInitialLoad {
         "mdi-battery",
         MIN_BATTERY,
         MAX_BATTERY).persistIfNotExist();
-    new Sensor(
+    new Measurement(battery, 90.2, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor airHumidityInside = new Sensor(
         "air_humidity_inside",
         "Luft innen",
         "%",
@@ -78,7 +89,9 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_AIR_HUMIDITY_INSIDE,
         MAX_AIR_HUMIDITY_INSIDE).persistIfNotExist();
-    new Sensor(
+    new Measurement(airHumidityInside, 99.1, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor wifi = new Sensor(
         "wifi",
         "WiFi",
         "%",
@@ -87,7 +100,9 @@ public class DatabaseInitialLoad {
         "mdi-wifi",
         MIN_WIFI_STRENGTH,
         MAX_WIFI_STRENGTH).persistIfNotExist();
-    new Sensor(
+    new Measurement(wifi, 70.0, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor brightness = new Sensor(
         "brightness",
         "Helligkeit",
         "%",
@@ -96,7 +111,9 @@ public class DatabaseInitialLoad {
         "mdi-white-balance-sunny",
         MIN_LIGHT_VALUE,
         MAX_LIGHT_VALUE).persistIfNotExist();
-    new Sensor(
+    new Measurement(brightness, 1800.8, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor co2 = new Sensor(
         "co2",
         "CO2",
         "ppa",
@@ -105,7 +122,9 @@ public class DatabaseInitialLoad {
         "mdi-soundcloud",
         MIN_CO2_VALUE,
         MAX_CO2_VALUE).persistIfNotExist();
-    new Sensor(
+    new Measurement(co2, 7000.8, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor soilHumidityLine1 = new Sensor(
         "soil_humidity_line1",
         "Bodenfeuchte Line1",
         "%",
@@ -114,7 +133,9 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Sensor(
+    new Measurement(soilHumidityLine1, 70.8, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor soilHumidityLine2 = new Sensor(
         "soil_humidity_line2",
         "Bodenfeuchte Line2",
         "%",
@@ -123,7 +144,9 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Sensor(
+    new Measurement(soilHumidityLine2, 74.2, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor soilHumidityLine3 = new Sensor(
         "soil_humidity_line3",
         "Bodenfeuchte Line3",
         "%",
@@ -132,7 +155,9 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Sensor(
+    new Measurement(soilHumidityLine3, 88.8, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor soilHumidityLine4 = new Sensor(
         "soil_humidity_line4",
         "Bodenfeuchte Line4",
         "%",
@@ -141,5 +166,8 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+    new Measurement(soilHumidityLine4, 88.8, new Date()).persist();
+    /* ============================================================================================================= */
+
   }
 }

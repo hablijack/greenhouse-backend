@@ -48,12 +48,16 @@ public class Sensor extends PanacheEntity {
     this.maxAlarmValue = maxAlarmValue;
   }
 
+  public Measurement findCurrentMeasurement() {
+    return Measurement.find("sensor = ?1 ORDER BY timestamp", this).firstResult();
+  }
+
   public Sensor persistIfNotExist() {
-    if (find("name = ?1 AND unit = ?2", name, unit).count() == 0) {
+    if (find("identifier = ?1", identifier).count() == 0) {
       this.persist();
       return this;
     } else {
-      return (Sensor) find("name = ?1 AND unit = ?2", name, unit).list().get(0);
+      return (Sensor) find("identifier = ?1", identifier).list().get(0);
     }
   }
 }
