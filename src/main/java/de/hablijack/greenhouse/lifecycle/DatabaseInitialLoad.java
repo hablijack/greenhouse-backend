@@ -34,6 +34,7 @@ public class DatabaseInitialLoad {
   @Transactional
   public void initializeWithBaseData(@Observes StartupEvent event) {
     new Sensor(
+        "air_temp_inside",
         "Luft innen",
         "°C",
         1,
@@ -42,6 +43,7 @@ public class DatabaseInitialLoad {
         MIN_AIR_INSIDE_TEMP,
         MAX_AIR_INSIDE_TEMP).persistIfNotExist();
     new Sensor(
+        "air_temp_outside",
         "Luft außen",
         "°C",
         1,
@@ -50,6 +52,7 @@ public class DatabaseInitialLoad {
         MIN_AIR_OUTSIDE_TEMP,
         MAX_AIR_OUTSIDE_TEMP).persistIfNotExist();
     new Sensor(
+        "soil_temp_inside",
         "Boden",
         "°C",
         1,
@@ -58,6 +61,7 @@ public class DatabaseInitialLoad {
         MIN_SOIL_TEMP,
         MAX_SOIL_TEMP).persistIfNotExist();
     new Sensor(
+        "battery",
         "Batterie",
         "%",
         0,
@@ -66,6 +70,7 @@ public class DatabaseInitialLoad {
         MIN_BATTERY,
         MAX_BATTERY).persistIfNotExist();
     new Sensor(
+        "air_humidity_inside",
         "Luft innen",
         "%",
         0,
@@ -74,6 +79,7 @@ public class DatabaseInitialLoad {
         MIN_AIR_HUMIDITY_INSIDE,
         MAX_AIR_HUMIDITY_INSIDE).persistIfNotExist();
     new Sensor(
+        "wifi",
         "WiFi",
         "%",
         0,
@@ -82,6 +88,7 @@ public class DatabaseInitialLoad {
         MIN_WIFI_STRENGTH,
         MAX_WIFI_STRENGTH).persistIfNotExist();
     new Sensor(
+        "brightness",
         "Helligkeit",
         "%",
         0,
@@ -90,6 +97,7 @@ public class DatabaseInitialLoad {
         MIN_LIGHT_VALUE,
         MAX_LIGHT_VALUE).persistIfNotExist();
     new Sensor(
+        "co2",
         "CO2",
         "ppa",
         0,
@@ -98,6 +106,7 @@ public class DatabaseInitialLoad {
         MIN_CO2_VALUE,
         MAX_CO2_VALUE).persistIfNotExist();
     new Sensor(
+        "soil_humidity_line1",
         "Bodenfeuchte Line1",
         "%",
         0,
@@ -106,6 +115,7 @@ public class DatabaseInitialLoad {
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
     new Sensor(
+        "soil_humidity_line2",
         "Bodenfeuchte Line2",
         "%",
         0,
@@ -114,6 +124,7 @@ public class DatabaseInitialLoad {
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
     new Sensor(
+        "soil_humidity_line3",
         "Bodenfeuchte Line3",
         "%",
         0,
@@ -122,6 +133,7 @@ public class DatabaseInitialLoad {
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
     new Sensor(
+        "soil_humidity_line4",
         "Bodenfeuchte Line4",
         "%",
         0,

@@ -9,6 +9,8 @@ import javax.persistence.Table;
 @Table(name = "sensor", schema = "greenhouse")
 public class Sensor extends PanacheEntity {
 
+  @Column(name = "name", nullable = false, unique = true)
+  public String identifier;
   @Column(name = "name", nullable = false)
   public String name;
 
@@ -33,8 +35,10 @@ public class Sensor extends PanacheEntity {
   public Sensor() {
   }
 
-  public Sensor(String name, String unit, Integer decimals, String description, String icon, Double minAlarmValue,
+  public Sensor(String identifier, String name, String unit, Integer decimals, String description, String icon,
+                Double minAlarmValue,
                 Double maxAlarmValue) {
+    this.identifier = identifier;
     this.name = name;
     this.unit = unit;
     this.decimals = decimals;
