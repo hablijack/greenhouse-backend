@@ -9,7 +9,7 @@ import javax.persistence.Table;
 @Table(name = "sensor", schema = "greenhouse")
 public class Sensor extends PanacheEntity {
 
-  @Column(name = "name", nullable = false, unique = true)
+  @Column(name = "identifier", nullable = false, unique = true)
   public String identifier;
   @Column(name = "name", nullable = false)
   public String name;
