@@ -82,7 +82,7 @@
             <plugin>
                 <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>2.12.1.Final</version>
+                <version>2.12.2.Final</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
