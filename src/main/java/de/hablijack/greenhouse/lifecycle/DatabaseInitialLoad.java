@@ -1,6 +1,8 @@
 package de.hablijack.greenhouse.lifecycle;
 
 import de.hablijack.greenhouse.entity.Measurement;
+import de.hablijack.greenhouse.entity.Relay;
+import de.hablijack.greenhouse.entity.RelayLog;
 import de.hablijack.greenhouse.entity.Sensor;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
@@ -33,7 +35,7 @@ public class DatabaseInitialLoad {
   private final Double MAX_SOIL_HUMIDITY_INSIDE = 40.0;
 
 
-  @SuppressWarnings("checkstyle:MagicNumber")
+  @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength"})
   @Transactional
   public void initializeWithBaseData(@Observes StartupEvent event) {
     Sensor airTempInside = new Sensor(
@@ -168,6 +170,53 @@ public class DatabaseInitialLoad {
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
     new Measurement(soilHumidityLine4, 88.8, new Date()).persist();
     /* ============================================================================================================= */
-
+    Relay relayLine1 = new Relay(
+        "relay_line1",
+        "Bewässerung Linie 1",
+        false,
+        "Bewässert Linie 1 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
+        "mdi-water",
+        "#0067AF").persistIfNotExist();
+    new RelayLog(relayLine1, "Quarkus: DBINIT", new Date(), false).persist();
+    Relay relayLine2 = new Relay(
+        "relay_line2",
+        "Bewässerung Linie 2",
+        false,
+        "Bewässert Linie 2 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
+        "mdi-water",
+        "#0067AF").persistIfNotExist();
+    new RelayLog(relayLine2, "Quarkus: DBINIT", new Date(), false).persist();
+    Relay relayLine3 = new Relay(
+        "relay_line3",
+        "Bewässerung Linie 3",
+        false,
+        "Bewässert Linie3 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
+        "mdi-water",
+        "#0067AF").persistIfNotExist();
+    new RelayLog(relayLine3, "Quarkus: DBINIT", new Date(), false).persist();
+    Relay relayLine4 = new Relay(
+        "relay_line4",
+        "Bewässerung Linie 4",
+        false,
+        "Bewässert Linie4 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
+        "mdi-water",
+        "#0067AF").persistIfNotExist();
+    new RelayLog(relayLine4, "Quarkus: DBINIT", new Date(), false).persist();
+    Relay relayLight = new Relay(
+        "relay_light",
+        "Pflanzenlicht",
+        false,
+        "Mit der LED-Decken-Beleuchtung kann das Wachstum und die Qualität von Gemüse gesteigert werden.",
+        "mdi-white-balance-sunny",
+        "#A092EB").persistIfNotExist();
+    new RelayLog(relayLight, "Quarkus: DBINIT", new Date(), false).persist();
+    Relay relayFans = new Relay(
+        "relay_fans",
+        "Ventilatoren",
+        false,
+        "Durch die richtige Verwendung von Ventilatoren wird die Luft rund um die Pflanze sanft vermischt, wodurch krankheitsfördernde Bereiche mit hoher Luftfeuchtigkeit beseitigt werden und eine starke Transpiration gefördert wird.",
+        "mdi-fan",
+        "#C89542").persistIfNotExist();
+    new RelayLog(relayFans, "Quarkus: DBINIT", new Date(), false).persist();
   }
 }

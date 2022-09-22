@@ -1,10 +1,16 @@
 package de.hablijack.greenhouse.api.sensor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hablijack.greenhouse.service.SensorService;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -33,15 +39,17 @@ public class MeasurementSocket {
       ObjectMapper objectMapper = new ObjectMapper();
       try {
         transactionManager.begin();
-        String jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
+        String jsonObject = null;
+        jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
         transactionManager.commit();
         session.getAsyncRemote().sendObject(jsonObject, result -> {
           if (result.getException() != null) {
-            LOGGER.log(Level.ERROR, "Unable to send message: " + result.getException());
+            LOGGER.log(Level.ERROR, "Unable to send message!");
           }
         });
-      } catch (Exception ex) {
-        LOGGER.log(Level.ERROR, "Unable to send message: " + ex.getMessage());
+      } catch (NotSupportedException | SystemException | JsonProcessingException | RollbackException
+               | HeuristicMixedException | HeuristicRollbackException e) {
+        throw new RuntimeException(e);
       }
     });
   }
