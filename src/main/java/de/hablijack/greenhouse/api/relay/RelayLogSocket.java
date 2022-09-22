@@ -30,9 +30,6 @@ public class RelayLogSocket {
   @Inject
   TransactionManager transactionManager;
 
-  @Inject
-  RelayLog relayLog;
-
   @SuppressWarnings("checkstyle:MagicNumber")
   @OnOpen
   public void onOpen(Session session) {
