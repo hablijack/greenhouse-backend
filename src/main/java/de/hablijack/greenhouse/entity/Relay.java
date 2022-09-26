@@ -34,6 +34,10 @@ public class Relay extends PanacheEntity {
     this.color = color;
   }
 
+  public static Relay findByIdentifier(String id) {
+    return (Relay) find("identifier = ?1", id).list().get(0);
+  }
+
   public Relay persistIfNotExist() {
     if (find("identifier = ?1", identifier).count() == 0) {
       this.persist();
