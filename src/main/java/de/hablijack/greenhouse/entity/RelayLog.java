@@ -36,6 +36,6 @@ public class RelayLog extends PanacheEntity {
   }
 
   public static List<RelayLog> getRecentLog(int maxEntries) {
-    return RelayLog.find("ORDER BY timestamp").range(0, maxEntries).list();
+    return RelayLog.find("ORDER BY timestamp DESC").range(0, maxEntries).list();
   }
 }
