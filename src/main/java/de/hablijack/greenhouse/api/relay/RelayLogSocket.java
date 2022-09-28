@@ -73,7 +73,7 @@ public class RelayLogSocket {
     sessions.values().forEach(s -> {
       s.getAsyncRemote().sendObject(message, result -> {
         if (result.getException() != null) {
-          LOGGER.log(Level.ERROR, "Unable to send message: " + result.getException());
+          LOGGER.log(Level.ERROR, "Unable to send message!");
         }
       });
     });

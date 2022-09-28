@@ -12,7 +12,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.transaction.Transactional;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.ContainerProvider;
@@ -27,8 +26,6 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 @Path("/api")
 public class RelayResouce {
-
-  private static final Logger LOGGER = Logger.getLogger(RelayResouce.class.getName());
   private static final int NUMBER_OF_LOG_ENTRIES = 10;
   private final Session session;
   private final ObjectMapper objectMapper;
@@ -55,12 +52,14 @@ public class RelayResouce {
   @Transactional
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public boolean toggleRelay(@PathParam String identifier, RelayLogEvent event) throws JsonProcessingException {
+    List<RelayLog> newRelay = new ArrayList<>();
     Relay relay = Relay.findByIdentifier(identifier);
     relay.value = event.getNewValue();
     relay.persist();
     RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
     log.persist();
-    session.getAsyncRemote().sendText(objectMapper.writeValueAsString(new ArrayList<RelayLog>().add(log)));
+    newRelay.add(log);
+    session.getAsyncRemote().sendText(objectMapper.writeValueAsString(newRelay));
     return true;
   }
 
