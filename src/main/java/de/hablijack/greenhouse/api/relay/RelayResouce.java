@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -59,7 +60,7 @@ public class RelayResouce {
     relay.persist();
     RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
     log.persist();
-    session.getAsyncRemote().sendText(objectMapper.writeValueAsString(log));
+    session.getAsyncRemote().sendText(objectMapper.writeValueAsString(new ArrayList<RelayLog>().add(log)));
     return true;
   }
 
