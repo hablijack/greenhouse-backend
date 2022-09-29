@@ -20,9 +20,9 @@ import javax.websocket.Session;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 @Path("/api")
 public class RelayResouce {
@@ -51,7 +51,8 @@ public class RelayResouce {
   @Path("/relay/{identifier}/switch")
   @Transactional
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public boolean toggleRelay(@PathParam String identifier, RelayLogEvent event) throws JsonProcessingException {
+  public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event)
+      throws JsonProcessingException {
     List<RelayLog> newRelay = new ArrayList<>();
     Relay relay = Relay.findByIdentifier(identifier);
     relay.value = event.getNewValue();

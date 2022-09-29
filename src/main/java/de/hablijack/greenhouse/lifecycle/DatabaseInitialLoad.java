@@ -3,6 +3,7 @@ package de.hablijack.greenhouse.lifecycle;
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
+import de.hablijack.greenhouse.entity.Satelite;
 import de.hablijack.greenhouse.entity.Sensor;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
@@ -11,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.transaction.Transactional;
 
+@SuppressWarnings("checkstyle:RegexpSingleline")
 @Startup
 @ApplicationScoped
 public class DatabaseInitialLoad {
@@ -34,10 +36,24 @@ public class DatabaseInitialLoad {
   private final Double MIN_SOIL_HUMIDITY_INSIDE = 15.0;
   private final Double MAX_SOIL_HUMIDITY_INSIDE = 40.0;
 
-
-  @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength"})
+  @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength", "PMD"})
   @Transactional
   public void initializeWithBaseData(@Observes StartupEvent event) {
+    new Satelite(
+        "greenhouse_cam",
+        "Gewächshaus Webcam",
+        "satelite.png",
+        "ESP-EYE Webcam-webserver um regelmäßig Bilder innerhalb des Gewächshauses aufzunehmen.",
+        "192.168.178.48",
+        true).persistIfNotExist();
+    new Satelite(
+        "greenhouse_control",
+        "Gewächshaus Steuerung",
+        "satelite.png",
+        "ESP32 Webserver mit Relays, Sensoren und Aktoren um das gesamte GEwächshaus fernzusteuern.",
+        "192.168.178.80",
+        true).persistIfNotExist();
+    /* ============================================================================================================= */
     Sensor airTempInside = new Sensor(
         "air_temp_inside",
         "Luft innen",
