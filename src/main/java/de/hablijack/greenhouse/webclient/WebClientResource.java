@@ -1,7 +1,5 @@
 package de.hablijack.greenhouse.webclient;
 
-import static org.jboss.logmanager.Level.ERROR;
-
 import io.smallrye.mutiny.Uni;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -23,8 +21,8 @@ public class WebClientResource {
 
   private static final long CONNECT_TIMEOUT = 25;
   private static final long READ_TIMEOUT = 1000;
-  private static final long CONNECTION_TTL = 25000;
-  private static final long CONNECTION_POOL_SIZE = 200;
+  private static final int CONNECTION_TTL = 25000;
+  private static final int CONNECTION_POOL_SIZE = 200;
   Map<String, WebClient> baseUrlToClient = new ConcurrentHashMap<>();
 
   private static String[] splitUrl(String fullUrl) {
@@ -44,7 +42,7 @@ public class WebClientResource {
           String[] baseAndRelative = splitUrl(fullUrl);
           return registerService(baseAndRelative[0]).getByEndpoint(baseAndRelative[1]);
         })
-        .onFailure().invoke(e -> LOGGER.log(ERROR, e.getMessage()))
+        //.onFailure().invoke(e -> LOGGER.log(ERROR, e.getMessage()))
         .onFailure().recoverWithNull();
   }
 

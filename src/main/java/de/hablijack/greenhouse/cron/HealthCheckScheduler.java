@@ -16,7 +16,7 @@ public class HealthCheckScheduler {
   @Inject
   WebClientResource webClient;
 
-  @Scheduled(every = "2m", concurrentExecution = SKIP)
+  @Scheduled(every = "10m", concurrentExecution = SKIP)
   @Transactional
   void sateliteHealthCheck() {
     for (PanacheEntityBase entity : Satelite.listAll()) {
