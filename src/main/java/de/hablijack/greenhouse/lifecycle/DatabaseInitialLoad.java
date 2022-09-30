@@ -50,7 +50,7 @@ public class DatabaseInitialLoad {
         "greenhouse_control",
         "Gewächshaus Steuerung",
         "satelite.png",
-        "ESP32 Webserver mit Relays, Sensoren und Aktoren um das gesamte GEwächshaus fernzusteuern.",
+        "ESP32 Webserver mit Relays, Sensoren und Aktoren um das gesamte Gewächshaus fernzusteuern.",
         "192.168.178.80",
         true).persistIfNotExist();
     /* ============================================================================================================= */
