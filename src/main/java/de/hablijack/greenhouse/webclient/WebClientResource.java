@@ -1,5 +1,7 @@
 package de.hablijack.greenhouse.webclient;
 
+import static org.jboss.logmanager.Level.ERROR;
+
 import io.smallrye.mutiny.Uni;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -7,6 +9,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
@@ -14,6 +17,9 @@ import org.jboss.resteasy.reactive.client.api.QuarkusRestClientProperties;
 
 @ApplicationScoped
 public class WebClientResource {
+
+  private static final Logger LOGGER = Logger.getLogger(WebClientResource.class.getName());
+
 
   private static final long CONNECT_TIMEOUT = 25;
   private static final long READ_TIMEOUT = 1000;
@@ -38,6 +44,7 @@ public class WebClientResource {
           String[] baseAndRelative = splitUrl(fullUrl);
           return registerService(baseAndRelative[0]).getByEndpoint(baseAndRelative[1]);
         })
+        .onFailure().invoke(e -> LOGGER.log(ERROR, e.getMessage()))
         .onFailure().recoverWithNull();
   }
 
