@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
@@ -15,9 +14,6 @@ import org.jboss.resteasy.reactive.client.api.QuarkusRestClientProperties;
 
 @ApplicationScoped
 public class WebClientResource {
-
-  private static final Logger LOGGER = Logger.getLogger(WebClientResource.class.getName());
-
 
   private static final long CONNECT_TIMEOUT = 25;
   private static final long READ_TIMEOUT = 1000;
@@ -30,7 +26,7 @@ public class WebClientResource {
       var url = new URL(fullUrl);
       String baseUrl = StringUtils.splitByWholeSeparator(fullUrl, url.getPath())[0];
       String relativePath = StringUtils.removeStart(fullUrl.replace(baseUrl, ""), "/");
-      return new String[] {baseUrl, relativePath};
+      return new String[] { baseUrl, relativePath };
     } catch (ArrayIndexOutOfBoundsException | MalformedURLException e) {
       return new String[] {};
     }
@@ -42,22 +38,20 @@ public class WebClientResource {
           String[] baseAndRelative = splitUrl(fullUrl);
           return registerService(baseAndRelative[0]).getByEndpoint(baseAndRelative[1]);
         })
-        //.onFailure().invoke(e -> LOGGER.log(ERROR, e.getMessage()))
+        // .onFailure().invoke(e -> LOGGER.log(ERROR, e.getMessage()))
         .onFailure().recoverWithNull();
   }
 
   private WebClient registerService(String baseUrl) {
-    return baseUrlToClient.computeIfAbsent(baseUrl, key ->
-        RestClientBuilder.newBuilder()
-            .baseUri(URI.create(key))
-            .followRedirects(true)
-            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
-            .property(QuarkusRestClientProperties.CONNECTION_TTL, CONNECTION_TTL)
-            .property(QuarkusRestClientProperties.CONNECTION_POOL_SIZE, CONNECTION_POOL_SIZE)
-            .property(QuarkusRestClientProperties.NAME, "my-single-client")
-            .property(QuarkusRestClientProperties.SHARED, true)
-            .build(WebClient.class)
-    );
+    return baseUrlToClient.computeIfAbsent(baseUrl, key -> RestClientBuilder.newBuilder()
+        .baseUri(URI.create(key))
+        .followRedirects(true)
+        .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+        .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
+        .property(QuarkusRestClientProperties.CONNECTION_TTL, CONNECTION_TTL)
+        .property(QuarkusRestClientProperties.CONNECTION_POOL_SIZE, CONNECTION_POOL_SIZE)
+        .property(QuarkusRestClientProperties.NAME, "my-single-client")
+        .property(QuarkusRestClientProperties.SHARED, true)
+        .build(WebClient.class));
   }
 }
