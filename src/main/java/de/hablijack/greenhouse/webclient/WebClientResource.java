@@ -26,7 +26,7 @@ public class WebClientResource {
       var url = new URL(fullUrl);
       String baseUrl = StringUtils.splitByWholeSeparator(fullUrl, url.getPath())[0];
       String relativePath = StringUtils.removeStart(fullUrl.replace(baseUrl, ""), "/");
-      return new String[] { baseUrl, relativePath };
+      return new String[] {baseUrl, relativePath};
     } catch (ArrayIndexOutOfBoundsException | MalformedURLException e) {
       return new String[] {};
     }
