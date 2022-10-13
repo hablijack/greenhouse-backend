@@ -37,9 +37,9 @@ jobs:
       - run:
           name: Build and push Docker Image to Heroku
           command: |
-            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:1.0.17 .
+            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:1.0.18 .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push hablijack/greenhouse-backend:1.0.17
+            docker push hablijack/greenhouse-backend:1.0.18
 
 workflows:
   version: 2
