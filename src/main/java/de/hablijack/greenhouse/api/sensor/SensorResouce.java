@@ -25,7 +25,7 @@ public class SensorResouce {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensor/{identifier}")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<Sensor> getOneSensor(@PathParam("identifier") String identifier) {
+  public Sensor getOneSensor(@PathParam("identifier") Long identifier) {
     return Sensor.findById(identifier);
   }
 
@@ -33,7 +33,7 @@ public class SensorResouce {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensor/{identifier}")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public Sensor updateOneSensor(@PathParam("identifier") String identifier, Sensor sensor) {
+  public Sensor updateOneSensor(@PathParam("identifier") Long identifier, Sensor sensor) {
     sensor.persist();
     return sensor;
   }
