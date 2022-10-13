@@ -33,8 +33,17 @@ public class SensorResouce {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensor/{identifier}")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public Sensor updateOneSensor(@PathParam("identifier") Long identifier, Sensor sensor) {
-    sensor.persist();
-    return sensor;
+  public Sensor updateOneSensor(@PathParam("identifier") Long identifier, Sensor newSensor) {
+    Sensor oldSensor = Sensor.findById(identifier);
+    oldSensor.identifier = newSensor.identifier;
+    oldSensor.icon = newSensor.icon;
+    oldSensor.unit = newSensor.unit;
+    oldSensor.decimals = newSensor.decimals;
+    oldSensor.minAlarmValue = newSensor.minAlarmValue;
+    oldSensor.maxAlarmValue = newSensor.maxAlarmValue;
+    oldSensor.description = newSensor.description;
+    oldSensor.name = newSensor.name;
+    oldSensor.persist();
+    return oldSensor;
   }
 }
