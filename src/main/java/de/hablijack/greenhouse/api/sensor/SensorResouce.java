@@ -19,7 +19,7 @@ public class SensorResouce {
   @Path("/sensors")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<Sensor> getAllSensors() {
-    return Sensor.listAll();
+    return Sensor.list("order by identifier");
   }
 
   @GET
