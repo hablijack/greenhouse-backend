@@ -3,6 +3,8 @@ package de.hablijack.greenhouse.entity;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -22,16 +24,25 @@ public class Relay extends PanacheEntity {
   @Column(name = "color", nullable = false)
   public String color;
 
+  @OneToOne(fetch = FetchType.LAZY)
+  public ConditionTrigger conditionTrigger;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  public TimeTrigger timeTrigger;
+
   public Relay() {
   }
 
-  public Relay(String identifier, String name, boolean value, String description, String icon, String color) {
+  public Relay(String identifier, String name, boolean value, String description, String icon, String color,
+               ConditionTrigger conditionTrigger, TimeTrigger timeTrigger) {
     this.identifier = identifier;
     this.name = name;
     this.value = value;
     this.description = description;
     this.icon = icon;
     this.color = color;
+    this.conditionTrigger = conditionTrigger;
+    this.timeTrigger = timeTrigger;
   }
 
   public static Relay findByIdentifier(String id) {
