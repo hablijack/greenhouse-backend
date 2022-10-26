@@ -1,4 +1,4 @@
-package de.hablijack.greenhouse.cron;
+package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 

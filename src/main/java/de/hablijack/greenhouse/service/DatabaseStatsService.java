@@ -11,15 +11,19 @@ import javax.persistence.Query;
 @SuppressWarnings("checkstyle:LineLength")
 @ApplicationScoped
 public class DatabaseStatsService {
+  private static final String DB_SIZE_QUERY =
+      "SELECT pg_table_size('greenhouse.measurement') as measurementSizeByte, pg_table_size('greenhouse.relay_log') as relayLogSizeByte ; ";
   @Inject
   EntityManager entityManager;
-  private static final String DB_SIZE_QUERY = "SELECT pg_table_size('greenhouse.measurement') as measurementSizeByte, pg_table_size('greenhouse.relay_log') as relayLogSizeByte ; ";
+
   public TableSize getCurrentDatabaseSize() {
     Query query = entityManager.createNativeQuery(DB_SIZE_QUERY);
-    List<Object[]> results = query.getResultList();
+    List<BigInteger[]> results = query.getResultList();
     TableSize tableSize = new TableSize();
-    tableSize.setMeasurementSizeByte((BigInteger) results.get(0)[0]);
-    tableSize.setRelayLogSizeByte((BigInteger) results.get(0)[1]);
+    if (results != null && results.size() > 0 && results.get(0).length >= 2) {
+      tableSize.setMeasurementSizeByte(results.get(0)[0]);
+      tableSize.setRelayLogSizeByte(results.get(0)[1]);
+    }
     return tableSize;
   }
 }

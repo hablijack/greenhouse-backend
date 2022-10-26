@@ -11,7 +11,6 @@ public class Sensor extends PanacheEntity {
 
   @Column(name = "identifier", nullable = false, unique = true)
   public String identifier;
-  
   @Column(name = "name", nullable = false)
   public String name;
 

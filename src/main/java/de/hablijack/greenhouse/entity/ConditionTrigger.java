@@ -15,13 +15,19 @@ public class ConditionTrigger extends PanacheEntity {
 
   @OneToOne(fetch = FetchType.LAZY)
   public Sensor triggerSensor;
-
   @Column(name = "active", nullable = false)
   public boolean active;
 
+  public ConditionTrigger() {
+  }
+
+  public ConditionTrigger(Sensor triggerSensor, boolean active) {
+    this.triggerSensor = triggerSensor;
+    this.active = active;
+  }
 
   public ConditionTrigger persistIfNotExist() {
-    if (findById(id).count() == 0) {
+    if (id == null || findById(id).count() == 0) {
       this.persist();
       return this;
     } else {

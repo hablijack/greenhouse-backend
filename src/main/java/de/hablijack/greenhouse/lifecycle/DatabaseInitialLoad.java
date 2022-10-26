@@ -192,11 +192,10 @@ public class DatabaseInitialLoad {
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
     new Measurement(soilHumidityLine4, 88.8, new Date()).persist();
     /* ============================================================================================================= */
-    ConditionTrigger line1ConditionalTrigger = new ConditionTrigger().persistIfNotExist();
+    ConditionTrigger line1ConditionalTrigger = new ConditionTrigger(soilHumidityLine1, false).persistIfNotExist();
     TimeTrigger line1TimeTrigger = new TimeTrigger(
-        "0 0 8,10,12,13,17,18 * * ? *",
-        "0 8 8,10,12,13,17,18 * * ? *",
-        false
+        "0-8 8,10,11,12,13,17,18 * * *",
+        true
     ).persistIfNotExist();
     Relay relayLine1 = new Relay(
         "relay_line1",
@@ -207,13 +206,12 @@ public class DatabaseInitialLoad {
         "#0067AF",
         line1ConditionalTrigger,
         line1TimeTrigger).persistIfNotExist();
-    new RelayLog(relayLine1, "Quarkus: DBINIT", new Date(), false).persist();
+    new RelayLog(relayLine1, "DB-INIT", new Date(), false).persist();
 
-    ConditionTrigger line2ConditionalTrigger = new ConditionTrigger().persistIfNotExist();
+    ConditionTrigger line2ConditionalTrigger = new ConditionTrigger(soilHumidityLine2, false).persistIfNotExist();
     TimeTrigger line2TimeTrigger = new TimeTrigger(
-        "0 0 8,10,12,13,17,18 * * ? *",
-        "0 8 8,10,12,13,17,18 * * ? *",
-        false).persistIfNotExist();
+        "0-8 8,10,12,13,17,18 * * *",
+        true).persistIfNotExist();
     Relay relayLine2 = new Relay(
         "relay_line2",
         "Bewässerung Linie 2",
@@ -224,12 +222,11 @@ public class DatabaseInitialLoad {
         line2ConditionalTrigger,
         line2TimeTrigger).persistIfNotExist();
 
-    ConditionTrigger line3ConditionalTrigger = new ConditionTrigger().persistIfNotExist();
+    ConditionTrigger line3ConditionalTrigger = new ConditionTrigger(soilHumidityLine3, false).persistIfNotExist();
     TimeTrigger line3TimeTrigger = new TimeTrigger(
-        "0 0 8,10,12,13,17,18 * * ? *",
-        "0 8 8,10,12,13,17,18 * * ? *",
-        false).persistIfNotExist();
-    new RelayLog(relayLine2, "Quarkus: DBINIT", new Date(), false).persist();
+        "0-8 8,10,12,13,17,18 * * *",
+        true).persistIfNotExist();
+    new RelayLog(relayLine2, "DB-INIT", new Date(), false).persist();
     Relay relayLine3 = new Relay(
         "relay_line3",
         "Bewässerung Linie 3",
@@ -240,12 +237,11 @@ public class DatabaseInitialLoad {
         line3ConditionalTrigger,
         line3TimeTrigger).persistIfNotExist();
 
-    ConditionTrigger line4ConditionalTrigger = new ConditionTrigger().persistIfNotExist();
+    ConditionTrigger line4ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
     TimeTrigger line4TimeTrigger = new TimeTrigger(
-        "0 0 8,10,12,13,17,18 * * ? *",
-        "0 8 8,10,12,13,17,18 * * ? *",
-        false).persistIfNotExist();
-    new RelayLog(relayLine3, "Quarkus: DBINIT", new Date(), false).persist();
+        "0-8 8,10,12,13,17,18 * * *",
+        true).persistIfNotExist();
+    new RelayLog(relayLine3, "DB-INIT", new Date(), false).persist();
     Relay relayLine4 = new Relay(
         "relay_line4",
         "Bewässerung Linie 4",
@@ -255,12 +251,11 @@ public class DatabaseInitialLoad {
         "#0067AF",
         line4ConditionalTrigger,
         line4TimeTrigger).persistIfNotExist();
-    new RelayLog(relayLine4, "Quarkus: DBINIT", new Date(), false).persist();
+    new RelayLog(relayLine4, "DB-INIT", new Date(), false).persist();
 
-    ConditionTrigger lightConditionalTrigger = new ConditionTrigger().persistIfNotExist();
+    ConditionTrigger lightConditionalTrigger = new ConditionTrigger(brightness, false).persistIfNotExist();
     TimeTrigger lightTimeTrigger = new TimeTrigger(
-        "0 0 12 * * ? *",
-        "0 10 12 * * ? *",
+        "0-8 8,10,12,13,17,18 * * *",
         false).persistIfNotExist();
     Relay relayLight = new Relay(
         "relay_light",
@@ -271,13 +266,12 @@ public class DatabaseInitialLoad {
         "#A092EB",
         lightConditionalTrigger,
         lightTimeTrigger).persistIfNotExist();
-    new RelayLog(relayLight, "Quarkus: DBINIT", new Date(), false).persist();
+    new RelayLog(relayLight, "DB-INIT", new Date(), false).persist();
 
-    ConditionTrigger fansConditionalTrigger = new ConditionTrigger().persistIfNotExist();
+    ConditionTrigger fansConditionalTrigger = new ConditionTrigger(airTempInside, false).persistIfNotExist();
     TimeTrigger fansTimeTrigger = new TimeTrigger(
-        "0 0 12 * * ? *",
-        "0 10 12 * * ? *",
-        false).persistIfNotExist();
+        "0-8 8,10,12,13,17,18 * * *",
+        true).persistIfNotExist();
     Relay relayFans = new Relay(
         "relay_fans",
         "Ventilatoren",
@@ -287,6 +281,8 @@ public class DatabaseInitialLoad {
         "#C89542",
         fansConditionalTrigger,
         fansTimeTrigger).persistIfNotExist();
-    new RelayLog(relayFans, "Quarkus: DBINIT", new Date(), false).persist();
+    new RelayLog(relayFans, "DB-INIT", new Date(), false).persist();
+
+    LOGGER.info("... database filled ...");
   }
 }

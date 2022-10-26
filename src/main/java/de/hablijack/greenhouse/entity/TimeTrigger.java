@@ -13,11 +13,8 @@ public class TimeTrigger extends PanacheEntity {
   @OneToOne(fetch = FetchType.LAZY)
   public Relay relay;
 
-  @Column(name = "start_cron_string", nullable = false)
-  public String startCronString;
-
-  @Column(name = "end_cron_string", nullable = false)
-  public String endCronString;
+  @Column(name = "cron_string", nullable = false)
+  public String cronString;
 
   @Column(name = "active", nullable = false)
   public boolean active;
@@ -25,14 +22,13 @@ public class TimeTrigger extends PanacheEntity {
   public TimeTrigger() {
   }
 
-  public TimeTrigger(String startCronString, String endCronString, boolean active) {
-    this.startCronString = startCronString;
-    this.endCronString = endCronString;
+  public TimeTrigger(String cronString, boolean active) {
+    this.cronString = cronString;
     this.active = active;
   }
 
   public TimeTrigger persistIfNotExist() {
-    if (findById(id).count() == 0) {
+    if (id == null || findById(id).count() == 0) {
       this.persist();
       return this;
     } else {
