@@ -1,8 +1,12 @@
 package de.hablijack.greenhouse.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -21,6 +25,9 @@ public class Satelite extends PanacheEntity {
   public String ip;
   @Column(name = "online", nullable = false)
   public boolean online;
+  @JsonBackReference
+  @OneToMany(fetch = FetchType.LAZY)
+  public Set<Relay> relays;
 
   public Satelite(String identifier, String name, String imageUrl, String description, String ip, boolean online) {
     this.identifier = identifier;

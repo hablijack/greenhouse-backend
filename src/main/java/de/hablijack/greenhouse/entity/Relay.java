@@ -4,6 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -30,11 +31,14 @@ public class Relay extends PanacheEntity {
   @OneToOne(fetch = FetchType.LAZY)
   public TimeTrigger timeTrigger;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  public Satelite satelite;
+
   public Relay() {
   }
 
   public Relay(String identifier, String name, boolean value, String description, String icon, String color,
-               ConditionTrigger conditionTrigger, TimeTrigger timeTrigger) {
+               ConditionTrigger conditionTrigger, TimeTrigger timeTrigger, Satelite satelite) {
     this.identifier = identifier;
     this.name = name;
     this.value = value;
@@ -43,6 +47,7 @@ public class Relay extends PanacheEntity {
     this.color = color;
     this.conditionTrigger = conditionTrigger;
     this.timeTrigger = timeTrigger;
+    this.satelite = satelite;
   }
 
   public static Relay findByIdentifier(String id) {

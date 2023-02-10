@@ -16,7 +16,6 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.scheduler.Scheduled;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 
@@ -25,7 +24,6 @@ public class RelayScheduler {
 
   public static final String QUARKUS_TIME_TRIGGER = "TIME-TRIGGER";
   public static final String QUARKUS_CONDITION_TRIGGER = "CONDITION-TRIGGER";
-  private static final Logger LOGGER = Logger.getLogger(RelayScheduler.class.getName());
 
   @SuppressFBWarnings("CRLF_INJECTION_LOGS")
   @Scheduled(every = "1m", concurrentExecution = SKIP)

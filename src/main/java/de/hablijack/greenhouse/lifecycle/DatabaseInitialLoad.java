@@ -45,14 +45,14 @@ public class DatabaseInitialLoad {
   @Transactional
   public void initializeWithBaseData(@Observes StartupEvent event) {
     LOGGER.info("... filling database...");
-    new Satelite(
+    Satelite greenhouseCam = new Satelite(
         "greenhouse_cam",
         "Gewächshaus Webcam",
         "satelite.png",
         "ESP-EYE Webcam-webserver um regelmäßig Bilder innerhalb des Gewächshauses aufzunehmen.",
         "192.168.178.48",
         true).persistIfNotExist();
-    new Satelite(
+    Satelite greenhouseControl = new Satelite(
         "greenhouse_control",
         "Gewächshaus Steuerung",
         "satelite.png",
@@ -205,7 +205,8 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         line1ConditionalTrigger,
-        line1TimeTrigger).persistIfNotExist();
+        line1TimeTrigger,
+        greenhouseControl).persistIfNotExist();
     new RelayLog(relayLine1, "DB-INIT", new Date(), false).persist();
 
     ConditionTrigger line2ConditionalTrigger = new ConditionTrigger(soilHumidityLine2, false).persistIfNotExist();
@@ -220,7 +221,8 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         line2ConditionalTrigger,
-        line2TimeTrigger).persistIfNotExist();
+        line2TimeTrigger,
+        greenhouseControl).persistIfNotExist();
 
     ConditionTrigger line3ConditionalTrigger = new ConditionTrigger(soilHumidityLine3, false).persistIfNotExist();
     TimeTrigger line3TimeTrigger = new TimeTrigger(
@@ -235,7 +237,9 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         line3ConditionalTrigger,
-        line3TimeTrigger).persistIfNotExist();
+        line3TimeTrigger,
+        greenhouseControl
+    ).persistIfNotExist();
 
     ConditionTrigger line4ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
     TimeTrigger line4TimeTrigger = new TimeTrigger(
@@ -250,7 +254,8 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         line4ConditionalTrigger,
-        line4TimeTrigger).persistIfNotExist();
+        line4TimeTrigger,
+        greenhouseControl).persistIfNotExist();
     new RelayLog(relayLine4, "DB-INIT", new Date(), false).persist();
 
     ConditionTrigger lightConditionalTrigger = new ConditionTrigger(brightness, false).persistIfNotExist();
@@ -265,7 +270,8 @@ public class DatabaseInitialLoad {
         "mdi-white-balance-sunny",
         "#A092EB",
         lightConditionalTrigger,
-        lightTimeTrigger).persistIfNotExist();
+        lightTimeTrigger,
+        greenhouseControl).persistIfNotExist();
     new RelayLog(relayLight, "DB-INIT", new Date(), false).persist();
 
     ConditionTrigger fansConditionalTrigger = new ConditionTrigger(airTempInside, false).persistIfNotExist();
@@ -280,7 +286,8 @@ public class DatabaseInitialLoad {
         "mdi-fan",
         "#C89542",
         fansConditionalTrigger,
-        fansTimeTrigger).persistIfNotExist();
+        fansTimeTrigger,
+        greenhouseControl).persistIfNotExist();
     new RelayLog(relayFans, "DB-INIT", new Date(), false).persist();
 
     LOGGER.info("... database filled ...");
