@@ -24,7 +24,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/api")
+@Path("/backend")
 public class RelayResouce {
   private static final int NUMBER_OF_LOG_ENTRIES = 10;
   private final Session session;
@@ -34,7 +34,7 @@ public class RelayResouce {
     objectMapper = new ObjectMapper();
     this.session = ContainerProvider.getWebSocketContainer().connectToServer(
         Client.class,
-        new URI("ws://localhost:8080/api/relays/socket/system")
+        new URI("ws://localhost:8080/backend/relays/socket/system")
     );
   }
 

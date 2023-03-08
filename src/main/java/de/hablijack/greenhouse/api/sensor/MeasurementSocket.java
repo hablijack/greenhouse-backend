@@ -18,7 +18,7 @@ import javax.websocket.server.ServerEndpoint;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logmanager.Level;
 
-@ServerEndpoint("/api/sensors/measurements/socket")
+@ServerEndpoint("/backend/sensors/measurements/socket")
 @ApplicationScoped
 public class MeasurementSocket {
 

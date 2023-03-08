@@ -23,7 +23,7 @@ import javax.websocket.server.ServerEndpoint;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logmanager.Level;
 
-@ServerEndpoint("/api/relays/socket/{userid}")
+@ServerEndpoint("/backend/relays/socket/{userid}")
 @ApplicationScoped
 public class RelayLogSocket {
 
