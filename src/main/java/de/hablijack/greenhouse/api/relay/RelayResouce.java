@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hablijack.greenhouse.api.pojo.RelayLogEvent;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
+import de.hablijack.greenhouse.entity.Satelite;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.URI;
@@ -17,8 +18,10 @@ import javax.websocket.ClientEndpoint;
 import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
 import javax.websocket.Session;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -62,6 +65,27 @@ public class RelayResouce {
     newRelay.add(log);
     session.getAsyncRemote().sendText(objectMapper.writeValueAsString(newRelay));
     return true;
+  }
+
+  @PUT
+  @Path("/relays/{identifier}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  @Transactional
+  public Relay updateRelay(@PathParam("identifier") String identifier, Relay newRelayData) {
+    Relay oldRelay = Relay.findByIdentifier(identifier);
+    oldRelay.color = newRelayData.color;
+    oldRelay.conditionTrigger = newRelayData.conditionTrigger;
+    oldRelay.description = newRelayData.description;
+    oldRelay.icon = newRelayData.icon;
+    oldRelay.identifier = newRelayData.identifier;
+    oldRelay.name = newRelayData.name;
+    oldRelay.target = newRelayData.target;
+    oldRelay.satelite = newRelayData.satelite;
+    oldRelay.timeTrigger = newRelayData.timeTrigger;
+    oldRelay.value = newRelayData.value;
+    oldRelay.persist();
+    return oldRelay;
   }
 
   @GET

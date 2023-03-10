@@ -45,7 +45,7 @@ public class DatabaseInitialLoad {
   @Transactional
   public void initializeWithBaseData(@Observes StartupEvent event) {
     LOGGER.info("... filling database...");
-    Satelite greenhouseCam = new Satelite(
+    new Satelite(
         "greenhouse_cam",
         "Gewächshaus Webcam",
         "satelite.png",
@@ -200,6 +200,7 @@ public class DatabaseInitialLoad {
     Relay relayLine1 = new Relay(
         "relay_line1",
         "Bewässerung Linie 1",
+        "Tomaten",
         false,
         "Bewässert Linie 1 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
@@ -216,6 +217,7 @@ public class DatabaseInitialLoad {
     Relay relayLine2 = new Relay(
         "relay_line2",
         "Bewässerung Linie 2",
+        "Tomaten",
         false,
         "Bewässert Linie 2 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
@@ -223,15 +225,16 @@ public class DatabaseInitialLoad {
         line2ConditionalTrigger,
         line2TimeTrigger,
         greenhouseControl).persistIfNotExist();
+    new RelayLog(relayLine2, "DB-INIT", new Date(), false).persist();
 
     ConditionTrigger line3ConditionalTrigger = new ConditionTrigger(soilHumidityLine3, false).persistIfNotExist();
     TimeTrigger line3TimeTrigger = new TimeTrigger(
         "0-8 8,10,12,13,17,18 * * *",
         true).persistIfNotExist();
-    new RelayLog(relayLine2, "DB-INIT", new Date(), false).persist();
     Relay relayLine3 = new Relay(
         "relay_line3",
         "Bewässerung Linie 3",
+        "Salat",
         false,
         "Bewässert Linie3 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
@@ -240,15 +243,16 @@ public class DatabaseInitialLoad {
         line3TimeTrigger,
         greenhouseControl
     ).persistIfNotExist();
+    new RelayLog(relayLine3, "DB-INIT", new Date(), false).persist();
 
     ConditionTrigger line4ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
     TimeTrigger line4TimeTrigger = new TimeTrigger(
         "0-8 8,10,12,13,17,18 * * *",
         true).persistIfNotExist();
-    new RelayLog(relayLine3, "DB-INIT", new Date(), false).persist();
     Relay relayLine4 = new Relay(
         "relay_line4",
         "Bewässerung Linie 4",
+        "Gurken",
         false,
         "Bewässert Linie4 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
@@ -258,6 +262,40 @@ public class DatabaseInitialLoad {
         greenhouseControl).persistIfNotExist();
     new RelayLog(relayLine4, "DB-INIT", new Date(), false).persist();
 
+    ConditionTrigger line5ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
+    TimeTrigger line5TimeTrigger = new TimeTrigger(
+        "0-8 8,10,12,13,17,18 * * *",
+        true).persistIfNotExist();
+    Relay relayLine5 = new Relay(
+        "relay_line5",
+        "Bewässerung Linie 5",
+        "Radieschen",
+        false,
+        "Bewässert Linie5 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
+        "mdi-water",
+        "#0067AF",
+        line5ConditionalTrigger,
+        line5TimeTrigger,
+        greenhouseControl).persistIfNotExist();
+    new RelayLog(relayLine5, "DB-INIT", new Date(), false).persist();
+
+    ConditionTrigger line6ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
+    TimeTrigger line6TimeTrigger = new TimeTrigger(
+        "0-8 8,10,12,13,17,18 * * *",
+        true).persistIfNotExist();
+    Relay relayLine6 = new Relay(
+        "relay_line6",
+        "Bewässerung Linie 6",
+        "Melonen",
+        false,
+        "Bewässert Linie6 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
+        "mdi-water",
+        "#0067AF",
+        line6ConditionalTrigger,
+        line6TimeTrigger,
+        greenhouseControl).persistIfNotExist();
+    new RelayLog(relayLine6, "DB-INIT", new Date(), false).persist();
+
     ConditionTrigger lightConditionalTrigger = new ConditionTrigger(brightness, false).persistIfNotExist();
     TimeTrigger lightTimeTrigger = new TimeTrigger(
         "0-8 8,10,12,13,17,18 * * *",
@@ -265,6 +303,7 @@ public class DatabaseInitialLoad {
     Relay relayLight = new Relay(
         "relay_light",
         "Pflanzenlicht",
+        null,
         false,
         "Mit der LED-Decken-Beleuchtung kann das Wachstum und die Qualität von Gemüse gesteigert werden.",
         "mdi-white-balance-sunny",
@@ -281,6 +320,7 @@ public class DatabaseInitialLoad {
     Relay relayFans = new Relay(
         "relay_fans",
         "Ventilatoren",
+        null,
         false,
         "Durch die richtige Verwendung von Ventilatoren wird die Luft rund um die Pflanze sanft vermischt, wodurch krankheitsfördernde Bereiche mit hoher Luftfeuchtigkeit beseitigt werden und eine starke Transpiration gefördert wird.",
         "mdi-fan",

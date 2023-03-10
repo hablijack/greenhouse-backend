@@ -16,6 +16,8 @@ public class Relay extends PanacheEntity {
   public String identifier;
   @Column(name = "name", nullable = false)
   public String name;
+  @Column(name = "target")
+  public String target;
   @Column(name = "value", nullable = false)
   public boolean value;
   @Column(name = "description", nullable = false)
@@ -37,7 +39,7 @@ public class Relay extends PanacheEntity {
   public Relay() {
   }
 
-  public Relay(String identifier, String name, boolean value, String description, String icon, String color,
+  public Relay(String identifier, String name, String target, boolean value, String description, String icon, String color,
                ConditionTrigger conditionTrigger, TimeTrigger timeTrigger, Satelite satelite) {
     this.identifier = identifier;
     this.name = name;
@@ -48,6 +50,7 @@ public class Relay extends PanacheEntity {
     this.conditionTrigger = conditionTrigger;
     this.timeTrigger = timeTrigger;
     this.satelite = satelite;
+    this.target = target;
   }
 
   public static Relay findByIdentifier(String id) {
