@@ -44,9 +44,6 @@ public class RelayScheduler {
             trigger = QUARKUS_TIME_TRIGGER;
             newState = false;
           }
-        }
-
-        if (newState == null) {
           if (relay.conditionTrigger.active && isConditionTriggered(relay)) {
             trigger = QUARKUS_CONDITION_TRIGGER;
             newState = true;

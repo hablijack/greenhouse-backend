@@ -192,6 +192,28 @@ public class DatabaseInitialLoad {
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
     new Measurement(soilHumidityLine4, 88.8, new Date()).persist();
     /* ============================================================================================================= */
+    Sensor soilHumidityLine5 = new Sensor(
+        "soil_humidity_line5",
+        "Bodenfeuchte Line5",
+        "%",
+        0,
+        "Bodenfeuchte in Pflanzspur 5",
+        "mdi-water",
+        MIN_SOIL_HUMIDITY_INSIDE,
+        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+    new Measurement(soilHumidityLine5, 88.8, new Date()).persist();
+    /* ============================================================================================================= */
+    Sensor soilHumidityLine6 = new Sensor(
+        "soil_humidity_line6",
+        "Bodenfeuchte Line6",
+        "%",
+        0,
+        "Bodenfeuchte in Pflanzspur 6",
+        "mdi-water",
+        MIN_SOIL_HUMIDITY_INSIDE,
+        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+    new Measurement(soilHumidityLine6, 88.8, new Date()).persist();
+    /* ============================================================================================================= */
     ConditionTrigger line1ConditionalTrigger = new ConditionTrigger(soilHumidityLine1, false).persistIfNotExist();
     TimeTrigger line1TimeTrigger = new TimeTrigger(
         "0-8 8,10,11,12,13,17,18 * * *",
