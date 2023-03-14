@@ -34,23 +34,22 @@ public class RelayScheduler {
       Relay relay = (Relay) entity;
       Boolean newState = null;
       String trigger = null;
-      if (relay.timeTrigger.active || relay.conditionTrigger.active) {
-        // Minimum one Trigger is active for current relay so check if conditions are met:
-        if (newState == null) {
-          if (relay.timeTrigger.active && isWithinTriggerTime(relay)) {
-            trigger = QUARKUS_TIME_TRIGGER;
-            newState = true;
-          } else {
-            trigger = QUARKUS_TIME_TRIGGER;
-            newState = false;
-          }
-          if (relay.conditionTrigger.active && isConditionTriggered(relay)) {
-            trigger = QUARKUS_CONDITION_TRIGGER;
-            newState = true;
-          } else {
-            trigger = QUARKUS_CONDITION_TRIGGER;
-            newState = false;
-          }
+      if (newState == null && (relay.timeTrigger.active || relay.conditionTrigger.active)) {
+        // Minimum one Trigger is active for current relay so check if conditions are
+        // met:
+        if (relay.timeTrigger.active && isWithinTriggerTime(relay)) {
+          trigger = QUARKUS_TIME_TRIGGER;
+          newState = true;
+        } else {
+          trigger = QUARKUS_TIME_TRIGGER;
+          newState = false;
+        }
+        if (relay.conditionTrigger.active && isConditionTriggered(relay)) {
+          trigger = QUARKUS_CONDITION_TRIGGER;
+          newState = true;
+        } else {
+          trigger = QUARKUS_CONDITION_TRIGGER;
+          newState = false;
         }
       }
 
