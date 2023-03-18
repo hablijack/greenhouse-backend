@@ -1,8 +1,13 @@
 package de.hablijack.greenhouse.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+
+import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -52,6 +57,10 @@ public class Sensor extends PanacheEntity {
     return Measurement.find("sensor = ?1 ORDER BY timestamp", this).firstResult();
   }
 
+  public static Sensor findByIdentifier(String id) {
+    return Sensor.find("identifier = ?1", id).firstResult();
+  }
+
   public Sensor persistIfNotExist() {
     if (find("identifier = ?1", identifier).count() == 0) {
       this.persist();
@@ -59,5 +68,9 @@ public class Sensor extends PanacheEntity {
     } else {
       return (Sensor) find("identifier = ?1", identifier).list().get(0);
     }
+  }
+
+  public List<Measurement> findMeasurementsWithinTimeRange(String timeRange) {
+    return Measurement.find("sensor = ?1 ORDER BY timestamp", this).list();
   }
 }
