@@ -23,6 +23,9 @@ public class HistoryResource {
   @Path("history/air/temperatures")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<ChartjsDataset> getAirtemperatureHistory(@RestQuery String timerange) {
+    if(timerange == null){
+      timerange = "week";
+    }
     List<ChartjsDataset> datalist = new ArrayList<>();
     Sensor airTempInsideSensor = Sensor.findByIdentifier("air_temp_inside");
     List<Measurement> insideMeasurements = airTempInsideSensor.findMeasurementsWithinTimeRange(timerange);
@@ -46,6 +49,28 @@ public class HistoryResource {
     outsideData.setData(this.extractDataFromMeasurements(outsideMeasurements));
     datalist.add(outsideData);
 
+    return datalist;
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("history/air/humidity")
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  public List<ChartjsDataset> getAirhumidityHistory(@RestQuery String timerange) {
+    if(timerange == null){
+      timerange = "week";
+    }
+    List<ChartjsDataset> datalist = new ArrayList<>();
+    Sensor airHumiditySensor = Sensor.findByIdentifier("air_temp_inside");
+    List<Measurement> insideMeasurements = airHumiditySensor.findMeasurementsWithinTimeRange(timerange);
+    ChartjsDataset insideData = new ChartjsDataset();
+    insideData.setBackgroundColor("rgba(92,127,173,0.1)");
+    insideData.setBorderColor("rgba(92,127,173,1)");
+    insideData.setBorderWidth(this.BORDER_WIDTH);
+    insideData.setFill(true);
+    insideData.setLabel("Luftfeuchtigkeit innen");
+    insideData.setData(this.extractDataFromMeasurements(insideMeasurements));
+    datalist.add(insideData);
     return datalist;
   }
 

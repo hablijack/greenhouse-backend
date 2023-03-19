@@ -2,6 +2,7 @@ package de.hablijack.greenhouse.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
@@ -71,6 +72,15 @@ public class Sensor extends PanacheEntity {
   }
 
   public List<Measurement> findMeasurementsWithinTimeRange(String timeRange) {
-    return Measurement.find("sensor = ?1 ORDER BY timestamp", this).list();
+    long days = 0;
+    if(timeRange.equals("week")){
+      days = 7;
+    } else if(timeRange.equals("month")){
+      days = 31;
+    } else {
+      days = 1;
+    }
+    Date ago = new Date(System.currentTimeMillis() - (days * 86400000));
+    return Measurement.find("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago).list();
   }
 }
