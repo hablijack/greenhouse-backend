@@ -11,6 +11,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.jboss.resteasy.reactive.RestQuery;
 
 @Path("/backend")
 public class HistoryResource {
@@ -21,10 +22,10 @@ public class HistoryResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("history/air/temperatures")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<ChartjsDataset> getAirtemperatureHistory() {
+  public List<ChartjsDataset> getAirtemperatureHistory(@RestQuery String timerange) {
     List<ChartjsDataset> datalist = new ArrayList<>();
     Sensor airTempInsideSensor = Sensor.findByIdentifier("air_temp_inside");
-    List<Measurement> insideMeasurements = airTempInsideSensor.findMeasurementsWithinTimeRange("WEEK");
+    List<Measurement> insideMeasurements = airTempInsideSensor.findMeasurementsWithinTimeRange(timerange);
     ChartjsDataset insideData = new ChartjsDataset();
     insideData.setBackgroundColor("rgba(92,127,173,0.1)");
     insideData.setBorderColor("rgba(92,127,173,1)");
@@ -35,7 +36,7 @@ public class HistoryResource {
     datalist.add(insideData);
 
     Sensor airTempOutsideSensor = Sensor.findByIdentifier("air_temp_outside");
-    List<Measurement> outsideMeasurements = airTempOutsideSensor.findMeasurementsWithinTimeRange("WEEK");
+    List<Measurement> outsideMeasurements = airTempOutsideSensor.findMeasurementsWithinTimeRange(timerange);
     ChartjsDataset outsideData = new ChartjsDataset();
     outsideData.setBackgroundColor("rgba(92,168,173,.1)");
     outsideData.setBorderColor("rgba(92,168,173,1)");
