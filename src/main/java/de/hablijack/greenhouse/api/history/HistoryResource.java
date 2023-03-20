@@ -64,10 +64,101 @@ public class HistoryResource {
     Sensor airHumiditySensor = Sensor.findByIdentifier("air_humidity_inside");
     List<Measurement> insideMeasurements = airHumiditySensor.findMeasurementsWithinTimeRange(timerange);
     ChartjsDataset insideData = new ChartjsDataset();
-    insideData.setBackgroundColor("rgba(92,127,173,0.1)");
+    insideData.setBackgroundColor("rgba(92,127,173,.1)");
+    insideData.setBorderColor("rgba(92,168,173,1)");
+    insideData.setBorderWidth(this.BORDER_WIDTH);
+    insideData.setFill(true);
     insideData.setLabel("Luftfeuchtigkeit innen");
     insideData.setData(this.extractDataFromMeasurements(insideMeasurements));
     datalist.add(insideData);
+    return datalist;
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("history/wifi")
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  public List<ChartjsDataset> getWifiStrengthHistory(@RestQuery String timerange) {
+    if(timerange == null){
+      timerange = "week";
+    }
+    List<ChartjsDataset> datalist = new ArrayList<>();
+    Sensor wifiSensor = Sensor.findByIdentifier("wifi");
+    List<Measurement> wifiMeasurements = wifiSensor.findMeasurementsWithinTimeRange(timerange);
+    ChartjsDataset wifiData = new ChartjsDataset();
+    wifiData.setBackgroundColor("rgba(255,255,60,.1)");
+    wifiData.setBorderColor("rgba(255,255,60,1)");
+    wifiData.setBorderWidth(this.BORDER_WIDTH);
+    wifiData.setFill(true);
+    wifiData.setLabel("Signalstärke");
+    wifiData.setData(this.extractDataFromMeasurements(wifiMeasurements));
+    datalist.add(wifiData);
+    return datalist;
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("history/co2")
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  public List<ChartjsDataset> getCO2History(@RestQuery String timerange) {
+    if(timerange == null){
+      timerange = "week";
+    }
+    List<ChartjsDataset> datalist = new ArrayList<>();
+    Sensor co2Sensor = Sensor.findByIdentifier("co2");
+    List<Measurement> co2Measurements = co2Sensor.findMeasurementsWithinTimeRange(timerange);
+    ChartjsDataset co2Data = new ChartjsDataset();
+    co2Data.setBackgroundColor("rgba(0,255,100,.1)");
+    co2Data.setBorderColor("rgba(0,255,100,1)");
+    co2Data.setBorderWidth(this.BORDER_WIDTH);
+    co2Data.setFill(true);
+    co2Data.setLabel("CO2 Gehalt");
+    co2Data.setData(this.extractDataFromMeasurements(co2Measurements));
+    datalist.add(co2Data);
+    return datalist;
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("history/brightness")
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  public List<ChartjsDataset> getBrightnessHistory(@RestQuery String timerange) {
+    if(timerange == null){
+      timerange = "week";
+    }
+    List<ChartjsDataset> datalist = new ArrayList<>();
+    Sensor brightnessSensor = Sensor.findByIdentifier("brightness");
+    List<Measurement> brightnessMeasurements = brightnessSensor.findMeasurementsWithinTimeRange(timerange);
+    ChartjsDataset brightnessData = new ChartjsDataset();
+    brightnessData.setBackgroundColor("rgba(0,255,255,.1)");
+    brightnessData.setBorderColor("rgba(0,255,255,1)");
+    brightnessData.setBorderWidth(this.BORDER_WIDTH);
+    brightnessData.setFill(true);
+    brightnessData.setLabel("Helligkeit");
+    brightnessData.setData(this.extractDataFromMeasurements(brightnessMeasurements));
+    datalist.add(brightnessData);
+    return datalist;
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("history/battery")
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  public List<ChartjsDataset> getBatteryistory(@RestQuery String timerange) {
+    if(timerange == null){
+      timerange = "week";
+    }
+    List<ChartjsDataset> datalist = new ArrayList<>();
+    Sensor batterySensor = Sensor.findByIdentifier("battery");
+    List<Measurement> batteryMeasurements = batterySensor.findMeasurementsWithinTimeRange(timerange);
+    ChartjsDataset batteryData = new ChartjsDataset();
+    batteryData.setBackgroundColor("rgba(0,0,0,.1)");
+    batteryData.setBorderColor("rgba(0,0,0,1)");
+    batteryData.setBorderWidth(this.BORDER_WIDTH);
+    batteryData.setFill(true);
+    batteryData.setLabel("battery Gehalt");
+    batteryData.setData(this.extractDataFromMeasurements(batteryMeasurements));
+    datalist.add(batteryData);
     return datalist;
   }
 
