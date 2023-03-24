@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,7 +41,7 @@ public class Relay extends PanacheEntity {
   }
 
   public Relay(String identifier, String name, String target, boolean value, String description, String icon,
-      String color, ConditionTrigger conditionTrigger, TimeTrigger timeTrigger, Satelite satelite) {
+               String color, ConditionTrigger conditionTrigger, TimeTrigger timeTrigger, Satelite satelite) {
     this.identifier = identifier;
     this.name = name;
     this.value = value;
@@ -55,6 +56,10 @@ public class Relay extends PanacheEntity {
 
   public static Relay findByIdentifier(String id) {
     return (Relay) find("identifier = ?1", id).list().get(0);
+  }
+
+  public static List<Relay> getAllRelaysForScheduler() {
+    return listAll();
   }
 
   public Relay persistIfNotExist() {

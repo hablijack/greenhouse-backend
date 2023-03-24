@@ -29,8 +29,7 @@ public class RelayScheduler {
   @Scheduled(every = "1m", concurrentExecution = SKIP)
   @Transactional
   void switchRelaysConditionally() {
-
-    for (PanacheEntityBase entity : Relay.listAll()) {
+    for (PanacheEntityBase entity : Relay.getAllRelaysForScheduler()) {
       Relay relay = (Relay) entity;
       Boolean newState = null;
       String trigger = null;
