@@ -1,7 +1,9 @@
 package de.hablijack.greenhouse.api.pojo;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 
+@SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP"})
 public class ChartjsDataset {
 
   private String label;
@@ -16,7 +18,7 @@ public class ChartjsDataset {
   }
 
   public ChartjsDataset(String label, List<ChartjsData> data, String borderColor,
-      int borderWidth, boolean fill, String backgroundColor) {
+                        int borderWidth, boolean fill, String backgroundColor) {
     this.label = label;
     this.data = data;
     this.borderColor = borderColor;

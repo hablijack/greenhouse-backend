@@ -1,16 +1,16 @@
 version: 2
 updates:
-- package-ecosystem: maven
-  directory: '/'
-  schedule:
-    interval: daily
-    time: '00:00'
-  open-pull-requests-limit: 10
-  reviewers:
-    - hablijack
-  assignees:
-    - hablijack
-  commit-message:
-    prefix: fix
-    prefix-development: chore
-    include: scope
+  - package-ecosystem: maven
+    directory: '/'
+    schedule:
+      interval: daily
+      time: '00:00'
+    open-pull-requests-limit: 10
+    reviewers:
+      - hablijack
+    assignees:
+      - hablijack
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope

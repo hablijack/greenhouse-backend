@@ -1,19 +1,20 @@
 package de.hablijack.greenhouse.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "sensor", schema = "greenhouse")
 public class Sensor extends PanacheEntity {
+
+  private static final int DAYS_A_WEEK = 7;
+  private static final int DAYS_A_MONTH = 7;
+  private static final int ONE_DAY = 1;
+  private static final int DAY_TO_MS_FACTOR = 86400000;
 
   @Column(name = "identifier", nullable = false, unique = true)
   public String identifier;
@@ -54,12 +55,12 @@ public class Sensor extends PanacheEntity {
     this.maxAlarmValue = maxAlarmValue;
   }
 
-  public Measurement findCurrentMeasurement() {
-    return Measurement.find("sensor = ?1 ORDER BY timestamp", this).firstResult();
-  }
-
   public static Sensor findByIdentifier(String id) {
     return Sensor.find("identifier = ?1", id).firstResult();
+  }
+
+  public Measurement findCurrentMeasurement() {
+    return Measurement.find("sensor = ?1 ORDER BY timestamp", this).firstResult();
   }
 
   public Sensor persistIfNotExist() {
@@ -73,14 +74,14 @@ public class Sensor extends PanacheEntity {
 
   public List<Measurement> findMeasurementsWithinTimeRange(String timeRange) {
     long days = 0;
-    if(timeRange.equals("week")){
-      days = 7;
-    } else if(timeRange.equals("month")){
-      days = 31;
+    if (timeRange.equals("week")) {
+      days = DAYS_A_WEEK;
+    } else if (timeRange.equals("month")) {
+      days = DAYS_A_MONTH;
     } else {
-      days = 1;
+      days = ONE_DAY;
     }
-    Date ago = new Date(System.currentTimeMillis() - (days * 86400000));
+    Date ago = new Date(System.currentTimeMillis() - (days * DAY_TO_MS_FACTOR));
     return Measurement.find("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago).list();
   }
 }

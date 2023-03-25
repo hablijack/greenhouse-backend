@@ -7,19 +7,22 @@ public class ChartjsData {
   private Double y;
 
   public ChartjsData(Date x, Double y) {
-    this.x = x;
+    this.x = (Date) x.clone();
     this.y = y;
   }
 
   public Date getX() {
-    return x;
+    return (Date) x.clone();
   }
+
   public void setX(Date x) {
-    this.x = x;
+    this.x = (Date) x.clone();
   }
+
   public Double getY() {
     return y;
   }
+
   public void setY(Double y) {
     this.y = y;
   }

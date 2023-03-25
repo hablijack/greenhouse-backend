@@ -23,7 +23,7 @@ public class HistoryResource {
   @Path("history/air/temperatures")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<ChartjsDataset> getAirtemperatureHistory(@RestQuery String timerange) {
-    if(timerange == null){
+    if (timerange == null) {
       timerange = "week";
     }
     List<ChartjsDataset> datalist = new ArrayList<>();
@@ -57,7 +57,7 @@ public class HistoryResource {
   @Path("history/air/humidity")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<ChartjsDataset> getAirhumidityHistory(@RestQuery String timerange) {
-    if(timerange == null){
+    if (timerange == null) {
       timerange = "week";
     }
     List<ChartjsDataset> datalist = new ArrayList<>();
@@ -79,7 +79,7 @@ public class HistoryResource {
   @Path("history/wifi")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<ChartjsDataset> getWifiStrengthHistory(@RestQuery String timerange) {
-    if(timerange == null){
+    if (timerange == null) {
       timerange = "week";
     }
     List<ChartjsDataset> datalist = new ArrayList<>();
@@ -101,7 +101,7 @@ public class HistoryResource {
   @Path("history/co2")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<ChartjsDataset> getCO2History(@RestQuery String timerange) {
-    if(timerange == null){
+    if (timerange == null) {
       timerange = "week";
     }
     List<ChartjsDataset> datalist = new ArrayList<>();
@@ -123,7 +123,7 @@ public class HistoryResource {
   @Path("history/brightness")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<ChartjsDataset> getBrightnessHistory(@RestQuery String timerange) {
-    if(timerange == null){
+    if (timerange == null) {
       timerange = "week";
     }
     List<ChartjsDataset> datalist = new ArrayList<>();
@@ -145,7 +145,7 @@ public class HistoryResource {
   @Path("history/battery")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<ChartjsDataset> getBatteryistory(@RestQuery String timerange) {
-    if(timerange == null){
+    if (timerange == null) {
       timerange = "week";
     }
     List<ChartjsDataset> datalist = new ArrayList<>();
