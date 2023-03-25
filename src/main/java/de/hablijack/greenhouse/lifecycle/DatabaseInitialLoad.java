@@ -303,7 +303,7 @@ public class DatabaseInitialLoad {
 
     ConditionTrigger line6ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
     TimeTrigger line6TimeTrigger = new TimeTrigger(
-        "0-8 8,10,12,13,17,18 * * *",
+        "0-20 8,10,12,13,17,18 * * *",
         true).persistIfNotExist();
     Relay relayLine6 = new Relay(
         "relay_line6",

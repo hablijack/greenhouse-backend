@@ -33,26 +33,23 @@ public class RelayScheduler {
     String trigger = null;
     for (PanacheEntityBase entity : Relay.getAllRelaysForScheduler()) {
       Relay relay = (Relay) entity;
-      if (newState == null && (relay.timeTrigger.active || relay.conditionTrigger.active)) {
-        // Minimum one Trigger is active for current relay so check if conditions are
-        // met:
-        if (relay.timeTrigger.active) {
-          if (isWithinTriggerTime(relay)) {
-            trigger = QUARKUS_TIME_TRIGGER;
-            newState = true;
-          } else {
-            trigger = QUARKUS_TIME_TRIGGER;
-            newState = false;
-          }
+
+      if (relay.timeTrigger.active) {
+        if (isWithinTriggerTime(relay)) {
+          trigger = QUARKUS_TIME_TRIGGER;
+          newState = true;
+        } else {
+          trigger = QUARKUS_TIME_TRIGGER;
+          newState = false;
         }
-        if (relay.conditionTrigger.active) {
-          if (isConditionTriggered(relay)) {
-            trigger = QUARKUS_CONDITION_TRIGGER;
-            newState = true;
-          } else {
-            trigger = QUARKUS_CONDITION_TRIGGER;
-            newState = false;
-          }
+      }
+      if (relay.conditionTrigger.active) {
+        if (isConditionTriggered(relay)) {
+          trigger = QUARKUS_CONDITION_TRIGGER;
+          newState = true;
+        } else {
+          trigger = QUARKUS_CONDITION_TRIGGER;
+          newState = false;
         }
       }
 
@@ -60,11 +57,10 @@ public class RelayScheduler {
         relay.value = newState;
         relay.persist();
         new RelayLog(relay, trigger, new Date(), newState).persist();
-        newState = null;
-        trigger = null;
       }
+      newState = null;
+      trigger = null;
     }
-
   }
 
   private boolean isWithinTriggerTime(Relay relay) {
