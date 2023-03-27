@@ -15,13 +15,16 @@
 #
 ###
 
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6-902
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.7-1085
 WORKDIR /work/
 
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
 COPY --chown=1001:root target/*-runner /work/application
+
+ENV TZ=Europe/Berlin
+RUN /bin/microdnf reinstall tzdata -y
 
 EXPOSE 8080
 USER 1001
