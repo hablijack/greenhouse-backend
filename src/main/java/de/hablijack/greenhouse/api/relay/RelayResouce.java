@@ -28,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/backend")
 public class RelayResouce {
-  private static final int NUMBER_OF_LOG_ENTRIES = 18;
+  private static final int NUMBER_OF_LOG_ENTRIES = 30;
   private final Session session;
   private final ObjectMapper objectMapper;
 
