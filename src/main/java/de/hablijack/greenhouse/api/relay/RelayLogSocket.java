@@ -50,7 +50,7 @@ public class RelayLogSocket {
       ObjectMapper objectMapper = new ObjectMapper();
       try {
         transactionManager.begin();
-        String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(18));
+        String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
         transactionManager.commit();
         session.getAsyncRemote().sendObject(jsonObject, result -> {
           if (result.getException() != null) {
