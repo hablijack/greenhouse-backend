@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run:
           name: Install GraalVM
-          command: curl https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java11-linux-amd64-22.2.0.tar.gz -O -J -L && tar xfz graalvm-ce-java11-linux-amd64-22.2.0.tar.gz && mv graalvm-ce-java11-22.2.0 .graalvm && rm graalvm-ce-java11-linux-amd64-22.2.0.tar.gz
+          command: curl https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.1/graalvm-ce-java11-linux-amd64-22.3.1.tar.gz -O -J -L && tar xfz graalvm-ce-java11-linux-amd64-22.3.1.tar.gz && mv graalvm-ce-java11-22.3.1 .graalvm && rm graalvm-ce-java11-linux-amd64-22.3.1.tar.gz
       - run:
           name: Install native-image
           command: $GRAALVM_HOME/bin/gu install native-image
@@ -37,9 +37,9 @@ jobs:
       - run:
           name: Build and push Docker Image to Heroku
           command: |
-            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:1.8.4 .
+            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:1.8.5 .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push hablijack/greenhouse-backend:1.8.4
+            docker push hablijack/greenhouse-backend:1.8.5
 
 workflows:
   version: 2
