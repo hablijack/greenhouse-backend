@@ -24,8 +24,9 @@ RUN chown 1001 /work \
 COPY --chown=1001:root target/*-runner /work/application
 
 ENV TZ=Europe/Berlin
-RUN /bin/microdnf update
+RUN /bin/microdnf update --nodocs
 RUN /bin/microdnf reinstall tzdata -y
+RUN /bin/microdnf clean all
 
 EXPOSE 8080
 USER 1001
