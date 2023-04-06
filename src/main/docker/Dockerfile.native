@@ -24,7 +24,7 @@ RUN chown 1001 /work \
 COPY --chown=1001:root target/*-runner /work/application
 
 ENV TZ=Europe/Berlin
-RUN /bin/microdnf update --nodocs
+RUN /bin/microdnf upgrade --refresh --best --nodocs --noplugins --setopt=install_weak_deps=0
 RUN /bin/microdnf reinstall tzdata -y
 RUN /bin/microdnf clean all
 
