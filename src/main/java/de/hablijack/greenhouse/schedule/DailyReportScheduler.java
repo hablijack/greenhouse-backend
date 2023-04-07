@@ -29,12 +29,12 @@ public class DailyReportScheduler {
   public void conditionReport() {
     String messageText = "";
     Map<String, Double> measurements = sensorService.getCurrentSensorValues();
-    for (String sensorId : measurements.keySet()) {
+    for (var entry : measurements.entrySet()) {
       String sensorLine = "";
-      Sensor sensor = Sensor.findByIdentifier(sensorId);
+      Sensor sensor = Sensor.findByIdentifier(entry.getKey());
       sensorLine += sensor.name;
-      sensorLine += ": " + measurements.get(sensorId) + " " + sensor.unit;
-      sensorLine += "\r\n";
+      sensorLine += ": " + measurements.get(entry.getKey()) + " " + sensor.unit;
+      sensorLine += "\\r\\n";
       messageText += sensorLine;
     }
     if (messageText.length() > 0) {
