@@ -1,5 +1,6 @@
 package de.hablijack.greenhouse.webclient;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.json.JsonObject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -17,18 +18,21 @@ public interface TelegramClient {
   @GET
   @Path("/sendMessage")
   @Produces(MediaType.APPLICATION_JSON)
+  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
   JsonObject sendMessage(@PathParam("token") String token, @QueryParam("chat_id") String chatId,
                          @QueryParam("text") String text);
 
   @POST
   @Path("/sendMessage")
   @Produces(MediaType.APPLICATION_JSON)
+  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
   JsonObject sendMessageWithBody(@PathParam("token") String token, @QueryParam("chat_id") String chatId,
                                  @QueryParam("text") String text, String body);
 
   @GET
   @Path("/sendPhoto")
   @Produces(MediaType.APPLICATION_JSON)
+  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
   JsonObject sendPhoto(@PathParam("token") String token, @QueryParam("chat_id") String chatId,
                        @QueryParam("photo") String urlOfFoto);
 }
