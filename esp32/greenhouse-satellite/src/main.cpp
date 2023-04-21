@@ -1,15 +1,13 @@
 #include <Arduino.h>
-#include "driver/adc.h"
-#include <time.h>
 #include <esp_wifi.h>
 #include <esp_bt.h>
 #include <OneWire.h>
 #include <Wire.h>
-#include <WiFi.h>
-#include <WebServer.h>
-#include <ArduinoJson.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include "AsyncJson.h"
+#include "ArduinoJson.h"
 #include <map>
-#include "ESPAutoWiFiConfig.h"
 // SENSORS
 #include "Adafruit_VEML7700.h"
 #include <Adafruit_Sensor.h>
@@ -19,12 +17,11 @@
 #include <DallasTemperature.h>
 
 #define SSID "Olymp"
-#define PWD ""
-#define WIFI_TIMEOUT 10000 // 10seconds in millisecond
+#define PWD "xxx"
 
-#define NTP_SERVER "192.168.178.1"
-#define TZ_INFO "CET-1CEST,M3.5.0,M10.5.0/3"
-
+// 18000s = 5hours
+// 300s
+const uint64_t sleepDuration = 300;
 Adafruit_INA260 batterySensor = Adafruit_INA260();
 Adafruit_VEML7700 lightSensor = Adafruit_VEML7700();
 DHT dht(22, DHT22);
@@ -36,91 +33,72 @@ DallasTemperature oneWireBus(&oneWire);
 std::map<std::string, int> relays;
 std::map<std::string, int>::iterator it;
 
-WebServer server(80);
+AsyncWebServer server(80);
 
-StaticJsonDocument<250> jsonDocument;
-char buffer[250];
-
-struct tm local;
-
-void healthcheck();
-void getRelayState();
-void setRelayState();
-void getSensorMeasurements();
-
-void setup_routing()
+void homepageHandler(AsyncWebServerRequest *request)
 {
-  server.on("/health", healthcheck);
-  server.on("/relays/state", getRelayState);
-  server.on("/relay/set", HTTP_POST, setRelayState);
-  server.on("/sensors/measurements", getSensorMeasurements);
-  server.begin();
+  AsyncResponseStream *response = request->beginResponseStream("text/html");
+  response->print("<!DOCTYPE html><html><head><title>Greenhouse-Satellite</title></head><body style='background-color: black; color: white;'>");
+  response->print("<h1>Greenhouse-Satellite</h1>");
+  response->printf("<p>IP: http://%s</p>", WiFi.softAPIP().toString().c_str());
+  response->printf("<p>WiFI-Strength: %i db", WiFi.RSSI());
+  response->print("</body></html>");
+  request->send(response);
 }
 
-void getSensorMeasurements()
+void healthcheckHandler(AsyncWebServerRequest *request)
 {
-  adc_power_on();
-  // oneWireBus.requestTemperatures();
-  jsonDocument.clear();
-  JsonObject obj = jsonDocument.createNestedObject();
-  gasSensor.IAQmeasure();
-  /*obj["rain_indicator"] = analogRead(36);
-  obj["soil_humidity_line5"] = analogRead(35);
-  obj["soil_humidity_line4"] = analogRead(34);*/
-  obj["wifi"] = WiFi.RSSI();
-  char ts_char[50] = {0};
-  obj["ntp_time"] = strftime(
-      ts_char,
-      sizeof(ts_char),
-      "%d.%m.%y %H:%M:%S",
-      &local);
-  /*obj["soil_humidity_line6"] = analogRead(33);
-  obj["soil_humidity_line1"] = analogRead(32);
-  obj["soil_humidity_line3"] = analogRead(31);*/
-  obj["co2"] = gasSensor.eCO2;
-  // obj["soil_humidity_line2"] = analogRead(23);
-  // obj["air_humidity_inside"] = dht.readHumidity();
-  obj["battery_voltage"] = batterySensor.readBusVoltage();
-  obj["power_consumption"] = batterySensor.readPower();
-  /*obj["air_temp_inside"] = dht.readTemperature();
-  obj["air_temp_outside"] = oneWireBus.getTempCByIndex(1);
-  obj["soil_temp_inside"] = oneWireBus.getTempCByIndex(0);*/
-  obj["brightness"] = lightSensor.readLux();
-  adc_power_off();
-  serializeJson(obj, buffer);
-  server.send(200, "application/json", buffer);
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  DynamicJsonDocument json(1024);
+  json["status"] = "ok";
+  serializeJson(json, *response);
+  request->send(response);
 }
 
-void getRelayState()
+void relayStateHandler(AsyncWebServerRequest *request)
 {
-  jsonDocument.clear();
-  JsonObject obj = jsonDocument.createNestedObject();
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  DynamicJsonDocument json(1024);
   for (it = relays.begin(); it != relays.end(); it++)
   {
-    obj[it->first] = (digitalRead(it->second) == LOW);
+    json[it->first] = (digitalRead(it->second) == LOW);
   }
-  serializeJson(obj, buffer);
-  server.send(200, "application/json", buffer);
+  serializeJson(json, *response);
+  request->send(response);
 }
 
-void healthcheck()
+void deepSleepRequest(AsyncWebServerRequest *request, JsonVariant &jsonInput)
 {
-  jsonDocument.clear();
-  JsonObject obj = jsonDocument.createNestedObject();
-  obj["status"] = "ok";
-  serializeJson(obj, buffer);
-  server.send(200, "application/json", buffer);
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  DynamicJsonDocument jsonResponse(1024);
+  if (jsonInput.containsKey("sleep_time"))
+  {
+    jsonResponse["success"] = true;
+    uint64_t sleepDuration = jsonInput["sleep_time"];
+    jsonResponse["sleep_time"] = sleepDuration;
+    serializeJson(jsonResponse, *response);
+    request->send(response);
+    esp_sleep_enable_timer_wakeup(sleepDuration * 1000000ULL);
+    delay(1000);
+    Serial.flush();
+    esp_deep_sleep_start();
+  }
+  else
+  {
+    jsonResponse["success"] = false;
+    jsonResponse["error"] = "No parameter 'sleep_time' specified! Ignoring request...";
+    serializeJson(jsonResponse, *response);
+    request->send(response);
+  }
 }
 
-void setRelayState()
+void setRelaysHandler(AsyncWebServerRequest *request, JsonVariant &jsonInput)
 {
-  String body = server.arg("plain");
-  deserializeJson(jsonDocument, body);
   for (it = relays.begin(); it != relays.end(); it++)
   {
-    if (jsonDocument.containsKey(it->first))
+    if (jsonInput.containsKey(it->first.c_str()))
     {
-      bool value = jsonDocument[it->first];
+      boolean value = jsonInput[it->first.c_str()];
       if (value)
       {
         digitalWrite(it->second, LOW);
@@ -131,7 +109,40 @@ void setRelayState()
       }
     }
   }
-  server.send(200, "application/json", "{}");
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  DynamicJsonDocument json(1024);
+  for (it = relays.begin(); it != relays.end(); it++)
+  {
+    json[it->first] = (digitalRead(it->second) == LOW);
+  }
+  serializeJson(json, *response);
+  request->send(response);
+}
+
+void getSensorMeasurementsHandler(AsyncWebServerRequest *request)
+{
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  DynamicJsonDocument json(1024);
+  // oneWireBus.requestTemperatures();
+  gasSensor.IAQmeasure();
+  // json["rain_indicator"] = analogRead(36);
+  // json["soil_humidity_line5"] = analogRead(35);
+  // json["soil_humidity_line4"] = analogRead(34);*/
+  json["wifi"] = WiFi.RSSI();
+  // json["soil_humidity_line6"] = analogRead(33);
+  // json["soil_humidity_line1"] = analogRead(32);
+  // json["soil_humidity_line3"] = analogRead(31);
+  json["co2"] = gasSensor.eCO2;
+  // json["soil_humidity_line2"] = analogRead(23);
+  // json["air_humidity_inside"] = dht.readHumidity();
+  json["battery_voltage"] = batterySensor.readBusVoltage();
+  json["power_consumption"] = batterySensor.readPower();
+  // json["air_temp_inside"] = dht.readTemperature();
+  // json["air_temp_outside"] = oneWireBus.getTempCByIndex(1);
+  // json["soil_temp_inside"] = oneWireBus.getTempCByIndex(0);*/
+  json["brightness"] = lightSensor.readLux();
+  serializeJson(json, *response);
+  request->send(response);
 }
 
 void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
@@ -145,6 +156,7 @@ void setup()
   setCpuFrequencyMhz(80);
   btStop();
   esp_bt_controller_disable();
+
   WiFi.mode(WIFI_STA);
   WiFi.disconnect(true);
   WiFi.onEvent(WiFiStationDisconnected, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
@@ -154,19 +166,19 @@ void setup()
     delay(500);
   }
 
-  // INIT Temperature OneWire Sensors
+  // ===> INIT Temperature OneWire Sensors
   // oneWireBus.begin();
-  // INIT LIGHT SENSOR
+  // ===> INIT LIGHT SENSOR
   if (lightSensor.begin())
   {
     lightSensor.setGain(VEML7700_GAIN_1_8);
     lightSensor.setIntegrationTime(VEML7700_IT_25MS);
   }
-  // INIT BATTERY SENSOR
+  // ===> INIT BATTERY SENSOR
   batterySensor.begin();
-  // INIT GAS SENSOR
+  // ===> INIT GAS SENSOR
   gasSensor.begin();
-  // INIT HUMIDITY & TEMPERATURE SENSOR
+  // ===> INIT HUMIDITY & TEMPERATURE SENSOR
   // dht.begin();
 
   // configure all relays with their pins
@@ -183,13 +195,16 @@ void setup()
     pinMode(it->second, OUTPUT);
     digitalWrite(it->second, HIGH);
   }
-  adc_power_off();
-  setup_routing();
-  configTzTime(TZ_INFO, NTP_SERVER); // ESP32 Systemzeit mit NTP Synchronisieren
-  getLocalTime(&local);
+
+  server.on("/", HTTP_GET, homepageHandler);
+  server.on("/health", HTTP_GET, healthcheckHandler);
+  server.on("/relays/state", HTTP_GET, relayStateHandler);
+  server.addHandler(new AsyncCallbackJsonWebHandler("/relays/set", setRelaysHandler));
+  server.addHandler(new AsyncCallbackJsonWebHandler("/system/deepsleep", deepSleepRequest));
+  server.on("/sensors/measurements", HTTP_GET, getSensorMeasurementsHandler);
+  server.begin();
 }
 
 void loop()
 {
-  server.handleClient();
 }
