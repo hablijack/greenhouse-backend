@@ -10,24 +10,22 @@
 #include <map>
 // SENSORS
 #include "Adafruit_VEML7700.h"
-#include <Adafruit_Sensor.h>
 #include <Adafruit_INA260.h>
-#include "DHT.h"
 #include "Adafruit_SGP30.h"
 #include <DallasTemperature.h>
 
 #define SSID "Olymp"
-#define PWD "xxx"
+#define PWD "XXXX"
 
-// 18000s = 5hours
-// 300s
-const uint64_t sleepDuration = 300;
+#define WET_STRING "wet"
+#define DRY_STRING "dry"
+
 Adafruit_INA260 batterySensor = Adafruit_INA260();
 Adafruit_VEML7700 lightSensor = Adafruit_VEML7700();
-DHT dht(22, DHT22);
+
 Adafruit_SGP30 gasSensor;
 // Temperature sensor probes via OneWire-BUS
-OneWire oneWire(2);
+OneWire oneWire(13);
 DallasTemperature oneWireBus(&oneWire);
 
 std::map<std::string, int> relays;
@@ -38,19 +36,22 @@ AsyncWebServer server(80);
 void homepageHandler(AsyncWebServerRequest *request)
 {
   AsyncResponseStream *response = request->beginResponseStream("text/html");
-  response->print("<!DOCTYPE html><html><head><title>Greenhouse-Satellite</title></head><body style='background-color: black; color: white;'>");
+  response->print("<!DOCTYPE html><html><head><title>Greenhouse-Satellite</title></head>");
+  response->print("<body style='background-color: black; color: white; font-family: monospace;'>");
   response->print("<h1>Greenhouse-Satellite</h1>");
-  response->printf("<p>IP: http://%s</p>", WiFi.softAPIP().toString().c_str());
-  response->printf("<p>WiFI-Strength: %i db", WiFi.RSSI());
+  response->printf("<p><b>IP:</b> http://%s</p>", WiFi.softAPIP().toString().c_str());
+  response->printf("<p><b>WiFI-Strength:</b> %i db", WiFi.RSSI());
   response->print("</body></html>");
   request->send(response);
 }
 
 void healthcheckHandler(AsyncWebServerRequest *request)
 {
+  float tempC = oneWireBus.getTempCByIndex(0);
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   DynamicJsonDocument json(1024);
   json["status"] = "ok";
+  json["temp"] = tempC;
   serializeJson(json, *response);
   request->send(response);
 }
@@ -123,23 +124,24 @@ void getSensorMeasurementsHandler(AsyncWebServerRequest *request)
 {
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   DynamicJsonDocument json(1024);
-  // oneWireBus.requestTemperatures();
+  oneWireBus.requestTemperatures();
   gasSensor.IAQmeasure();
-  // json["rain_indicator"] = analogRead(36);
-  // json["soil_humidity_line5"] = analogRead(35);
-  // json["soil_humidity_line4"] = analogRead(34);*/
+
+  json["rain_indicator"] = (digitalRead(27) == LOW ? WET_STRING : DRY_STRING);
+  json["soil_humidity_line5"] = (digitalRead(25) == LOW ? WET_STRING : DRY_STRING);
+  json["soil_humidity_line4"] = (digitalRead(33) == LOW ? WET_STRING : DRY_STRING);
   json["wifi"] = WiFi.RSSI();
-  // json["soil_humidity_line6"] = analogRead(33);
-  // json["soil_humidity_line1"] = analogRead(32);
-  // json["soil_humidity_line3"] = analogRead(31);
+  json["soil_humidity_line6"] = (digitalRead(32) == LOW ? WET_STRING : DRY_STRING);
+  json["soil_humidity_line1"] = (digitalRead(35) == LOW ? WET_STRING : DRY_STRING);
+  json["soil_humidity_line3"] = (digitalRead(34) == LOW ? WET_STRING : DRY_STRING);
   json["co2"] = gasSensor.eCO2;
-  // json["soil_humidity_line2"] = analogRead(23);
-  // json["air_humidity_inside"] = dht.readHumidity();
+  json["soil_humidity_line2"] = (digitalRead(26) == LOW ? WET_STRING : DRY_STRING);
+  // json["air_humidity_inside"] = XXXXXXXXXXXXXXXXXXXXXXXXXXXX;
   json["battery_voltage"] = batterySensor.readBusVoltage();
   json["power_consumption"] = batterySensor.readPower();
-  // json["air_temp_inside"] = dht.readTemperature();
-  // json["air_temp_outside"] = oneWireBus.getTempCByIndex(1);
-  // json["soil_temp_inside"] = oneWireBus.getTempCByIndex(0);*/
+  // json["air_temp_inside"] = XXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+  json["air_temp_outside"] = oneWireBus.getTempCByIndex(1);
+  json["soil_temp_inside"] = oneWireBus.getTempCByIndex(0);
   json["brightness"] = lightSensor.readLux();
   serializeJson(json, *response);
   request->send(response);
@@ -152,6 +154,30 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 
 void setup()
 {
+  // FIRST OF ALL: configure all relays with their pins
+  relays.insert(std::make_pair("relay1", 19));
+  relays.insert(std::make_pair("relay2", 18));
+  relays.insert(std::make_pair("relay3", 17));
+  relays.insert(std::make_pair("relay4", 5));
+  relays.insert(std::make_pair("relay5", 2));
+  relays.insert(std::make_pair("relay6", 4));
+  relays.insert(std::make_pair("relay7", 16));
+  relays.insert(std::make_pair("relay8", 15));
+  for (it = relays.begin(); it != relays.end(); it++)
+  {
+    pinMode(it->second, OUTPUT);
+    digitalWrite(it->second, HIGH);
+  }
+
+  // DEFINE MOISTURE SENSORS INPUT PINS
+  pinMode(27, INPUT);
+  pinMode(25, INPUT);
+  pinMode(33, INPUT);
+  pinMode(32, INPUT);
+  pinMode(35, INPUT);
+  pinMode(34, INPUT);
+  pinMode(26, INPUT);
+
   Serial.begin(115200);
   setCpuFrequencyMhz(80);
   btStop();
@@ -167,7 +193,7 @@ void setup()
   }
 
   // ===> INIT Temperature OneWire Sensors
-  // oneWireBus.begin();
+  oneWireBus.begin();
   // ===> INIT LIGHT SENSOR
   if (lightSensor.begin())
   {
@@ -178,23 +204,6 @@ void setup()
   batterySensor.begin();
   // ===> INIT GAS SENSOR
   gasSensor.begin();
-  // ===> INIT HUMIDITY & TEMPERATURE SENSOR
-  // dht.begin();
-
-  // configure all relays with their pins
-  relays.insert(std::make_pair("relay1", 19));
-  relays.insert(std::make_pair("relay2", 18));
-  relays.insert(std::make_pair("relay3", 17));
-  relays.insert(std::make_pair("relay4", 5));
-  relays.insert(std::make_pair("relay5", 2));
-  relays.insert(std::make_pair("relay6", 4));
-  relays.insert(std::make_pair("relay7", 16));
-  relays.insert(std::make_pair("relay8", 15));
-  for (it = relays.begin(); it != relays.end(); it++)
-  {
-    pinMode(it->second, OUTPUT);
-    digitalWrite(it->second, HIGH);
-  }
 
   server.on("/", HTTP_GET, homepageHandler);
   server.on("/health", HTTP_GET, healthcheckHandler);
