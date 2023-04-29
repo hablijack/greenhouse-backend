@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "relay_log", schema = "greenhouse")
+@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class RelayLog extends PanacheEntity {
   @Column(name = "initiator", nullable = false)
   public String initiator;
