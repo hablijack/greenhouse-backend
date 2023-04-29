@@ -6,25 +6,25 @@ import de.hablijack.greenhouse.api.pojo.RelayLogEvent;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.transaction.Transactional;
+import jakarta.websocket.ClientEndpoint;
+import jakarta.websocket.ContainerProvider;
+import jakarta.websocket.DeploymentException;
+import jakarta.websocket.Session;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.transaction.Transactional;
-import javax.websocket.ClientEndpoint;
-import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
-import javax.websocket.Session;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 @Path("/backend")
 public class RelayResouce {
@@ -80,7 +80,7 @@ public class RelayResouce {
     oldRelay.identifier = newRelayData.identifier;
     oldRelay.name = newRelayData.name;
     oldRelay.target = newRelayData.target;
-    oldRelay.satelite = newRelayData.satelite;
+    oldRelay.satellite = newRelayData.satellite;
     oldRelay.timeTrigger = newRelayData.timeTrigger;
     oldRelay.value = newRelayData.value;
     oldRelay.persist();

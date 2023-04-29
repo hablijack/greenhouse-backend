@@ -1,13 +1,13 @@
 package de.hablijack.greenhouse.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "relay", schema = "greenhouse")
@@ -35,13 +35,13 @@ public class Relay extends PanacheEntity {
   public TimeTrigger timeTrigger;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  public Satelite satelite;
+  public Satellite satellite;
 
   public Relay() {
   }
 
   public Relay(String identifier, String name, String target, boolean value, String description, String icon,
-               String color, ConditionTrigger conditionTrigger, TimeTrigger timeTrigger, Satelite satelite) {
+               String color, ConditionTrigger conditionTrigger, TimeTrigger timeTrigger, Satellite satellite) {
     this.identifier = identifier;
     this.name = name;
     this.value = value;
@@ -50,7 +50,7 @@ public class Relay extends PanacheEntity {
     this.color = color;
     this.conditionTrigger = conditionTrigger;
     this.timeTrigger = timeTrigger;
-    this.satelite = satelite;
+    this.satellite = satellite;
     this.target = target;
   }
 

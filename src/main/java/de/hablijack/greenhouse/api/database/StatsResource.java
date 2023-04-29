@@ -3,11 +3,11 @@ package de.hablijack.greenhouse.api.database;
 import de.hablijack.greenhouse.api.pojo.TableSize;
 import de.hablijack.greenhouse.service.DatabaseStatsService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 @Path("/backend")
 public class StatsResource {

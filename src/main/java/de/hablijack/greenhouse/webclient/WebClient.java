@@ -2,12 +2,12 @@ package de.hablijack.greenhouse.webclient;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.smallrye.mutiny.Uni;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.MediaType;
 import java.util.Map;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
 
 @Path("/")
 public interface WebClient {

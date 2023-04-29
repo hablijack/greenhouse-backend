@@ -6,10 +6,10 @@ import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.service.SensorService;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import io.quarkus.scheduler.Scheduled;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 

@@ -2,16 +2,16 @@ package de.hablijack.greenhouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "satelite", schema = "greenhouse")
-public class Satelite extends PanacheEntity {
+@Table(name = "satellite", schema = "greenhouse")
+public class Satellite extends PanacheEntity {
 
   @Column(name = "identifier", nullable = false, unique = true)
   public String identifier;
@@ -29,7 +29,7 @@ public class Satelite extends PanacheEntity {
   @OneToMany(fetch = FetchType.LAZY)
   public Set<Relay> relays;
 
-  public Satelite(String identifier, String name, String imageUrl, String description, String ip, boolean online) {
+  public Satellite(String identifier, String name, String imageUrl, String description, String ip, boolean online) {
     this.identifier = identifier;
     this.name = name;
     this.imageUrl = imageUrl;
@@ -38,24 +38,24 @@ public class Satelite extends PanacheEntity {
     this.online = online;
   }
 
-  public Satelite() {
+  public Satellite() {
   }
 
-  public static Satelite findByIdentifier(String id) {
-    return (Satelite) find("identifier = ?1", id).list().get(0);
+  public static Satellite findByIdentifier(String id) {
+    return (Satellite) find("identifier = ?1", id).list().get(0);
   }
 
-  public static Satelite findByIp(String ip) {
-    return (Satelite) find("ip = ?1", ip).list().get(0);
+  public static Satellite findByIp(String ip) {
+    return (Satellite) find("ip = ?1", ip).list().get(0);
   }
 
 
-  public Satelite persistIfNotExist() {
+  public Satellite persistIfNotExist() {
     if (find("identifier = ?1", identifier).count() == 0) {
       this.persist();
       return this;
     } else {
-      return (Satelite) find("identifier = ?1", identifier).list().get(0);
+      return (Satellite) find("identifier = ?1", identifier).list().get(0);
     }
   }
 }

@@ -1,13 +1,13 @@
 package de.hablijack.greenhouse.webclient;
 
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.jboss.resteasy.reactive.client.api.QuarkusRestClientProperties;

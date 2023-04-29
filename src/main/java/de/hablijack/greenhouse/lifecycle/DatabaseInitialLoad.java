@@ -5,16 +5,16 @@ import de.hablijack.greenhouse.entity.ConditionTrigger;
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
-import de.hablijack.greenhouse.entity.Satelite;
+import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.entity.TimeTrigger;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.logging.Logger;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.transaction.Transactional;
 
 @SuppressWarnings("checkstyle:RegexpSingleline")
 @Startup
@@ -45,14 +45,14 @@ public class DatabaseInitialLoad {
   @Transactional
   public void initializeWithBaseData(@Observes StartupEvent event) {
     LOGGER.info("... filling database...");
-    new Satelite(
+    new Satellite(
         "greenhouse_cam",
         "Gewächshaus Webcam",
         "satelite.png",
         "ESP-EYE Webcam-webserver um regelmäßig Bilder innerhalb des Gewächshauses aufzunehmen.",
         "192.168.178.48",
         true).persistIfNotExist();
-    Satelite greenhouseControl = new Satelite(
+    Satellite greenhouseControl = new Satellite(
         "greenhouse_control",
         "Gewächshaus Steuerung",
         "satelite.png",
@@ -284,7 +284,7 @@ public class DatabaseInitialLoad {
         greenhouseControl).persistIfNotExist();
     new RelayLog(relayLine4, "DB-INIT", new Date(), false).persist();
 
-    ConditionTrigger line5ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
+    ConditionTrigger line5ConditionalTrigger = new ConditionTrigger(soilHumidityLine5, false).persistIfNotExist();
     TimeTrigger line5TimeTrigger = new TimeTrigger(
         "0-8 8,10,12,13,17,18 * * *",
         true).persistIfNotExist();
@@ -301,7 +301,7 @@ public class DatabaseInitialLoad {
         greenhouseControl).persistIfNotExist();
     new RelayLog(relayLine5, "DB-INIT", new Date(), false).persist();
 
-    ConditionTrigger line6ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false).persistIfNotExist();
+    ConditionTrigger line6ConditionalTrigger = new ConditionTrigger(soilHumidityLine6, false).persistIfNotExist();
     TimeTrigger line6TimeTrigger = new TimeTrigger(
         "0-20 8,10,12,13,17,18 * * *",
         true).persistIfNotExist();

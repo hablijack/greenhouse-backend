@@ -2,11 +2,11 @@ package de.hablijack.greenhouse.service;
 
 import de.hablijack.greenhouse.entity.Sensor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
-import javax.transaction.Transactional;
 
 @ApplicationScoped
 public class SensorService {
