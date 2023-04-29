@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run:
           name: Install GraalVM
-          command: curl https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.1/graalvm-ce-java11-linux-amd64-22.3.1.tar.gz -O -J -L && tar xfz graalvm-ce-java11-linux-amd64-22.3.1.tar.gz && mv graalvm-ce-java11-22.3.1 .graalvm && rm graalvm-ce-java11-linux-amd64-22.3.1.tar.gz
+          command: curl https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.2/graalvm-ce-java11-linux-amd64-22.3.2.tar.gz -O -J -L && tar xfz graalvm-ce-java11-linux-amd64-22.3.2.tar.gz && mv graalvm-ce-java11-22.3.2 .graalvm && rm graalvm-ce-java11-linux-amd64-22.3.2.tar.gz
       - run:
           name: Install native-image
           command: $GRAALVM_HOME/bin/gu install native-image
