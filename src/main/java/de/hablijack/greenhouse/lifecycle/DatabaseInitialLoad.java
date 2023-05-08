@@ -1,6 +1,5 @@
 package de.hablijack.greenhouse.lifecycle;
 
-import de.hablijack.greenhouse.api.sensor.MeasurementSocket;
 import de.hablijack.greenhouse.entity.ConditionTrigger;
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Relay;
@@ -21,7 +20,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class DatabaseInitialLoad {
 
-  private static final Logger LOGGER = Logger.getLogger(MeasurementSocket.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(DatabaseInitialLoad.class.getName());
   private final Double MIN_AIR_INSIDE_TEMP = 15.0;
   private final Double MAX_AIR_INSIDE_TEMP = 40.0;
   private final Double MIN_AIR_OUTSIDE_TEMP = 15.0;
@@ -41,8 +40,8 @@ public class DatabaseInitialLoad {
   private final Double MIN_SOIL_HUMIDITY_INSIDE = 10.0;
   private final Double MAX_SOIL_HUMIDITY_INSIDE = 30.0;
 
-  @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength", "PMD"})
   @Transactional
+  @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength", "PMD"})
   public void initializeWithBaseData(@Observes StartupEvent event) {
     LOGGER.info("... filling database...");
     new Satellite(
@@ -57,7 +56,7 @@ public class DatabaseInitialLoad {
         "Gewächshaus Steuerung",
         "satelite.png",
         "ESP32 Webserver mit Relays, Sensoren und Aktoren um das gesamte Gewächshaus fernzusteuern.",
-        "192.168.178.80",
+        "192.168.178.37",
         true).persistIfNotExist();
     /* ============================================================================================================= */
     Sensor airTempInside = new Sensor(

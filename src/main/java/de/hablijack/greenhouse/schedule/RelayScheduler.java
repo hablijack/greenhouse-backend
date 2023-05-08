@@ -11,19 +11,42 @@ import com.cronutils.parser.CronParser;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
 import de.hablijack.greenhouse.entity.Sensor;
+import de.hablijack.greenhouse.service.SatelliteService;
+import de.hablijack.greenhouse.webclient.SatelliteClient;
+import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class RelayScheduler {
 
   public static final String QUARKUS_TIME_TRIGGER = "TIME-TRIGGER";
   public static final String QUARKUS_CONDITION_TRIGGER = "CONDITION-TRIGGER";
+  private static final Logger LOGGER = Logger.getLogger(RelayScheduler.class.getName());
+
+  @Inject
+  @RestClient
+  TelegramClient telegramClient;
+
+  @Inject
+  SatelliteService satelliteService;
+
+  @ConfigProperty(name = "telegram.bot.token")
+  String botToken;
+
+  @ConfigProperty(name = "telegram.bot.chatid")
+  String chatId;
 
   @SuppressFBWarnings("CRLF_INJECTION_LOGS")
   @Scheduled(every = "1m", concurrentExecution = SKIP)
@@ -54,9 +77,22 @@ public class RelayScheduler {
       }
 
       if (newState != null && newState != relay.value) {
+        Map<String, Boolean> relayState = new HashMap<>();
         relay.value = newState;
-        relay.persist();
-        new RelayLog(relay, trigger, new Date(), newState).persist();
+        relayState.put(relay.name, relay.value);
+        SatelliteClient satelliteClient = satelliteService.createWebClient(relay.satellite.ip);
+        try {
+          satelliteClient.updateRelayState(relayState);
+          relay.persist();
+          new RelayLog(relay, trigger, new Date(), newState).persist();
+        } catch (Exception error) {
+          LOGGER.warning(error.getMessage());
+          telegramClient.sendMessage(botToken, chatId,
+              "Fehler beim Einschalten des Relays! \r\n\r\n"
+                  + "Konnte das Relay: " + relay.name + " nicht auf: "
+                  + relay.value + " schalten.\r\n\r\n"
+                  + error.getMessage());
+        }
       }
       newState = null;
       trigger = null;
