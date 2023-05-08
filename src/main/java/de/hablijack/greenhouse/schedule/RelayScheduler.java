@@ -80,7 +80,7 @@ public class RelayScheduler {
         Map<String, Boolean> relayState = new HashMap<>();
         relay.value = newState;
         relayState.put(relay.name, relay.value);
-        SatelliteClient satelliteClient = satelliteService.createWebClient(relay.satellite.ip);
+        SatelliteClient satelliteClient = satelliteService.createWebClient("http://" + relay.satellite.ip);
         try {
           satelliteClient.updateRelayState(relayState);
           relay.persist();

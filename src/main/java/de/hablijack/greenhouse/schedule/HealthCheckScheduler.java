@@ -38,16 +38,19 @@ public class HealthCheckScheduler {
   void sateliteHealthCheck() {
     for (PanacheEntityBase entity : Satellite.listAll()) {
       Satellite satellite = (Satellite) entity;
-      SatelliteClient satelliteClient = satelliteService.createWebClient(satellite.ip);
+      boolean alreadyOffline = !satellite.online;
+      SatelliteClient satelliteClient = satelliteService.createWebClient("http://" + satellite.ip);
       try {
         JsonObject result = satelliteClient.healthcheck();
         satellite.online = result != null && result.get("status").equals("ok");
       } catch (Exception error) {
-        LOGGER.warning(error.getMessage());
-        telegramClient.sendMessage(botToken, chatId,
-            "Konnte den Satelliten nicht erreichen! \r\n\r\n"
-                + satellite.name + "\r\n\r\n"
-                + error.getMessage());
+        if (!alreadyOffline) {
+          LOGGER.warning(error.getMessage());
+          telegramClient.sendMessage(botToken, chatId,
+              "Konnte den Satelliten nicht erreichen! \r\n\r\n"
+                  + satellite.name + "\r\n\r\n"
+                  + error.getMessage());
+        }
         satellite.online = false;
       }
       satellite.persist();
