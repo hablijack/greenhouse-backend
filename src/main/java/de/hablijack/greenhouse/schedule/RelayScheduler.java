@@ -54,7 +54,7 @@ public class RelayScheduler {
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
-    for (PanacheEntityBase entity : Relay.getAllRelaysForScheduler()) {
+    for (PanacheEntityBase entity : Relay.listAll()) {
       Relay relay = (Relay) entity;
 
       if (relay.timeTrigger.active) {

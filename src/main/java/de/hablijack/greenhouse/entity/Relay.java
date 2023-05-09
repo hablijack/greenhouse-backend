@@ -7,7 +7,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.List;
 
 @Entity
 @Table(name = "relay", schema = "greenhouse")
@@ -28,13 +27,13 @@ public class Relay extends PanacheEntity {
   @Column(name = "color", nullable = false)
   public String color;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   public ConditionTrigger conditionTrigger;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   public TimeTrigger timeTrigger;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   public Satellite satellite;
 
   public Relay() {
@@ -56,10 +55,6 @@ public class Relay extends PanacheEntity {
 
   public static Relay findByIdentifier(String id) {
     return (Relay) find("identifier = ?1", id).list().get(0);
-  }
-
-  public static List<Relay> getAllRelaysForScheduler() {
-    return listAll();
   }
 
   public Relay persistIfNotExist() {
