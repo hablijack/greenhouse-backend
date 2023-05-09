@@ -16,7 +16,7 @@
 #include <DallasTemperature.h>
 
 #define SSID "Olymp"
-#define PWD "77315779004817316262"
+#define PWD "XXX"
 
 #define WET_STRING "wet"
 #define DRY_STRING "dry"
@@ -40,12 +40,12 @@ void homepageHandler(AsyncWebServerRequest *request)
   gasSensor.IAQmeasure();
   sensors_event_t humidity, temp;
   tempAndHumSensor.getEvent(&humidity, &temp);
-
+  char aString[200];
   AsyncResponseStream *response = request->beginResponseStream("text/html");
   response->print("<!DOCTYPE html><html><head><title>Greenhouse-Satellite</title></head>");
   response->print("<body style='background-color: black; color: white; font-family: monospace;'>");
   response->print("<h1>Greenhouse-Satellite</h1>");
-  response->printf("<p><b>IP:</b> http://%s</p>", WiFi.softAPIP().toString().c_str());
+  response->printf("<p><b>IP:</b> http://%s</p>", WiFi.localIP().toString().c_str());
   response->printf("<p><b>WiFI-Strength:</b> %i db", WiFi.RSSI());
   response->printf("<p><b>Rain indicator (outside):</b> %s", (digitalRead(27) == LOW ? WET_STRING : DRY_STRING));
   response->printf("<p><b>Soil Humidity Line1:</b> %s", (digitalRead(35) == LOW ? WET_STRING : DRY_STRING));
@@ -54,25 +54,23 @@ void homepageHandler(AsyncWebServerRequest *request)
   response->printf("<p><b>Soil Humidity Line4:</b> %s", (digitalRead(33) == LOW ? WET_STRING : DRY_STRING));
   response->printf("<p><b>Soil Humidity Line5:</b> %s", (digitalRead(25) == LOW ? WET_STRING : DRY_STRING));
   response->printf("<p><b>Soil Humidity Line6:</b> %s", (digitalRead(32) == LOW ? WET_STRING : DRY_STRING));
-  response->printf("<p><b>CO2 (inside):</b> %s", gasSensor.eCO2);
-  response->printf("<p><b>Air-Humidity (inside):</b> %s", humidity.relative_humidity);
-  response->printf("<p><b>Solar Battery Voltage:</b> %s", batterySensor.readBusVoltage());
-  response->printf("<p><b>Solar Battery Power Consumption:</b> %s", batterySensor.readPower());
-  response->printf("<p><b>Air Temp (inside):</b> %s", temp.temperature);
-  response->printf("<p><b>Air Temp (outside):</b> %s", oneWireBus.getTempCByIndex(1));
-  response->printf("<p><b>Soil Temp (inside):</b> %s", oneWireBus.getTempCByIndex(0));
-  response->printf("<p><b>Brightness (inside):</b> %s", lightSensor.readLux());
+  response->printf("<p><b>CO2 (inside):</b> %i", gasSensor.eCO2);
+  response->printf("<p><b>Air-Humidity (inside):</b> %2.2f", humidity.relative_humidity);
+  response->printf("<p><b>Solar Battery Voltage:</b> %2.2f", batterySensor.readBusVoltage());
+  response->printf("<p><b>Solar Battery Power Consumption:</b> %2.2f", batterySensor.readPower());
+  response->printf("<p><b>Air Temp (inside):</b> %2.2f", temp.temperature);
+  response->printf("<p><b>Air Temp (outside):</b> %2.2f", oneWireBus.getTempCByIndex(1));
+  response->printf("<p><b>Soil Temp (inside):</b> %2.2f", oneWireBus.getTempCByIndex(0));
+  response->printf("<p><b>Brightness (inside):</b> %2.2f", lightSensor.readLux());
   response->print("</body></html>");
   request->send(response);
 }
 
 void healthcheckHandler(AsyncWebServerRequest *request)
 {
-  float tempC = oneWireBus.getTempCByIndex(0);
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   DynamicJsonDocument json(1024);
   json["status"] = "ok";
-  json["temp"] = tempC;
   serializeJson(json, *response);
   request->send(response);
 }

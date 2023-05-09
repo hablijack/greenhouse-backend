@@ -10,6 +10,7 @@ import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
+import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
@@ -80,7 +81,8 @@ public class RelayScheduler {
         Map<String, Boolean> relayState = new HashMap<>();
         relay.value = newState;
         relayState.put(relay.name, relay.value);
-        SatelliteClient satelliteClient = satelliteService.createWebClient("http://" + relay.satellite.ip);
+        Satellite satellite = Satellite.findById(relay.satellite.id);
+        SatelliteClient satelliteClient = satelliteService.createWebClient("http://" + satellite.ip);
         try {
           satelliteClient.updateRelayState(relayState);
           relay.persist();
