@@ -82,6 +82,8 @@ public class RelayScheduler {
         relay.value = newState;
         relayState.put(relay.name, relay.value);
         Satellite satellite = Satellite.findById(relay.satellite.id);
+        LOGGER.warning("=========================================");
+        LOGGER.warning(satellite.ip);
         SatelliteClient satelliteClient = satelliteService.createWebClient("http://" + satellite.ip);
         try {
           satelliteClient.updateRelayState(relayState);
