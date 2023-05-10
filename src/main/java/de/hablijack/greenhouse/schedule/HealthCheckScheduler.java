@@ -3,7 +3,6 @@ package de.hablijack.greenhouse.schedule;
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 
 import de.hablijack.greenhouse.entity.Satellite;
-import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -12,8 +11,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.transaction.Transactional;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
@@ -25,8 +27,8 @@ public class HealthCheckScheduler {
   @RestClient
   TelegramClient telegramClient;
 
-  @Inject
-  SatelliteService satelliteService;
+  @RestClient
+  SatelliteClient satelliteClient;
 
   @ConfigProperty(name = "telegram.bot.token")
   String botToken;
@@ -35,11 +37,13 @@ public class HealthCheckScheduler {
 
   @Scheduled(every = "1m", concurrentExecution = SKIP)
   @Transactional
-  void sateliteHealthCheck() {
+  void sateliteHealthCheck() throws MalformedURLException {
     for (PanacheEntityBase entity : Satellite.listAll()) {
       Satellite satellite = (Satellite) entity;
       boolean alreadyOffline = !satellite.online;
-      SatelliteClient satelliteClient = satelliteService.createWebClient("http://" + satellite.ip);
+      satelliteClient = RestClientBuilder.newBuilder().baseUrl(
+          new URL("http://" + String.valueOf(satellite.ip))
+      ).build(SatelliteClient.class);
       try {
         JsonObject result = satelliteClient.healthcheck();
         satellite.online = result != null && result.get("status").equals("ok");

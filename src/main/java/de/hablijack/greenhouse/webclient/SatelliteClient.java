@@ -9,8 +9,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.Map;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-@Path("/")
+@RegisterRestClient
 public interface SatelliteClient {
 
   @GET

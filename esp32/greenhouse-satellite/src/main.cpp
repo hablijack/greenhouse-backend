@@ -176,14 +176,14 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 void setup()
 {
   // FIRST OF ALL: configure all relays with their pins
-  relays.insert(std::make_pair("relay1", 19));
-  relays.insert(std::make_pair("relay2", 18));
-  relays.insert(std::make_pair("relay3", 17));
-  relays.insert(std::make_pair("relay4", 5));
-  relays.insert(std::make_pair("relay5", 2));
-  relays.insert(std::make_pair("relay6", 4));
-  relays.insert(std::make_pair("relay7", 16));
-  relays.insert(std::make_pair("relay8", 15));
+  relays.insert(std::make_pair("relay_line1", 19));
+  relays.insert(std::make_pair("relay_line2", 18));
+  relays.insert(std::make_pair("relay_line3", 17));
+  relays.insert(std::make_pair("relay_line4", 5));
+  relays.insert(std::make_pair("relay_line5", 2));
+  relays.insert(std::make_pair("relay_line6", 4));
+  relays.insert(std::make_pair("relay_line7", 16));
+  relays.insert(std::make_pair("relay_line8", 15));
   for (it = relays.begin(); it != relays.end(); it++)
   {
     pinMode(it->second, OUTPUT);
