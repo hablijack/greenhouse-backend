@@ -85,7 +85,7 @@ public class RelayScheduler {
           satelliteClient = RestClientBuilder.newBuilder().baseUrl(
               new URL("http://" + String.valueOf(relay.satellite.ip))
           ).build(SatelliteClient.class);
-          JsonObject result = satelliteClient.updateRelayState(relayState);
+          satelliteClient.updateRelayState(relayState);
           relay.persist();
           new RelayLog(relay, trigger, new Date(), newState).persist();
         } catch (Exception error) {
