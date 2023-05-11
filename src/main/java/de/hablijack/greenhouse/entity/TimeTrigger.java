@@ -22,7 +22,8 @@ public class TimeTrigger extends PanacheEntity {
   public TimeTrigger() {
   }
 
-  public TimeTrigger(String cronString, boolean active) {
+  public TimeTrigger(String cronString, boolean active, Relay relay) {
+    this.relay = relay;
     this.cronString = cronString;
     this.active = active;
   }

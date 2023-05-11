@@ -21,17 +21,17 @@ public class ConditionTrigger extends PanacheEntity {
   public ConditionTrigger() {
   }
 
-  public ConditionTrigger(Sensor triggerSensor, boolean active) {
+  public ConditionTrigger(Sensor triggerSensor, boolean active, Relay relay) {
     this.triggerSensor = triggerSensor;
     this.active = active;
   }
 
   public ConditionTrigger persistIfNotExist() {
-    if (relay == null || find("relay = ?1", relay).count() == 0) {
+    if (relay == null || find("sensor = ?1", triggerSensor).count() == 0) {
       this.persist();
       return this;
     } else {
-      return (ConditionTrigger) find("relay = ?1", relay);
+      return (ConditionTrigger) find("sensor = ?1", triggerSensor);
     }
   }
 }
