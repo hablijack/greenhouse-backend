@@ -17,6 +17,8 @@ import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.scheduler.Scheduled;
+import io.smallrye.common.annotation.Blocking;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -24,6 +26,7 @@ import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -49,14 +52,16 @@ public class RelayScheduler {
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
 
+
   @SuppressFBWarnings("CRLF_INJECTION_LOGS")
   @Scheduled(every = "1m", concurrentExecution = SKIP)
-  @Transactional
+  @Blocking
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
-    for (PanacheEntityBase entity : Relay.listAll()) {
-      Relay relay = (Relay) entity;
+    for (Relay relay : relayService.getAllRelays()) {
+      LOGGER.warning("======>");
+      LOGGER.warning(relayService.getSatelliteBaseUrlForRelay(relay));
       if (relay.timeTrigger.active) {
         if (isWithinTriggerTime(relay)) {
           trigger = QUARKUS_TIME_TRIGGER;
