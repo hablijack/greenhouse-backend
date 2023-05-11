@@ -28,11 +28,11 @@ public class ConditionTrigger extends PanacheEntity {
   }
 
   public ConditionTrigger persistIfNotExist() {
-    if (relay == null || find("sensor = ?1", triggerSensor).count() == 0) {
+    if (relay == null || find("relay = ?1", relay).count() == 0) {
       this.persist();
       return this;
     } else {
-      return (ConditionTrigger) find("sensor = ?1", triggerSensor);
+      return (ConditionTrigger) find("relay = ?1", relay).list().get(0);
     }
   }
 }

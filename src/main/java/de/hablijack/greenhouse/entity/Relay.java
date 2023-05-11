@@ -39,20 +39,14 @@ public class Relay extends PanacheEntity {
   public Relay() {
   }
 
-  public Relay(String identifier) {
-    this.identifier = identifier;
-  }
-
   public Relay(String identifier, String name, String target, boolean value, String description, String icon,
-               String color, ConditionTrigger conditionTrigger, TimeTrigger timeTrigger, Satellite satellite) {
+               String color,  Satellite satellite) {
     this.identifier = identifier;
     this.name = name;
     this.value = value;
     this.description = description;
     this.icon = icon;
     this.color = color;
-    this.conditionTrigger = conditionTrigger;
-    this.timeTrigger = timeTrigger;
     this.satellite = satellite;
     this.target = target;
   }

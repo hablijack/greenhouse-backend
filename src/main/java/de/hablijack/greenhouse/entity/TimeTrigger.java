@@ -33,7 +33,7 @@ public class TimeTrigger extends PanacheEntity {
       this.persist();
       return this;
     } else {
-      return (TimeTrigger) find("relay = ?1", relay);
+      return (TimeTrigger) find("relay = ?1", relay).list().get(0);
     }
   }
 }
