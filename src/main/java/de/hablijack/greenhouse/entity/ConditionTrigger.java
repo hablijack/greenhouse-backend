@@ -21,6 +21,7 @@ public class ConditionTrigger extends PanacheEntity {
   public ConditionTrigger() {
   }
 
+
   public ConditionTrigger(Sensor triggerSensor, boolean active, Relay relay) {
     this.relay = relay;
     this.triggerSensor = triggerSensor;

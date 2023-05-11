@@ -233,26 +233,6 @@ public class DatabaseInitialLoad {
     relayLine1.persist();
     new RelayLog(relayLine1, "DB-INIT", new Date(), false).persist();
 
-    Relay relayLine11 = new Relay(
-        "relay_line1",
-        "Bewässerung Linie 1",
-        "Tomaten",
-        false,
-        "Bewässert Linie 1 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
-        "mdi-water",
-        "#0067AF",
-        greenhouseControl).persistIfNotExist();
-    ConditionTrigger line11ConditionalTrigger = new ConditionTrigger(soilHumidityLine1, false, relayLine11).persistIfNotExist();
-    TimeTrigger line11TimeTrigger = new TimeTrigger(
-        "0-8 8,10,11,12,13,17,18 * * *",
-        true,
-        relayLine1
-    ).persistIfNotExist();
-    relayLine11.conditionTrigger = line11ConditionalTrigger;
-    relayLine11.timeTrigger = line11TimeTrigger;
-    relayLine11.persist();
-    new RelayLog(relayLine1, "DB-INIT", new Date(), false).persist();
-
     Relay relayLine2 = new Relay(
         "relay_line2",
         "Bewässerung Linie 2",

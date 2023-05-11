@@ -42,7 +42,7 @@ public class HealthCheckScheduler {
       Satellite satellite = (Satellite) entity;
       boolean alreadyOffline = !satellite.online;
       satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-          new URL("http://" + String.valueOf(satellite.ip))
+          new URL("http://" + satellite.ip)
       ).build(SatelliteClient.class);
       try {
         JsonObject result = satelliteClient.healthcheck();

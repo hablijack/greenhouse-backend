@@ -1,5 +1,6 @@
 package de.hablijack.greenhouse.entity;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "relay", schema = "greenhouse")
+@SuppressFBWarnings(value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", justification = "Yes we fill dependencies in dbinit")
 public class Relay extends PanacheEntity {
 
   @Column(name = "identifier", nullable = false, unique = true)
