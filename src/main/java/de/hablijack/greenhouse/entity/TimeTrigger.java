@@ -28,11 +28,11 @@ public class TimeTrigger extends PanacheEntity {
   }
 
   public TimeTrigger persistIfNotExist() {
-    if (id == null || findById(id).count() == 0) {
+    if (relay == null || find("relay = ?1", relay).count() == 0) {
       this.persist();
       return this;
     } else {
-      return findById(id);
+      return (TimeTrigger) find("relay = ?1", relay);
     }
   }
 }

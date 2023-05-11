@@ -27,11 +27,11 @@ public class ConditionTrigger extends PanacheEntity {
   }
 
   public ConditionTrigger persistIfNotExist() {
-    if (id == null || findById(id).count() == 0) {
+    if (relay == null || find("relay = ?1", relay).count() == 0) {
       this.persist();
       return this;
     } else {
-      return findById(id);
+      return (ConditionTrigger) find("relay = ?1", relay);
     }
   }
 }
