@@ -53,9 +53,6 @@ public class RelayScheduler {
     Boolean newState = null;
     String trigger = null;
     for (Relay relay : Relay.<Relay>listAll()) {
-      LOGGER.warning("======>");
-      LOGGER.warning(String.valueOf(relay.id));
-      LOGGER.warning(String.valueOf(relay.satellite.id));
       if (relay.timeTrigger.active) {
         if (isWithinTriggerTime(relay)) {
           trigger = QUARKUS_TIME_TRIGGER;
@@ -79,8 +76,6 @@ public class RelayScheduler {
         Map<String, Boolean> relayState = new HashMap<>();
         relay.value = newState;
         relayState.put(relay.identifier, relay.value);
-        LOGGER.warning("=========================================");
-        LOGGER.warning(relay.satellite.ip);
         try {
           satelliteClient = RestClientBuilder.newBuilder().baseUrl(
               new URL("http://" + relay.satellite.ip)
