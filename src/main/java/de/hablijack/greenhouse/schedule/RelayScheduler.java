@@ -10,8 +10,8 @@ import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
-import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
+import de.hablijack.greenhouse.service.RelayService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -40,6 +40,8 @@ public class RelayScheduler {
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
+  RelayService relayService;
+  @Inject
   @RestClient
   TelegramClient telegramClient;
   @ConfigProperty(name = "telegram.bot.token")
@@ -55,12 +57,6 @@ public class RelayScheduler {
     String trigger = null;
     for (PanacheEntityBase entity : Relay.listAll()) {
       Relay relay = (Relay) entity;
-      LOGGER.warning("=========================================");
-      LOGGER.warning(String.valueOf(relay.satellite.id));
-      LOGGER.warning("=========================================");
-      Satellite satellite = Satellite.findById(relay.satellite.id);
-      LOGGER.warning(satellite.ip);
-      LOGGER.warning("=========================================");
       if (relay.timeTrigger.active) {
         if (isWithinTriggerTime(relay)) {
           trigger = QUARKUS_TIME_TRIGGER;
@@ -85,10 +81,10 @@ public class RelayScheduler {
         relay.value = newState;
         relayState.put(relay.identifier, relay.value);
         LOGGER.warning("=========================================");
-        LOGGER.warning(String.valueOf(relay.satellite.ip));
+        LOGGER.warning(relayService.getSatelliteBaseUrlForRelay(relay));
         try {
           satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-              new URL("http://" + String.valueOf(relay.satellite.ip))
+              new URL(relayService.getSatelliteBaseUrlForRelay(relay))
           ).build(SatelliteClient.class);
           satelliteClient.updateRelayState(relayState);
           relay.persist();
