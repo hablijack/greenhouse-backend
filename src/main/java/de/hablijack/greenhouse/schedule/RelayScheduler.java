@@ -16,9 +16,10 @@ import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.scheduler.Scheduled;
+import io.smallrye.common.annotation.NonBlocking;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.transaction.Transactional;
 import java.net.URL;
 import java.time.ZonedDateTime;
@@ -49,12 +50,15 @@ public class RelayScheduler {
 
   @SuppressFBWarnings("CRLF_INJECTION_LOGS")
   @Scheduled(every = "1m", concurrentExecution = SKIP)
+  @NonBlocking
   @Transactional
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
     for (PanacheEntityBase entity : Relay.listAll()) {
       Relay relay = (Relay) entity;
+      LOGGER.warning("=========================================");
+      LOGGER.warning(String.valueOf(relay.satellite.ip));
 
       if (relay.timeTrigger.active) {
         if (isWithinTriggerTime(relay)) {
