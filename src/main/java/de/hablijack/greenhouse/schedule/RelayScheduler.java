@@ -10,15 +10,16 @@ import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
+import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.scheduler.Scheduled;
-import io.smallrye.common.annotation.Blocking;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -48,15 +49,18 @@ public class RelayScheduler {
 
   @SuppressFBWarnings("CRLF_INJECTION_LOGS")
   @Scheduled(every = "1m", concurrentExecution = SKIP)
-  @Blocking
+  @Transactional
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
     for (PanacheEntityBase entity : Relay.listAll()) {
       Relay relay = (Relay) entity;
       LOGGER.warning("=========================================");
-      LOGGER.warning(String.valueOf(relay.satellite.ip));
-
+      LOGGER.warning(String.valueOf(relay.satellite.id));
+      LOGGER.warning("=========================================");
+      Satellite satellite = Satellite.findById(relay.satellite.id);
+      LOGGER.warning(satellite.ip);
+      LOGGER.warning("=========================================");
       if (relay.timeTrigger.active) {
         if (isWithinTriggerTime(relay)) {
           trigger = QUARKUS_TIME_TRIGGER;
