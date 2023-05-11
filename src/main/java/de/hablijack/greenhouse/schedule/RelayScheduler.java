@@ -18,6 +18,7 @@ import io.quarkus.scheduler.Scheduled;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -47,7 +48,7 @@ public class RelayScheduler {
 
   @SuppressFBWarnings("CRLF_INJECTION_LOGS")
   @Scheduled(every = "1m", concurrentExecution = SKIP)
-  @Blocking
+  @Transactional
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
