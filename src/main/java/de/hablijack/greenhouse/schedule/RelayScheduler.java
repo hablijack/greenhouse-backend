@@ -15,7 +15,6 @@ import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.scheduler.Scheduled;
-import io.smallrye.common.annotation.Blocking;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
