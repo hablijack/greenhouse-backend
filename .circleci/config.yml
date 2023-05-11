@@ -35,11 +35,11 @@ jobs:
           command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
           no_output_timeout: 30m
       - run:
-          name: Build and push Docker Image to Heroku
+          name: Build and push Docker Image to Dockerhub
           command: |
-            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:2.1.8 .
+            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:2.1.9 .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push hablijack/greenhouse-backend:2.1.8
+            docker push hablijack/greenhouse-backend:2.1.9
 
 workflows:
   version: 2
