@@ -19,13 +19,10 @@ public class DailyReportScheduler {
   @Inject
   @RestClient
   TelegramClient telegramClient;
-
   @ConfigProperty(name = "telegram.bot.token")
   String botToken;
-
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
-
   @Inject
   SensorService sensorService;
 

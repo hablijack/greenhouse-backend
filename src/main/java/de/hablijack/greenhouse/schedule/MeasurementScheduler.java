@@ -7,6 +7,7 @@ import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -40,38 +41,41 @@ public class MeasurementScheduler {
   String chatId;
 
   @Scheduled(every = "5m", concurrentExecution = SKIP)
+  @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS"})
   @Transactional
-  void fetchMeasurements() throws MalformedURLException {
+  void requestMeasurements() throws MalformedURLException {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
-    if (greenhouseControl.online) {
-      satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-          new URL("http://" + greenhouseControl.ip)
-      ).build(SatelliteClient.class);
-      try {
-        JsonObject measurements = satelliteClient.getMeasurements();
-        for (Sensor sensor : Sensor.<Sensor>listAll()) {
-          if (measurements.containsKey(sensor.identifier)) {
-            Measurement measurement = new Measurement();
-            measurement.sensor = sensor;
-            JsonValue value = measurements.get(sensor.identifier);
-            if (value.getValueType() == JsonValue.ValueType.STRING) {
-              if (value.toString().equals("wet")) {
-                measurement.value = HUNDRED_PERCENT_VALUE;
-              } else {
-                measurement.value = ZERO_PERCENT_VALUE;
-              }
-            } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
-              measurement.value = ((JsonNumber) value).doubleValue();
+    if (!greenhouseControl.online) {
+      return;
+    }
+
+    satelliteClient = RestClientBuilder.newBuilder().baseUrl(
+        new URL("http://" + greenhouseControl.ip)
+    ).build(SatelliteClient.class);
+    try {
+      JsonObject currentValues = satelliteClient.getMeasurements();
+      for (Sensor sensor : Sensor.<Sensor>listAll()) {
+        if (currentValues.containsKey(sensor.identifier)) {
+          Measurement measurement = new Measurement();
+          measurement.sensor = sensor;
+          JsonValue value = currentValues.get(sensor.identifier);
+          if (value.getValueType() == JsonValue.ValueType.STRING) {
+            if (value.toString().equals("wet")) {
+              measurement.value = HUNDRED_PERCENT_VALUE;
+            } else {
+              measurement.value = ZERO_PERCENT_VALUE;
             }
+          } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
+            measurement.value = ((JsonNumber) value).doubleValue();
           }
         }
-      } catch (Exception error) {
-        LOGGER.warning(error.getMessage());
-        telegramClient.sendMessage(botToken, chatId,
-            "Konnte die Sensorwerte nicht abholen! \r\n\r\n"
-                + greenhouseControl.name + "\r\n\r\n"
-                + error.getMessage());
       }
+    } catch (Exception error) {
+      LOGGER.warning(error.getMessage());
+      telegramClient.sendMessage(botToken, chatId,
+          "Konnte die Sensorwerte nicht abholen! \r\n\r\n"
+              + greenhouseControl.name + "\r\n\r\n"
+              + error.getMessage());
     }
   }
 }
