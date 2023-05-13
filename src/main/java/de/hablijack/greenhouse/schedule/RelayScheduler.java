@@ -52,6 +52,9 @@ public class RelayScheduler {
     Boolean newState = null;
     String trigger = null;
     for (Relay relay : Relay.<Relay>listAll()) {
+      if (!relay.satellite.online) {
+        return;
+      }
       if (relay.timeTrigger.active) {
         if (isWithinTriggerTime(relay)) {
           trigger = QUARKUS_TIME_TRIGGER;

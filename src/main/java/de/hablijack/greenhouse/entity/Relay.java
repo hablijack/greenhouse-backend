@@ -32,13 +32,13 @@ public class Relay extends PanacheEntity {
   @Column(name = "color", nullable = false)
   public String color;
 
-  @OneToOne(fetch = FetchType.EAGER)
+  @OneToOne(fetch = FetchType.LAZY)
   public ConditionTrigger conditionTrigger;
 
-  @OneToOne(fetch = FetchType.EAGER)
+  @OneToOne(fetch = FetchType.LAZY)
   public TimeTrigger timeTrigger;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   public Satellite satellite;
 
   public Relay() {

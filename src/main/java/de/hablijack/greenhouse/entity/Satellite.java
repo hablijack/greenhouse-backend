@@ -25,8 +25,8 @@ public class Satellite extends PanacheEntity {
   public String ip;
   @Column(name = "online", nullable = false)
   public boolean online;
+  @OneToMany(fetch = FetchType.LAZY)
   @JsonBackReference
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "satellite")
   public Set<Relay> relays;
 
   public Satellite(String identifier, String name, String imageUrl, String description, String ip, boolean online) {
