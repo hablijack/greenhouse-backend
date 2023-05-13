@@ -5,7 +5,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import java.math.BigInteger;
 
 @SuppressWarnings("checkstyle:LineLength")
 @ApplicationScoped
@@ -20,8 +19,8 @@ public class DatabaseStatsService {
     Object[] results = (Object[]) query.getSingleResult();
     TableSize tableSize = new TableSize();
     if (results != null && results.length > 0) {
-      tableSize.setMeasurementSizeByte((BigInteger) results[0]);
-      tableSize.setRelayLogSizeByte((BigInteger) results[1]);
+      tableSize.setMeasurementSizeByte((Long) results[0]);
+      tableSize.setRelayLogSizeByte((Long) results[1]);
     }
     return tableSize;
   }

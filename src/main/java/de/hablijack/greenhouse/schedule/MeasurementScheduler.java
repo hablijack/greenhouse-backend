@@ -48,7 +48,7 @@ public class MeasurementScheduler {
           new URL("http://" + greenhouseControl.ip)
       ).build(SatelliteClient.class);
       try {
-        JsonObject measurements = satelliteClient.healthcheck();
+        JsonObject measurements = satelliteClient.getMeasurements();
         for (Sensor sensor : Sensor.<Sensor>listAll()) {
           if (measurements.containsKey(sensor.identifier)) {
             Measurement measurement = new Measurement();
