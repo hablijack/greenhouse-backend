@@ -13,6 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.transaction.Transactional;
 import java.net.MalformedURLException;
@@ -60,7 +61,8 @@ public class MeasurementScheduler {
           measurement.sensor = sensor;
           JsonValue value = currentValues.get(sensor.identifier);
           if (value.getValueType() == JsonValue.ValueType.STRING) {
-            if (value.toString().equals("wet")) {
+            String measuredValue = ((JsonString) value).getString();
+            if (measuredValue.equals("wet")) {
               measurement.value = HUNDRED_PERCENT_VALUE;
             } else {
               measurement.value = ZERO_PERCENT_VALUE;

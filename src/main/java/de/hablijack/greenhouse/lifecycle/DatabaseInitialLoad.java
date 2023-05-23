@@ -49,7 +49,7 @@ public class DatabaseInitialLoad {
         "Gewächshaus Webcam",
         "satelite.png",
         "ESP-EYE Webcam-webserver um regelmäßig Bilder innerhalb des Gewächshauses aufzunehmen.",
-        "192.168.178.48",
+        "192.168.178.73",
         true).persistIfNotExist();
     Satellite greenhouseControl = new Satellite(
         "greenhouse_control",
@@ -68,7 +68,7 @@ public class DatabaseInitialLoad {
         "mdi-thermometer",
         MIN_AIR_INSIDE_TEMP,
         MAX_AIR_INSIDE_TEMP).persistIfNotExist();
-    new Measurement(airTempInside, 20.5, new Date()).persist();
+    new Measurement(airTempInside, 20.5, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor airTempOutside = new Sensor(
         "air_temp_outside",
@@ -79,7 +79,7 @@ public class DatabaseInitialLoad {
         "mdi-thermometer",
         MIN_AIR_OUTSIDE_TEMP,
         MAX_AIR_OUTSIDE_TEMP).persistIfNotExist();
-    new Measurement(airTempOutside, 18.2, new Date()).persist();
+    new Measurement(airTempOutside, 18.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilTempInside = new Sensor(
         "soil_temp_inside",
@@ -90,10 +90,10 @@ public class DatabaseInitialLoad {
         "mdi-thermometer",
         MIN_SOIL_TEMP,
         MAX_SOIL_TEMP).persistIfNotExist();
-    new Measurement(soilTempInside, 14.2, new Date()).persist();
+    new Measurement(soilTempInside, 14.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor battery = new Sensor(
-        "battery",
+        "battery_voltage",
         "Batterie",
         "%",
         0,
@@ -101,7 +101,7 @@ public class DatabaseInitialLoad {
         "mdi-battery",
         MIN_BATTERY,
         MAX_BATTERY).persistIfNotExist();
-    new Measurement(battery, 90.2, new Date()).persist();
+    new Measurement(battery, 90.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor airHumidityInside = new Sensor(
         "air_humidity_inside",
@@ -112,7 +112,7 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_AIR_HUMIDITY_INSIDE,
         MAX_AIR_HUMIDITY_INSIDE).persistIfNotExist();
-    new Measurement(airHumidityInside, 99.1, new Date()).persist();
+    new Measurement(airHumidityInside, 99.1, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor wifi = new Sensor(
         "wifi",
@@ -123,7 +123,7 @@ public class DatabaseInitialLoad {
         "mdi-wifi",
         MIN_WIFI_STRENGTH,
         MAX_WIFI_STRENGTH).persistIfNotExist();
-    new Measurement(wifi, 70.0, new Date()).persist();
+    new Measurement(wifi, 70.0, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor brightness = new Sensor(
         "brightness",
@@ -134,7 +134,7 @@ public class DatabaseInitialLoad {
         "mdi-white-balance-sunny",
         MIN_LIGHT_VALUE,
         MAX_LIGHT_VALUE).persistIfNotExist();
-    new Measurement(brightness, 1800.8, new Date()).persist();
+    new Measurement(brightness, 1800.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor co2 = new Sensor(
         "co2",
@@ -145,7 +145,7 @@ public class DatabaseInitialLoad {
         "mdi-soundcloud",
         MIN_CO2_VALUE,
         MAX_CO2_VALUE).persistIfNotExist();
-    new Measurement(co2, 7000.8, new Date()).persist();
+    new Measurement(co2, 7000.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine1 = new Sensor(
         "soil_humidity_line1",
@@ -156,7 +156,7 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Measurement(soilHumidityLine1, 70.8, new Date()).persist();
+    new Measurement(soilHumidityLine1, 70.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine2 = new Sensor(
         "soil_humidity_line2",
@@ -167,7 +167,7 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Measurement(soilHumidityLine2, 74.2, new Date()).persist();
+    new Measurement(soilHumidityLine2, 74.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine3 = new Sensor(
         "soil_humidity_line3",
@@ -178,7 +178,7 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Measurement(soilHumidityLine3, 88.8, new Date()).persist();
+    new Measurement(soilHumidityLine3, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine4 = new Sensor(
         "soil_humidity_line4",
@@ -189,7 +189,7 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Measurement(soilHumidityLine4, 88.8, new Date()).persist();
+    new Measurement(soilHumidityLine4, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine5 = new Sensor(
         "soil_humidity_line5",
@@ -200,7 +200,7 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Measurement(soilHumidityLine5, 88.8, new Date()).persist();
+    new Measurement(soilHumidityLine5, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine6 = new Sensor(
         "soil_humidity_line6",
@@ -211,7 +211,7 @@ public class DatabaseInitialLoad {
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
         MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
-    new Measurement(soilHumidityLine6, 88.8, new Date()).persist();
+    new Measurement(soilHumidityLine6, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Relay relayLine1 = new Relay(
         "relay_line1",
@@ -222,16 +222,17 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         greenhouseControl).persistIfNotExist();
-    ConditionTrigger line1ConditionalTrigger = new ConditionTrigger(soilHumidityLine1, false, relayLine1).persistIfNotExist();
+    ConditionTrigger line1ConditionalTrigger =
+        new ConditionTrigger(soilHumidityLine1, false, relayLine1).persistIfNotExist();
     TimeTrigger line1TimeTrigger = new TimeTrigger(
-        "0-8 8,10,11,12,13,17,18 * * *",
+        "0-3 8,12,18 * * *",
         true,
         relayLine1
     ).persistIfNotExist();
     relayLine1.conditionTrigger = line1ConditionalTrigger;
     relayLine1.timeTrigger = line1TimeTrigger;
     relayLine1.persist();
-    new RelayLog(relayLine1, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayLine1, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayLine2 = new Relay(
         "relay_line2",
@@ -242,15 +243,16 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         greenhouseControl).persistIfNotExist();
-    ConditionTrigger line2ConditionalTrigger = new ConditionTrigger(soilHumidityLine2, false, relayLine2).persistIfNotExist();
+    ConditionTrigger line2ConditionalTrigger =
+        new ConditionTrigger(soilHumidityLine2, false, relayLine2).persistIfNotExist();
     TimeTrigger line2TimeTrigger = new TimeTrigger(
-        "0-8 8,10,12,13,17,18 * * *",
+        "3-6 8,12,18 * * *",
         true,
         relayLine2).persistIfNotExist();
     relayLine2.conditionTrigger = line2ConditionalTrigger;
     relayLine2.timeTrigger = line2TimeTrigger;
     relayLine2.persist();
-    new RelayLog(relayLine2, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayLine2, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayLine3 = new Relay(
         "relay_line3",
@@ -262,15 +264,16 @@ public class DatabaseInitialLoad {
         "#0067AF",
         greenhouseControl
     ).persistIfNotExist();
-    ConditionTrigger line3ConditionalTrigger = new ConditionTrigger(soilHumidityLine3, false, relayLine3).persistIfNotExist();
+    ConditionTrigger line3ConditionalTrigger =
+        new ConditionTrigger(soilHumidityLine3, false, relayLine3).persistIfNotExist();
     TimeTrigger line3TimeTrigger = new TimeTrigger(
-        "0-8 8,10,12,13,17,18 * * *",
+        "6-9 8,12,18 * * *",
         true,
         relayLine3).persistIfNotExist();
     relayLine3.conditionTrigger = line3ConditionalTrigger;
     relayLine3.timeTrigger = line3TimeTrigger;
     relayLine3.persist();
-    new RelayLog(relayLine3, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayLine3, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayLine4 = new Relay(
         "relay_line4",
@@ -281,15 +284,16 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         greenhouseControl).persistIfNotExist();
-    ConditionTrigger line4ConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false, relayLine4).persistIfNotExist();
+    ConditionTrigger line4ConditionalTrigger =
+        new ConditionTrigger(soilHumidityLine4, false, relayLine4).persistIfNotExist();
     TimeTrigger line4TimeTrigger = new TimeTrigger(
-        "0-8 8,10,12,13,17,18 * * *",
+        "9-12 8,12,18 * * *",
         true,
         relayLine4).persistIfNotExist();
     relayLine4.conditionTrigger = line4ConditionalTrigger;
     relayLine4.timeTrigger = line4TimeTrigger;
     relayLine4.persist();
-    new RelayLog(relayLine4, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayLine4, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayLine5 = new Relay(
         "relay_line5",
@@ -300,15 +304,16 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         greenhouseControl).persistIfNotExist();
-    ConditionTrigger line5ConditionalTrigger = new ConditionTrigger(soilHumidityLine5, false, relayLine5).persistIfNotExist();
+    ConditionTrigger line5ConditionalTrigger =
+        new ConditionTrigger(soilHumidityLine5, false, relayLine5).persistIfNotExist();
     TimeTrigger line5TimeTrigger = new TimeTrigger(
-        "0-8 8,10,12,13,17,18 * * *",
+        "12-15 8,12,18 * * *",
         true,
         relayLine5).persistIfNotExist();
     relayLine5.conditionTrigger = line5ConditionalTrigger;
     relayLine5.timeTrigger = line5TimeTrigger;
     relayLine5.persist();
-    new RelayLog(relayLine5, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayLine5, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayLine6 = new Relay(
         "relay_line6",
@@ -319,15 +324,16 @@ public class DatabaseInitialLoad {
         "mdi-water",
         "#0067AF",
         greenhouseControl).persistIfNotExist();
-    ConditionTrigger line6ConditionalTrigger = new ConditionTrigger(soilHumidityLine6, false, relayLine6).persistIfNotExist();
+    ConditionTrigger line6ConditionalTrigger =
+        new ConditionTrigger(soilHumidityLine6, false, relayLine6).persistIfNotExist();
     TimeTrigger line6TimeTrigger = new TimeTrigger(
-        "0-20 8,10,12,13,17,18 * * *",
+        "15-18 8,12,18 * * *",
         true,
         relayLine6).persistIfNotExist();
     relayLine6.conditionTrigger = line6ConditionalTrigger;
     relayLine6.timeTrigger = line6TimeTrigger;
     relayLine6.persist();
-    new RelayLog(relayLine6, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayLine6, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayLight = new Relay(
         "relay_light",
@@ -340,13 +346,13 @@ public class DatabaseInitialLoad {
         greenhouseControl).persistIfNotExist();
     ConditionTrigger lightConditionalTrigger = new ConditionTrigger(brightness, false, relayLight).persistIfNotExist();
     TimeTrigger lightTimeTrigger = new TimeTrigger(
-        "0-8 8,10,12,13,17,18 * * *",
+        "0-2 8,12,18 * * *",
         false,
         relayLight).persistIfNotExist();
     relayLight.conditionTrigger = lightConditionalTrigger;
     relayLight.timeTrigger = lightTimeTrigger;
     relayLight.persist();
-    new RelayLog(relayLight, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayLight, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayFans = new Relay(
         "relay_fans",
@@ -359,12 +365,12 @@ public class DatabaseInitialLoad {
         greenhouseControl).persistIfNotExist();
     ConditionTrigger fansConditionalTrigger = new ConditionTrigger(airTempInside, false, relayFans).persistIfNotExist();
     TimeTrigger fansTimeTrigger = new TimeTrigger(
-        "0-8 8,10,12,13,17,18 * * *",
-        true,
+        "0-2 8,12,18 * * *",
+        false,
         relayFans).persistIfNotExist();
     relayFans.conditionTrigger = fansConditionalTrigger;
     relayFans.timeTrigger = fansTimeTrigger;
-    new RelayLog(relayFans, "DB-INIT", new Date(), false).persist();
+    new RelayLog(relayFans, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     LOGGER.info("... database filled ...");
   }

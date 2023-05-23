@@ -10,6 +10,7 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
 import jakarta.transaction.Transactional;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,7 +47,8 @@ public class HealthCheckScheduler {
       ).build(SatelliteClient.class);
       try {
         JsonObject result = satelliteClient.healthcheck();
-        satellite.online = result != null && result.get("status").equals("ok");
+        String status = ((JsonString) result.get("status")).getString();
+        satellite.online = result != null && status.equals("ok");
       } catch (Exception error) {
         if (!alreadyOffline) {
           LOGGER.warning(error.getMessage());

@@ -40,4 +40,10 @@ public class RelayLog extends PanacheEntity {
   public static List<RelayLog> getRecentLog(int maxEntries) {
     return RelayLog.find("ORDER BY timestamp DESC").range(0, maxEntries).list();
   }
+
+  public void persistIfInitForThisRelay() {
+    if (find("relay = ?1", relay).count() == 0) {
+      this.persist();
+    }
+  }
 }

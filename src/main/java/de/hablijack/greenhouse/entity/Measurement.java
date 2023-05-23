@@ -36,4 +36,10 @@ public class Measurement extends PanacheEntity {
     this.value = value;
     this.timestamp = timestamp;
   }
+
+  public void persistIfInitForThisSensor() {
+    if (find("sensor = ?1", sensor).count() == 0) {
+      this.persist();
+    }
+  }
 }
