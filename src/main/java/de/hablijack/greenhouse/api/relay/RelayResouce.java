@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hablijack.greenhouse.api.pojo.RelayLogEvent;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
+import de.hablijack.greenhouse.webclient.SatelliteClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.transaction.Transactional;
 import jakarta.websocket.ClientEndpoint;
@@ -22,15 +23,24 @@ import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/backend")
 public class RelayResouce {
   private static final int NUMBER_OF_LOG_ENTRIES = 30;
+  private static final Logger LOGGER = Logger.getLogger(RelayResouce.class.getName());
   private final Session session;
   private final ObjectMapper objectMapper;
+  @RestClient
+  SatelliteClient satelliteClient;
 
   public RelayResouce() throws URISyntaxException, DeploymentException, IOException {
     objectMapper = new ObjectMapper();
@@ -55,15 +65,30 @@ public class RelayResouce {
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event)
       throws JsonProcessingException {
-    List<RelayLog> newRelay = new ArrayList<>();
-    Relay relay = Relay.findByIdentifier(identifier);
-    relay.value = event.getNewValue();
-    relay.persist();
-    RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
-    log.persist();
-    newRelay.add(log);
-    session.getAsyncRemote().sendText(objectMapper.writeValueAsString(newRelay));
-    return true;
+    try {
+      // FIND COREESPONDING RELAY
+      Relay relay = Relay.findByIdentifier(identifier);
+      // TRIGGER REST ENDPOINT ON SATELLITE
+      satelliteClient = RestClientBuilder.newBuilder().baseUrl(
+          new URL("http://" + relay.satellite.ip)
+      ).build(SatelliteClient.class);
+      Map<String, Boolean> relayState = new HashMap<>();
+      relayState.put(relay.identifier, event.getNewValue());
+      satelliteClient.updateRelayState(relayState);
+      // REFRESH RELAY IN DB
+      relay.value = event.getNewValue();
+      relay.persist();
+      // RELAY LOG REFRESH IN DB AND WEBSOCKET
+      List<RelayLog> logs = new ArrayList<>();
+      RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
+      log.persist();
+      logs.add(log);
+      session.getAsyncRemote().sendText(objectMapper.writeValueAsString(logs));
+      return true;
+    } catch (Exception exception) {
+      LOGGER.warning(exception.getMessage());
+      return false;
+    }
   }
 
   @PUT
