@@ -5,6 +5,7 @@ import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
+import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -16,11 +17,8 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.transaction.Transactional;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
@@ -36,6 +34,8 @@ public class MeasurementScheduler {
   TelegramClient telegramClient;
   @RestClient
   SatelliteClient satelliteClient;
+  @Inject
+  SatelliteService satelliteService;
   @ConfigProperty(name = "telegram.bot.token")
   String botToken;
   @ConfigProperty(name = "telegram.bot.chatid")
@@ -44,40 +44,36 @@ public class MeasurementScheduler {
   @Scheduled(every = "5m", concurrentExecution = SKIP)
   @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS"})
   @Transactional
-  void requestMeasurements() throws MalformedURLException {
+  void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
-    if (!greenhouseControl.online) {
-      return;
-    }
-
-    satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-        new URL("http://" + greenhouseControl.ip)
-    ).build(SatelliteClient.class);
-    try {
-      JsonObject currentValues = satelliteClient.getMeasurements();
-      for (Sensor sensor : Sensor.<Sensor>listAll()) {
-        if (currentValues.containsKey(sensor.identifier)) {
-          Measurement measurement = new Measurement();
-          measurement.sensor = sensor;
-          JsonValue value = currentValues.get(sensor.identifier);
-          if (value.getValueType() == JsonValue.ValueType.STRING) {
-            String measuredValue = ((JsonString) value).getString();
-            if (measuredValue.equals("wet")) {
-              measurement.value = HUNDRED_PERCENT_VALUE;
-            } else {
-              measurement.value = ZERO_PERCENT_VALUE;
+    if (greenhouseControl.online) {
+      try {
+        satelliteClient = satelliteService.createSatelliteClient(greenhouseControl.ip);
+        JsonObject currentValues = satelliteClient.getMeasurements();
+        for (Sensor sensor : Sensor.<Sensor>listAll()) {
+          if (currentValues.containsKey(sensor.identifier)) {
+            Measurement measurement = new Measurement();
+            measurement.sensor = sensor;
+            JsonValue value = currentValues.get(sensor.identifier);
+            if (value.getValueType() == JsonValue.ValueType.STRING) {
+              String measuredValue = ((JsonString) value).getString();
+              if (measuredValue.equals("wet")) {
+                measurement.value = HUNDRED_PERCENT_VALUE;
+              } else {
+                measurement.value = ZERO_PERCENT_VALUE;
+              }
+            } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
+              measurement.value = ((JsonNumber) value).doubleValue();
             }
-          } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
-            measurement.value = ((JsonNumber) value).doubleValue();
           }
         }
+      } catch (Exception error) {
+        LOGGER.warning(error.getMessage());
+        telegramClient.sendMessage(botToken, chatId,
+            "Konnte die Sensorwerte nicht abholen! \r\n\r\n"
+                + greenhouseControl.name + "\r\n\r\n"
+                + error.getMessage());
       }
-    } catch (Exception error) {
-      LOGGER.warning(error.getMessage());
-      telegramClient.sendMessage(botToken, chatId,
-          "Konnte die Sensorwerte nicht abholen! \r\n\r\n"
-              + greenhouseControl.name + "\r\n\r\n"
-              + error.getMessage());
     }
   }
 }

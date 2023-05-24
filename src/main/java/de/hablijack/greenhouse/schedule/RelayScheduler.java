@@ -11,6 +11,7 @@ import com.cronutils.parser.CronParser;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
 import de.hablijack.greenhouse.entity.Sensor;
+import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -18,14 +19,12 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
@@ -40,6 +39,8 @@ public class RelayScheduler {
   @Inject
   @RestClient
   TelegramClient telegramClient;
+  @Inject
+  SatelliteService satelliteService;
   @ConfigProperty(name = "telegram.bot.token")
   String botToken;
   @ConfigProperty(name = "telegram.bot.chatid")
@@ -79,9 +80,7 @@ public class RelayScheduler {
         relay.value = newState;
         relayState.put(relay.identifier, relay.value);
         try {
-          satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-              new URL("http://" + relay.satellite.ip)
-          ).build(SatelliteClient.class);
+          satelliteClient = satelliteService.createSatelliteClient(relay.satellite.ip);
           satelliteClient.updateRelayState(relayState);
           relay.persist();
           new RelayLog(relay, trigger, new Date(), newState).persist();
