@@ -336,7 +336,7 @@ public class DatabaseInitialLoad {
     new RelayLog(relayLine6, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayLight = new Relay(
-        "relay_light",
+        "relay_line7",
         "Pflanzenlicht",
         null,
         false,
@@ -355,7 +355,7 @@ public class DatabaseInitialLoad {
     new RelayLog(relayLight, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
     Relay relayFans = new Relay(
-        "relay_fans",
+        "relay_line8",
         "Ventilatoren",
         null,
         false,
