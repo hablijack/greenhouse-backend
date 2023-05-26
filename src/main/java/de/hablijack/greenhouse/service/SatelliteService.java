@@ -10,7 +10,7 @@ import org.eclipse.microprofile.rest.client.RestClientBuilder;
 @ApplicationScoped
 public class SatelliteService {
 
-  private static final Long CONNECT_TIMEOUT = Long.valueOf(5000);
+  private static final Long CONNECT_TIMEOUT = Long.valueOf(10000);
   private static final Long READ_TIMEOUT = Long.valueOf(10000);
 
   public SatelliteClient createSatelliteClient(String ip) throws MalformedURLException {
