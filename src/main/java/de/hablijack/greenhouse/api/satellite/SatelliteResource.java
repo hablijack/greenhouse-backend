@@ -3,7 +3,10 @@ package de.hablijack.greenhouse.api.satellite;
 import de.hablijack.greenhouse.entity.CameraPicture;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.Satellite;
+import de.hablijack.greenhouse.service.SatelliteService;
+import de.hablijack.greenhouse.webclient.SatelliteClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -14,10 +17,23 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/backend")
 public class SatelliteResource {
+
+  private static final Logger LOGGER = Logger.getLogger(SatelliteResource.class.getName());
+  @RestClient
+  SatelliteClient satelliteClient;
+  @Inject
+  SatelliteService satelliteService;
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -40,6 +56,34 @@ public class SatelliteResource {
       return response.build();
     } else {
       Response.ResponseBuilder response = Response.serverError();
+      return response.build();
+    }
+  }
+
+  @GET
+  @Produces("text/plain")
+  @Path("/satellites/greenhouse-cam/snapshot")
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  @Transactional
+  public Response takeSnapshot() throws MalformedURLException {
+    Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
+    if (greenhouseCamera != null && greenhouseCamera.online) {
+      Response.ResponseBuilder response = Response.ok("OK");
+      satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
+      File file = satelliteClient.savePicture();
+      CameraPicture picture = CameraPicture.findExistingOrCreteNew();
+      try (FileInputStream readStream = new FileInputStream(file)) {
+        picture.imageByte = readStream.readAllBytes();
+        picture.timestamp = new Date();
+        picture.persist();
+        return response.build();
+      } catch (IOException error) {
+        response = Response.notModified(error.getMessage());
+        LOGGER.warning(error.getMessage());
+        return response.build();
+      }
+    } else {
+      Response.ResponseBuilder response = Response.ok("NOT OK");
       return response.build();
     }
   }
