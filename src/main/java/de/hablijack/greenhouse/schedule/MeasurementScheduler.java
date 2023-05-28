@@ -33,7 +33,8 @@ public class MeasurementScheduler {
   SatelliteService satelliteService;
 
   @Scheduled(every = "10m", concurrentExecution = SKIP)
-  @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS"})
+  @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS",
+      "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   @Transactional
   void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");

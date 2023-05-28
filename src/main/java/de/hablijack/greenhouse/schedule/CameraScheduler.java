@@ -13,6 +13,9 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -27,7 +30,7 @@ public class CameraScheduler {
   @Inject
   SatelliteService satelliteService;
 
-  @SuppressFBWarnings("CRLF_INJECTION_LOGS")
+  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   @Scheduled(every = "20m", concurrentExecution = SKIP)
   void takePicture() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
@@ -44,20 +47,22 @@ public class CameraScheduler {
     }
   }
 
-  @SuppressFBWarnings("CRLF_INJECTION_LOGS")
+  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   @Scheduled(every = "40m", concurrentExecution = SKIP)
   @Transactional
-  void savePictureToDatabase() {
+  void savePictureToDatabase() throws MalformedURLException {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {
-      try {
-        satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
-        File file = satelliteClient.savePicture();
-        CameraPicture picture = CameraPicture.findExistingOrCreteNew();
-        picture.imageByte = new FileInputStream(file).readAllBytes();
+      satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
+      File file = satelliteClient.savePicture();
+      CameraPicture picture = CameraPicture.findExistingOrCreteNew();
+      try (FileInputStream readStream = new FileInputStream(file)) {
+        picture.imageByte = readStream.readAllBytes();
         picture.timestamp = new Date();
         picture.persist();
-      } catch (Exception error) {
+      } catch (FileNotFoundException error) {
+        LOGGER.warning(error.getMessage());
+      } catch (IOException error) {
         LOGGER.warning(error.getMessage());
       }
     }
