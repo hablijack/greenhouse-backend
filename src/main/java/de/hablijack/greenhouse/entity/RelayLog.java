@@ -1,5 +1,8 @@
 package de.hablijack.greenhouse.entity;
 
+import static de.hablijack.greenhouse.schedule.RelayScheduler.QUARKUS_CONDITION_TRIGGER;
+import static de.hablijack.greenhouse.schedule.RelayScheduler.QUARKUS_TIME_TRIGGER;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
@@ -35,6 +38,12 @@ public class RelayLog extends PanacheEntity {
     this.value = value;
     this.initiator = initiator;
     this.timestamp = timestamp;
+  }
+
+  public static boolean isLastActionManualActivated(Relay relay) {
+    RelayLog lastAction = (RelayLog) RelayLog.find("relay=?1 ORDER BY timestamp DESC", relay).range(0, 1).list().get(0);
+    return !lastAction.initiator.equals(QUARKUS_TIME_TRIGGER)
+        && !lastAction.initiator.equals(QUARKUS_CONDITION_TRIGGER) && lastAction.value;
   }
 
   public static List<RelayLog> getRecentLog(int maxEntries) {

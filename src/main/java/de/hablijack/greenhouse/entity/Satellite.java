@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,13 +43,22 @@ public class Satellite extends PanacheEntity {
   }
 
   public static Satellite findByIdentifier(String id) {
-    return (Satellite) find("identifier = ?1", id).list().get(0);
+    List<Satellite> result = find("identifier = ?1", id).list();
+    if (result.stream().count() == 0) {
+      return null;
+    } else {
+      return result.get(0);
+    }
   }
 
   public static Satellite findByIp(String ip) {
-    return (Satellite) find("ip = ?1", ip).list().get(0);
+    List<Satellite> result = find("ip = ?1", ip).list();
+    if (result.stream().count() == 0) {
+      return null;
+    } else {
+      return result.get(0);
+    }
   }
-
 
   public Satellite persistIfNotExist() {
     if (find("identifier = ?1", identifier).count() == 0) {

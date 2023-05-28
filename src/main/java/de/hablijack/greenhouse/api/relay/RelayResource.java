@@ -34,15 +34,15 @@ import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/backend")
-public class RelayResouce {
+public class RelayResource {
   private static final int NUMBER_OF_LOG_ENTRIES = 30;
-  private static final Logger LOGGER = Logger.getLogger(RelayResouce.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(RelayResource.class.getName());
   private final Session session;
   private final ObjectMapper objectMapper;
   @RestClient
   SatelliteClient satelliteClient;
 
-  public RelayResouce() throws URISyntaxException, DeploymentException, IOException {
+  public RelayResource() throws URISyntaxException, DeploymentException, IOException {
     objectMapper = new ObjectMapper();
     this.session = ContainerProvider.getWebSocketContainer().connectToServer(
         Client.class,
@@ -66,7 +66,7 @@ public class RelayResouce {
   public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event)
       throws JsonProcessingException {
     try {
-      // FIND COREESPONDING RELAY
+      // FIND CORRESPONDING RELAY
       Relay relay = Relay.findByIdentifier(identifier);
       // TRIGGER REST ENDPOINT ON SATELLITE
       satelliteClient = RestClientBuilder.newBuilder().baseUrl(

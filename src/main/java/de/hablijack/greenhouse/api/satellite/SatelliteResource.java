@@ -1,5 +1,6 @@
 package de.hablijack.greenhouse.api.satellite;
 
+import de.hablijack.greenhouse.entity.CameraPicture;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.Satellite;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -12,6 +13,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/backend")
@@ -23,6 +25,23 @@ public class SatelliteResource {
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<Relay> getAllSatellites() {
     return Satellite.listAll();
+  }
+
+  @GET
+  @Produces("image/jpg")
+  @Path("/satellites/greenhouse-cam/picture.jpg")
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  @Transactional
+  public Response getCurrentPicture() {
+    if (CameraPicture.findAll().list().size() > 0) {
+      CameraPicture picture = (CameraPicture) CameraPicture.findAll().list().get(0);
+      Response.ResponseBuilder response = Response.ok(picture.imageByte);
+      response.header("Content-Disposition", "inline; filename=\"picture.jpg\"");
+      return response.build();
+    } else {
+      Response.ResponseBuilder response = Response.serverError();
+      return response.build();
+    }
   }
 
   @GET

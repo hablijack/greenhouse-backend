@@ -53,7 +53,7 @@ public class RelayScheduler {
     Boolean newState = null;
     String trigger = null;
     for (Relay relay : Relay.<Relay>listAll()) {
-      if (!relay.satellite.online) {
+      if (!relay.satellite.online || RelayLog.isLastActionManualActivated(relay)) {
         return;
       }
       if (relay.timeTrigger.active) {

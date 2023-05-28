@@ -16,6 +16,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.transaction.Transactional;
+import java.util.Date;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -31,12 +32,12 @@ public class MeasurementScheduler {
   @Inject
   SatelliteService satelliteService;
 
-  @Scheduled(every = "5m", concurrentExecution = SKIP)
+  @Scheduled(every = "10m", concurrentExecution = SKIP)
   @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS"})
   @Transactional
   void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
-    if (greenhouseControl.online) {
+    if (greenhouseControl != null && greenhouseControl.online) {
       try {
         satelliteClient = satelliteService.createSatelliteClient(greenhouseControl.ip);
         JsonObject currentValues = satelliteClient.getMeasurements();
@@ -54,6 +55,10 @@ public class MeasurementScheduler {
               }
             } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
               measurement.value = ((JsonNumber) value).doubleValue();
+            }
+            if (measurement.value != null) {
+              measurement.timestamp = new Date();
+              measurement.persist();
             }
           }
         }
