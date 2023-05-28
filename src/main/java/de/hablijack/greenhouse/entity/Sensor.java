@@ -60,7 +60,7 @@ public class Sensor extends PanacheEntity {
   }
 
   public Measurement findCurrentMeasurement() {
-    return Measurement.find("sensor = ?1 ORDER BY timestamp", this).firstResult();
+    return Measurement.find("sensor = ?1 ORDER BY timestamp DESC", this).firstResult();
   }
 
   public Sensor persistIfNotExist() {

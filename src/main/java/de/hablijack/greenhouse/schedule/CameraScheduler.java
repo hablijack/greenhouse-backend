@@ -11,20 +11,16 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Date;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class CameraScheduler {
 
   private static final Logger LOGGER = Logger.getLogger(CameraScheduler.class.getName());
-
-  private static final double DEGREE_ROTATION = 180.0;
 
   @RestClient
   SatelliteClient satelliteClient;
@@ -57,11 +53,8 @@ public class CameraScheduler {
       try {
         satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
         File file = satelliteClient.savePicture();
-        BufferedImage bufferedImage = SatelliteService.rotate(ImageIO.read(file), DEGREE_ROTATION);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "jpg", outputStream);
         CameraPicture picture = CameraPicture.findExistingOrCreteNew();
-        picture.imageByte = outputStream.toByteArray();
+        picture.imageByte = new FileInputStream(file).readAllBytes();
         picture.timestamp = new Date();
         picture.persist();
       } catch (Exception error) {
