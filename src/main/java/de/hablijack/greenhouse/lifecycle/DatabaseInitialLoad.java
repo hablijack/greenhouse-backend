@@ -107,7 +107,7 @@ public class DatabaseInitialLoad {
         "Batterie",
         "%",
         0,
-        "Ladezustand der Photovoltaik-Batterie",
+        "Ladezustand der Relay-Batterie",
         "mdi-battery",
         MIN_BATTERY,
         MAX_BATTERY).persistIfNotExist();

@@ -17,6 +17,8 @@ import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import jakarta.transaction.Transactional;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -27,6 +29,8 @@ public class MeasurementScheduler {
   static final Double ZERO_PERCENT_VALUE = 0.0;
 
   private static final Logger LOGGER = Logger.getLogger(MeasurementScheduler.class.getName());
+
+  private static final String LIGHT_RELAY_IDENTIFIER = "relay_line7";
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
@@ -38,10 +42,17 @@ public class MeasurementScheduler {
   @Transactional
   void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
+    Map<String, Boolean> relayState = new HashMap<>();
     if (greenhouseControl != null && greenhouseControl.online) {
       try {
         satelliteClient = satelliteService.createSatelliteClient(greenhouseControl.ip);
+        // SWITCH LIGHT ON BEFORE MEASURING
+        relayState.put(LIGHT_RELAY_IDENTIFIER, true);
+        satelliteClient.updateRelayState(relayState);
         JsonObject currentValues = satelliteClient.getMeasurements();
+        // SWITCH LIGHT OFF AFTER MEASURING
+        relayState.replace(LIGHT_RELAY_IDENTIFIER, false);
+        satelliteClient.updateRelayState(relayState);
         for (Sensor sensor : Sensor.<Sensor>listAll()) {
           if (currentValues.containsKey(sensor.identifier)) {
             Measurement measurement = new Measurement();
