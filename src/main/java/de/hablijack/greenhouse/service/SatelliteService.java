@@ -60,33 +60,34 @@ public class SatelliteService {
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   public boolean savePictureToDatabase() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
+    boolean success = false;
     if (greenhouseCamera != null && greenhouseCamera.online) {
       CameraPicture picture = CameraPicture.findExistingOrCreteNew();
       try {
         satelliteClient = createSatelliteClient(greenhouseCamera.ip);
       } catch (MalformedURLException error) {
         LOGGER.warning(error.getMessage());
-        return false;
       }
-      File file = satelliteClient.savePicture();
-      if (file.length() < MIN_FILE_SIZE) {
-        LOGGER.warning("Picture not saved! Image is too small...");
-        return false;
-      }
-      try (FileInputStream readStream = new FileInputStream(file)) {
-        picture.imageByte = readStream.readAllBytes();
-        picture.timestamp = new Date();
-        picture.persist();
-      } catch (FileNotFoundException error) {
+      try {
+        File file = satelliteClient.savePicture();
+        if (file.length() < MIN_FILE_SIZE) {
+          LOGGER.warning("Picture not saved! Image is too small...");
+        }
+        try (FileInputStream readStream = new FileInputStream(file)) {
+          picture.imageByte = readStream.readAllBytes();
+          picture.timestamp = new Date();
+          picture.persist();
+        } catch (FileNotFoundException error) {
+          LOGGER.warning(error.getMessage());
+        } catch (IOException error) {
+          LOGGER.warning(error.getMessage());
+        }
+        success = true;
+      } catch (Exception error) {
         LOGGER.warning(error.getMessage());
-        return false;
-      } catch (IOException error) {
-        LOGGER.warning(error.getMessage());
-        return false;
       }
-      return true;
     }
-    return false;
+    return success;
   }
 
 }

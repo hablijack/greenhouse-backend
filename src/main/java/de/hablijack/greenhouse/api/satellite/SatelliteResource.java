@@ -24,8 +24,8 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/backend")
 public class SatelliteResource {
-  
   private static final Logger LOGGER = Logger.getLogger(SatelliteResource.class.getName());
+
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
@@ -68,7 +68,7 @@ public class SatelliteResource {
       response = Response.serverError();
       response.entity("Could not take snapshot from camera!");
     } else {
-      TimeUnit.SECONDS.sleep(satelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
+      TimeUnit.SECONDS.sleep(SatelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
       success = satelliteService.savePictureToDatabase();
       if (!success) {
         response = Response.serverError();
