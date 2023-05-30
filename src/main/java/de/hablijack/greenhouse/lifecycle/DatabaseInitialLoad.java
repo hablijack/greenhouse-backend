@@ -381,19 +381,7 @@ public class DatabaseInitialLoad {
     relayFans.timeTrigger = fansTimeTrigger;
     new RelayLog(relayFans, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
-
-    Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
-    if (greenhouseCamera != null && greenhouseCamera.online) {
-      try {
-        satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
-        String pictureResponse = satelliteClient.takePicture();
-        if (!pictureResponse.equals("Taking Photo")) {
-          LOGGER.warning("Could not take new picture from greenhouse_cam");
-        }
-      } catch (Exception error) {
-        LOGGER.warning(error.getMessage());
-      }
-    }
+    satelliteService.takeCameraSnapshot();
 
     LOGGER.info("... database filled ...");
   }

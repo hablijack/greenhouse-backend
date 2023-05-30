@@ -34,18 +34,7 @@ public class CameraScheduler {
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   @Scheduled(every = "20m", concurrentExecution = SKIP)
   void takePicture() {
-    Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
-    if (greenhouseCamera != null && greenhouseCamera.online) {
-      try {
-        satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
-        String pictureResponse = satelliteClient.takePicture();
-        if (!pictureResponse.equals("Taking Photo")) {
-          LOGGER.warning("Could not take new picture from greenhouse_cam");
-        }
-      } catch (Exception error) {
-        LOGGER.warning(error.getMessage());
-      }
-    }
+    satelliteService.takeCameraSnapshot();
   }
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})

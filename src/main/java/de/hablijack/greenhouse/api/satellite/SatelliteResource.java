@@ -17,11 +17,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -65,27 +60,10 @@ public class SatelliteResource {
   @Path("/satellites/greenhouse-cam/snapshot")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   @Transactional
-  public Response takeSnapshot() throws MalformedURLException {
-    Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
-    if (greenhouseCamera != null && greenhouseCamera.online) {
-      Response.ResponseBuilder response = Response.ok("OK");
-      satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
-      File file = satelliteClient.savePicture();
-      CameraPicture picture = CameraPicture.findExistingOrCreteNew();
-      try (FileInputStream readStream = new FileInputStream(file)) {
-        picture.imageByte = readStream.readAllBytes();
-        picture.timestamp = new Date();
-        picture.persist();
-        return response.build();
-      } catch (IOException error) {
-        response = Response.notModified(error.getMessage());
-        LOGGER.warning(error.getMessage());
-        return response.build();
-      }
-    } else {
-      Response.ResponseBuilder response = Response.ok("NOT OK");
-      return response.build();
-    }
+  public Response takeSnapshot() {
+    satelliteService.takeCameraSnapshot();
+    Response.ResponseBuilder response = Response.ok();
+    return response.build();
   }
 
   @GET
