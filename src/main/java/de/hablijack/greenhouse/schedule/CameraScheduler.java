@@ -24,13 +24,14 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 public class CameraScheduler {
 
   private static final Logger LOGGER = Logger.getLogger(CameraScheduler.class.getName());
+  private static final long MIN_FILE_SIZE = 195000L;
 
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
   SatelliteService satelliteService;
 
-  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
+  /*@SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   @Scheduled(every = "20m", concurrentExecution = SKIP)
   void takePicture() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
@@ -45,16 +46,19 @@ public class CameraScheduler {
         LOGGER.warning(error.getMessage());
       }
     }
-  }
+  }*/
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
-  @Scheduled(every = "40m", concurrentExecution = SKIP)
+  @Scheduled(every = "23m", concurrentExecution = SKIP)
   @Transactional
   void savePictureToDatabase() throws MalformedURLException {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {
       satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
       File file = satelliteClient.savePicture();
+      if (file.length() < MIN_FILE_SIZE) {
+        return;
+      }
       CameraPicture picture = CameraPicture.findExistingOrCreteNew();
       try (FileInputStream readStream = new FileInputStream(file)) {
         picture.imageByte = readStream.readAllBytes();
