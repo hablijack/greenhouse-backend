@@ -31,7 +31,7 @@ public class CameraScheduler {
   @Inject
   SatelliteService satelliteService;
 
-  /*@SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
+  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   @Scheduled(every = "20m", concurrentExecution = SKIP)
   void takePicture() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
@@ -46,7 +46,7 @@ public class CameraScheduler {
         LOGGER.warning(error.getMessage());
       }
     }
-  }*/
+  }
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   @Scheduled(every = "23m", concurrentExecution = SKIP)
