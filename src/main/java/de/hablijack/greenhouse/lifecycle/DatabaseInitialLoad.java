@@ -7,13 +7,17 @@ import de.hablijack.greenhouse.entity.RelayLog;
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.entity.TimeTrigger;
+import de.hablijack.greenhouse.service.SatelliteService;
+import de.hablijack.greenhouse.webclient.SatelliteClient;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.logging.Logger;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @SuppressWarnings("checkstyle:RegexpSingleline")
 @Startup
@@ -39,6 +43,11 @@ public class DatabaseInitialLoad {
   private final Double MAX_LIGHT_VALUE = 2800.0;
   private final Double MIN_SOIL_HUMIDITY_INSIDE = 10.0;
   private final Double MAX_SOIL_HUMIDITY_INSIDE = 30.0;
+
+  @RestClient
+  SatelliteClient satelliteClient;
+  @Inject
+  SatelliteService satelliteService;
 
   @Transactional
   @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength", "PMD"})
@@ -371,6 +380,20 @@ public class DatabaseInitialLoad {
     relayFans.conditionTrigger = fansConditionalTrigger;
     relayFans.timeTrigger = fansTimeTrigger;
     new RelayLog(relayFans, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
+
+
+    Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
+    if (greenhouseCamera != null && greenhouseCamera.online) {
+      try {
+        satelliteClient = satelliteService.createSatelliteClient(greenhouseCamera.ip);
+        String pictureResponse = satelliteClient.takePicture();
+        if (!pictureResponse.equals("Taking Photo")) {
+          LOGGER.warning("Could not take new picture from greenhouse_cam");
+        }
+      } catch (Exception error) {
+        LOGGER.warning(error.getMessage());
+      }
+    }
 
     LOGGER.info("... database filled ...");
   }
