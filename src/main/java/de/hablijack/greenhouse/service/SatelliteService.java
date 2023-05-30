@@ -2,6 +2,7 @@ package de.hablijack.greenhouse.service;
 
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +29,7 @@ public class SatelliteService {
         .build(SatelliteClient.class);
   }
 
+  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
   public void takeCameraSnapshot() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {
