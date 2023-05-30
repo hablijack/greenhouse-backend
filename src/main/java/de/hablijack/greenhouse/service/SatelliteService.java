@@ -57,7 +57,8 @@ public class SatelliteService {
     return false;
   }
 
-  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
+  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+      "REC_CATCH_EXCEPTION"})
   public boolean savePictureToDatabase() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {
