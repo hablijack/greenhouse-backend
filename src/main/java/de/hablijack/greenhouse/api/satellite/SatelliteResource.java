@@ -61,8 +61,11 @@ public class SatelliteResource {
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   @Transactional
   public Response takeSnapshot() {
-    satelliteService.takeCameraSnapshot();
+    boolean result = satelliteService.takeCameraSnapshot();
     Response.ResponseBuilder response = Response.ok();
+    if (!result) {
+      response = Response.serverError();
+    }
     return response.build();
   }
 

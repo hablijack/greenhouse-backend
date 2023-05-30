@@ -381,8 +381,16 @@ public class DatabaseInitialLoad {
     relayFans.timeTrigger = fansTimeTrigger;
     new RelayLog(relayFans, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
 
-    satelliteService.takeCameraSnapshot();
-
+    boolean success = satelliteService.takeCameraSnapshot();
+    if (success) {
+      success = satelliteService.savePictureToDatabase();
+      if (!success) {
+        LOGGER.warning("Could not save webcam picture to database!");
+      }
+    } else {
+      LOGGER.warning("Could not take a new webcam snapshot!");
+    }
+    
     LOGGER.info("... database filled ...");
   }
 }

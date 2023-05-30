@@ -1,11 +1,17 @@
 package de.hablijack.greenhouse.service;
 
+import de.hablijack.greenhouse.entity.CameraPicture;
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
@@ -17,6 +23,8 @@ public class SatelliteService {
   private static final Logger LOGGER = Logger.getLogger(SatelliteService.class.getName());
   private static final Long CONNECT_TIMEOUT = 10000L;
   private static final Long READ_TIMEOUT = 10000L;
+  private static final long MIN_FILE_SIZE = 195000L;
+
 
   @RestClient
   SatelliteClient satelliteClient;
@@ -30,7 +38,7 @@ public class SatelliteService {
   }
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
-  public void takeCameraSnapshot() {
+  public boolean takeCameraSnapshot() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {
       try {
@@ -38,10 +46,48 @@ public class SatelliteService {
         String pictureResponse = satelliteClient.takePicture();
         if (!pictureResponse.equals("Taking Photo")) {
           LOGGER.warning("Could not take new picture from greenhouse_cam");
+          return false;
+        } else {
+          return true;
         }
       } catch (Exception error) {
         LOGGER.warning(error.getMessage());
+        return false;
       }
     }
+    return false;
   }
+
+  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
+  public boolean savePictureToDatabase() {
+    Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
+    if (greenhouseCamera != null && greenhouseCamera.online) {
+      CameraPicture picture = CameraPicture.findExistingOrCreteNew();
+      try {
+        satelliteClient = createSatelliteClient(greenhouseCamera.ip);
+      } catch (MalformedURLException error) {
+        LOGGER.warning(error.getMessage());
+        return false;
+      }
+      File file = satelliteClient.savePicture();
+      if (file.length() < MIN_FILE_SIZE) {
+        LOGGER.warning("Picture not saved! Image is too small...");
+        return false;
+      }
+      try (FileInputStream readStream = new FileInputStream(file)) {
+        picture.imageByte = readStream.readAllBytes();
+        picture.timestamp = new Date();
+        picture.persist();
+      } catch (FileNotFoundException error) {
+        LOGGER.warning(error.getMessage());
+        return false;
+      } catch (IOException error) {
+        LOGGER.warning(error.getMessage());
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
 }
