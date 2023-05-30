@@ -5,6 +5,7 @@ import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,7 +25,7 @@ public class SatelliteService {
   private static final Logger LOGGER = Logger.getLogger(SatelliteService.class.getName());
   private static final Long CONNECT_TIMEOUT = 10000L;
   private static final Long READ_TIMEOUT = 10000L;
-  private static final long MIN_FILE_SIZE = 195000L;
+  private static final long MIN_FILE_SIZE = 100000L;
   @RestClient
   SatelliteClient satelliteClient;
 
@@ -59,6 +60,7 @@ public class SatelliteService {
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
       "REC_CATCH_EXCEPTION"})
+  @Transactional
   public boolean savePictureToDatabase() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {
@@ -79,6 +81,7 @@ public class SatelliteService {
           picture.imageByte = readStream.readAllBytes();
           picture.timestamp = new Date();
           picture.persist();
+          return true;
         } catch (FileNotFoundException error) {
           LOGGER.warning(error.getMessage());
         } catch (IOException error) {
@@ -90,7 +93,7 @@ public class SatelliteService {
         return false;
       }
     }
-    return true;
+    return false;
   }
 
 }

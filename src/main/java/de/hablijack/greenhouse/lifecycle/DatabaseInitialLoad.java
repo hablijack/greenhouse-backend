@@ -392,7 +392,6 @@ public class DatabaseInitialLoad {
     } else {
       LOGGER.warning("Could not take a new webcam snapshot!");
     }
-
     LOGGER.info("... database filled ...");
   }
 }
