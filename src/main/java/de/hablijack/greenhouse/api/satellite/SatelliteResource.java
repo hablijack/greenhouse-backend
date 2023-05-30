@@ -18,12 +18,13 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/backend")
 public class SatelliteResource {
-
+  
   private static final Logger LOGGER = Logger.getLogger(SatelliteResource.class.getName());
   @RestClient
   SatelliteClient satelliteClient;
@@ -60,11 +61,19 @@ public class SatelliteResource {
   @Path("/satellites/greenhouse-cam/snapshot")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   @Transactional
-  public Response takeSnapshot() {
-    boolean result = satelliteService.takeCameraSnapshot();
+  public Response takeSnapshot() throws InterruptedException {
+    boolean success = satelliteService.takeCameraSnapshot();
     Response.ResponseBuilder response = Response.ok();
-    if (!result) {
+    if (!success) {
       response = Response.serverError();
+      response.entity("Could not take snapshot from camera!");
+    } else {
+      TimeUnit.SECONDS.sleep(satelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
+      success = satelliteService.savePictureToDatabase();
+      if (!success) {
+        response = Response.serverError();
+        response.entity("Could not persist snapshot in database!");
+      }
     }
     return response.build();
   }

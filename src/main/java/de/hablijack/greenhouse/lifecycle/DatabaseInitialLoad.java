@@ -16,6 +16,7 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -51,7 +52,7 @@ public class DatabaseInitialLoad {
 
   @Transactional
   @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength", "PMD"})
-  public void initializeWithBaseData(@Observes StartupEvent event) {
+  public void initializeWithBaseData(@Observes StartupEvent event) throws InterruptedException {
     LOGGER.info("... filling database...");
     new Satellite(
         "greenhouse_cam",
@@ -383,6 +384,7 @@ public class DatabaseInitialLoad {
 
     boolean success = satelliteService.takeCameraSnapshot();
     if (success) {
+      TimeUnit.SECONDS.sleep(SatelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
       success = satelliteService.savePictureToDatabase();
       if (!success) {
         LOGGER.warning("Could not save webcam picture to database!");
@@ -390,7 +392,7 @@ public class DatabaseInitialLoad {
     } else {
       LOGGER.warning("Could not take a new webcam snapshot!");
     }
-    
+
     LOGGER.info("... database filled ...");
   }
 }
