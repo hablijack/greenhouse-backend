@@ -38,7 +38,7 @@ public class CameraScheduler {
   void savePictureToDatabase() throws MalformedURLException {
     boolean success = satelliteService.savePictureToDatabase();
     if (!success) {
-      LOGGER.warning("Could not persist webcam imaage to database!");
+      LOGGER.warning("Could not persist webcam image to database!");
     }
   }
 }

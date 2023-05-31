@@ -55,7 +55,7 @@ public class RelayResource {
   @Path("/relays")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public List<Relay> getAllRelays() {
-    return Relay.listAll();
+    return Relay.list("order by sortkey");
   }
 
   @POST

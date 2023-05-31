@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "relay", schema = "greenhouse")
 @SuppressFBWarnings(
-    value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
+    value = {"UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"},
     justification = "Yes we fill dependencies in dbinit"
 )
 public class Relay extends PanacheEntity {
@@ -31,6 +31,8 @@ public class Relay extends PanacheEntity {
   public String icon;
   @Column(name = "color", nullable = false)
   public String color;
+  @Column(name = "sortkey", nullable = false)
+  public int sortkey;
 
   @OneToOne(fetch = FetchType.LAZY)
   public ConditionTrigger conditionTrigger;
@@ -45,7 +47,7 @@ public class Relay extends PanacheEntity {
   }
 
   public Relay(String identifier, String name, String target, boolean value, String description, String icon,
-               String color, Satellite satellite) {
+               String color, Satellite satellite, int sortkey) {
     this.identifier = identifier;
     this.name = name;
     this.value = value;
@@ -54,6 +56,7 @@ public class Relay extends PanacheEntity {
     this.color = color;
     this.satellite = satellite;
     this.target = target;
+    this.sortkey = sortkey;
   }
 
   public static Relay findByIdentifier(String id) {

@@ -16,7 +16,6 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -77,7 +76,9 @@ public class DatabaseInitialLoad {
         "Themperatur innerhalb des Gewächshauses",
         "mdi-thermometer",
         MIN_AIR_INSIDE_TEMP,
-        MAX_AIR_INSIDE_TEMP).persistIfNotExist();
+        MAX_AIR_INSIDE_TEMP,
+        1,
+        true).persistIfNotExist();
     new Measurement(airTempInside, 20.5, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor airTempOutside = new Sensor(
@@ -88,7 +89,9 @@ public class DatabaseInitialLoad {
         "Themperatur außerhalb des Gewächshauses",
         "mdi-thermometer",
         MIN_AIR_OUTSIDE_TEMP,
-        MAX_AIR_OUTSIDE_TEMP).persistIfNotExist();
+        MAX_AIR_OUTSIDE_TEMP,
+        2,
+        true).persistIfNotExist();
     new Measurement(airTempOutside, 18.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilTempInside = new Sensor(
@@ -99,7 +102,9 @@ public class DatabaseInitialLoad {
         "Themperatur der Erde im Gewächshaus",
         "mdi-thermometer",
         MIN_SOIL_TEMP,
-        MAX_SOIL_TEMP).persistIfNotExist();
+        MAX_SOIL_TEMP,
+        3,
+        true).persistIfNotExist();
     new Measurement(soilTempInside, 14.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor battery = new Sensor(
@@ -110,7 +115,9 @@ public class DatabaseInitialLoad {
         "Ladezustand der Relay-Batterie",
         "mdi-battery",
         MIN_BATTERY,
-        MAX_BATTERY).persistIfNotExist();
+        MAX_BATTERY,
+        14,
+        false).persistIfNotExist();
     new Measurement(battery, 90.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor airHumidityInside = new Sensor(
@@ -121,7 +128,9 @@ public class DatabaseInitialLoad {
         "Luftfeuchte im Gewächshaus",
         "mdi-water",
         MIN_AIR_HUMIDITY_INSIDE,
-        MAX_AIR_HUMIDITY_INSIDE).persistIfNotExist();
+        MAX_AIR_HUMIDITY_INSIDE,
+        4,
+        true).persistIfNotExist();
     new Measurement(airHumidityInside, 99.1, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor wifi = new Sensor(
@@ -132,7 +141,9 @@ public class DatabaseInitialLoad {
         "W-Lan Empfangsstärke im Gewächshaus",
         "mdi-wifi",
         MIN_WIFI_STRENGTH,
-        MAX_WIFI_STRENGTH).persistIfNotExist();
+        MAX_WIFI_STRENGTH,
+        7,
+        true).persistIfNotExist();
     new Measurement(wifi, 70.0, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor brightness = new Sensor(
@@ -143,7 +154,9 @@ public class DatabaseInitialLoad {
         "Intensität der Sonneneinstrahlung im Gewächshaus",
         "mdi-white-balance-sunny",
         MIN_LIGHT_VALUE,
-        MAX_LIGHT_VALUE).persistIfNotExist();
+        MAX_LIGHT_VALUE,
+        6,
+        true).persistIfNotExist();
     new Measurement(brightness, 1800.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor co2 = new Sensor(
@@ -154,7 +167,9 @@ public class DatabaseInitialLoad {
         "CO2 Sättigung im Gewächshaus",
         "mdi-soundcloud",
         MIN_CO2_VALUE,
-        MAX_CO2_VALUE).persistIfNotExist();
+        MAX_CO2_VALUE,
+        5,
+        true).persistIfNotExist();
     new Measurement(co2, 7000.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine1 = new Sensor(
@@ -165,7 +180,9 @@ public class DatabaseInitialLoad {
         "Bodenfeuchte in Pflanzspur 1",
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
-        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+        MAX_SOIL_HUMIDITY_INSIDE,
+        8,
+        true).persistIfNotExist();
     new Measurement(soilHumidityLine1, 70.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine2 = new Sensor(
@@ -176,7 +193,9 @@ public class DatabaseInitialLoad {
         "Bodenfeuchte in Pflanzspur 2",
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
-        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+        MAX_SOIL_HUMIDITY_INSIDE,
+        9,
+        true).persistIfNotExist();
     new Measurement(soilHumidityLine2, 74.2, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine3 = new Sensor(
@@ -187,7 +206,9 @@ public class DatabaseInitialLoad {
         "Bodenfeuchte in Pflanzspur 3",
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
-        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+        MAX_SOIL_HUMIDITY_INSIDE,
+        10,
+        true).persistIfNotExist();
     new Measurement(soilHumidityLine3, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine4 = new Sensor(
@@ -198,7 +219,9 @@ public class DatabaseInitialLoad {
         "Bodenfeuchte in Pflanzspur 4",
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
-        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+        MAX_SOIL_HUMIDITY_INSIDE,
+        11,
+        true).persistIfNotExist();
     new Measurement(soilHumidityLine4, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine5 = new Sensor(
@@ -209,7 +232,9 @@ public class DatabaseInitialLoad {
         "Bodenfeuchte in Pflanzspur 5",
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
-        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+        MAX_SOIL_HUMIDITY_INSIDE,
+        12,
+        true).persistIfNotExist();
     new Measurement(soilHumidityLine5, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor soilHumidityLine6 = new Sensor(
@@ -220,7 +245,9 @@ public class DatabaseInitialLoad {
         "Bodenfeuchte in Pflanzspur 6",
         "mdi-water",
         MIN_SOIL_HUMIDITY_INSIDE,
-        MAX_SOIL_HUMIDITY_INSIDE).persistIfNotExist();
+        MAX_SOIL_HUMIDITY_INSIDE,
+        13,
+        true).persistIfNotExist();
     new Measurement(soilHumidityLine6, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Relay relayLine1 = new Relay(
@@ -231,7 +258,8 @@ public class DatabaseInitialLoad {
         "Bewässert Linie 1 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
         "#0067AF",
-        greenhouseControl).persistIfNotExist();
+        greenhouseControl,
+        1).persistIfNotExist();
     ConditionTrigger line1ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine1, false, relayLine1).persistIfNotExist();
     TimeTrigger line1TimeTrigger = new TimeTrigger(
@@ -252,7 +280,8 @@ public class DatabaseInitialLoad {
         "Bewässert Linie 2 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
         "#0067AF",
-        greenhouseControl).persistIfNotExist();
+        greenhouseControl,
+        2).persistIfNotExist();
     ConditionTrigger line2ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine2, false, relayLine2).persistIfNotExist();
     TimeTrigger line2TimeTrigger = new TimeTrigger(
@@ -272,7 +301,8 @@ public class DatabaseInitialLoad {
         "Bewässert Linie3 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
         "#0067AF",
-        greenhouseControl
+        greenhouseControl,
+        3
     ).persistIfNotExist();
     ConditionTrigger line3ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine3, false, relayLine3).persistIfNotExist();
@@ -293,7 +323,9 @@ public class DatabaseInitialLoad {
         "Bewässert Linie4 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
         "#0067AF",
-        greenhouseControl).persistIfNotExist();
+        greenhouseControl,
+        4
+    ).persistIfNotExist();
     ConditionTrigger line4ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine4, false, relayLine4).persistIfNotExist();
     TimeTrigger line4TimeTrigger = new TimeTrigger(
@@ -313,7 +345,9 @@ public class DatabaseInitialLoad {
         "Bewässert Linie5 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
         "#0067AF",
-        greenhouseControl).persistIfNotExist();
+        greenhouseControl,
+        5
+    ).persistIfNotExist();
     ConditionTrigger line5ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine5, false, relayLine5).persistIfNotExist();
     TimeTrigger line5TimeTrigger = new TimeTrigger(
@@ -333,7 +367,9 @@ public class DatabaseInitialLoad {
         "Bewässert Linie6 gezielt in Wurzelnähe und damit sparsam, weil das Wasser genau da ankommt, wo es hin soll",
         "mdi-water",
         "#0067AF",
-        greenhouseControl).persistIfNotExist();
+        greenhouseControl,
+        6
+    ).persistIfNotExist();
     ConditionTrigger line6ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine6, false, relayLine6).persistIfNotExist();
     TimeTrigger line6TimeTrigger = new TimeTrigger(
@@ -353,7 +389,9 @@ public class DatabaseInitialLoad {
         "Mit der LED-Decken-Beleuchtung kann das Wachstum und die Qualität von Gemüse gesteigert werden.",
         "mdi-white-balance-sunny",
         "#A092EB",
-        greenhouseControl).persistIfNotExist();
+        greenhouseControl,
+        7
+    ).persistIfNotExist();
     ConditionTrigger lightConditionalTrigger = new ConditionTrigger(brightness, false, relayLight).persistIfNotExist();
     TimeTrigger lightTimeTrigger = new TimeTrigger(
         "0-2 8,12,18 * * *",
@@ -372,7 +410,9 @@ public class DatabaseInitialLoad {
         "Durch die richtige Verwendung von Ventilatoren wird die Luft rund um die Pflanze sanft vermischt, wodurch krankheitsfördernde Bereiche mit hoher Luftfeuchtigkeit beseitigt werden und eine starke Transpiration gefördert wird.",
         "mdi-fan",
         "#C89542",
-        greenhouseControl).persistIfNotExist();
+        greenhouseControl,
+        8
+    ).persistIfNotExist();
     ConditionTrigger fansConditionalTrigger = new ConditionTrigger(airTempInside, false, relayFans).persistIfNotExist();
     TimeTrigger fansTimeTrigger = new TimeTrigger(
         "0-2 8,12,18 * * *",
@@ -381,17 +421,6 @@ public class DatabaseInitialLoad {
     relayFans.conditionTrigger = fansConditionalTrigger;
     relayFans.timeTrigger = fansTimeTrigger;
     new RelayLog(relayFans, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
-
-    boolean success = satelliteService.takeCameraSnapshot();
-    if (success) {
-      TimeUnit.SECONDS.sleep(SatelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
-      success = satelliteService.savePictureToDatabase();
-      if (!success) {
-        LOGGER.warning("Could not save webcam picture to database!");
-      }
-    } else {
-      LOGGER.warning("Could not take a new webcam snapshot!");
-    }
     LOGGER.info("... database filled ...");
   }
 }

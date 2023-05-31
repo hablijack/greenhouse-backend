@@ -25,7 +25,7 @@ public class SatelliteService {
   private static final Logger LOGGER = Logger.getLogger(SatelliteService.class.getName());
   private static final Long CONNECT_TIMEOUT = 10000L;
   private static final Long READ_TIMEOUT = 10000L;
-  private static final long MIN_FILE_SIZE = 100000L;
+  private static final long MIN_FILE_SIZE = 10000L;
   @RestClient
   SatelliteClient satelliteClient;
 

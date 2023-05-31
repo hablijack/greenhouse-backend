@@ -1,5 +1,6 @@
 package de.hablijack.greenhouse.entity;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +10,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "sensor", schema = "greenhouse")
+@SuppressFBWarnings(
+    value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
+    justification = "Yes we fill dependencies in dbinit"
+)
 public class Sensor extends PanacheEntity {
 
   private static final int DAYS_A_WEEK = 7;
@@ -39,12 +44,17 @@ public class Sensor extends PanacheEntity {
   @Column(name = "max_alarm_value", nullable = false)
   public Double maxAlarmValue;
 
+  @Column(name = "sortkey", nullable = false)
+  public int sortkey;
+
+  @Column(name = "visible", nullable = false)
+  public boolean visible;
+
   public Sensor() {
   }
 
   public Sensor(String identifier, String name, String unit, Integer decimals, String description, String icon,
-                Double minAlarmValue,
-                Double maxAlarmValue) {
+                Double minAlarmValue, Double maxAlarmValue, int sortkey, boolean visible) {
     this.identifier = identifier;
     this.name = name;
     this.unit = unit;
@@ -53,6 +63,8 @@ public class Sensor extends PanacheEntity {
     this.icon = icon;
     this.minAlarmValue = minAlarmValue;
     this.maxAlarmValue = maxAlarmValue;
+    this.visible = visible;
+    this.sortkey = sortkey;
   }
 
   public static Sensor findByIdentifier(String id) {
