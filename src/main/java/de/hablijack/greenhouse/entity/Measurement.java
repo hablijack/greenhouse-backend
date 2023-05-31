@@ -10,12 +10,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity
 @Table(name = "measurement", schema = "greenhouse")
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class Measurement extends PanacheEntity {
+
+  private static final int ONE_MONTH_PAST_IN_DAYS = -31;
 
   @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +38,13 @@ public class Measurement extends PanacheEntity {
     this.sensor = sensor;
     this.value = value;
     this.timestamp = timestamp;
+  }
+
+  public static void cleanupOldEntries() {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date());
+    cal.add(Calendar.DATE, ONE_MONTH_PAST_IN_DAYS);
+    delete("timestamp<=?1", cal.getTime());
   }
 
   public void persistIfInitForThisSensor() {

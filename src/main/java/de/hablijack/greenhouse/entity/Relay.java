@@ -31,7 +31,7 @@ public class Relay extends PanacheEntity {
   public String icon;
   @Column(name = "color", nullable = false)
   public String color;
-  @Column(name = "sortkey", nullable = false)
+  @Column(name = "sortkey")
   public int sortkey;
 
   @OneToOne(fetch = FetchType.LAZY)

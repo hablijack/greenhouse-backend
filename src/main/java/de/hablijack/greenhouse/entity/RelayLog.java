@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,14 +19,13 @@ import java.util.List;
 @Table(name = "relay_log", schema = "greenhouse")
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class RelayLog extends PanacheEntity {
+  private static final int ONE_MONTH_PAST_IN_DAYS = -31;
   @Column(name = "initiator", nullable = false)
   public String initiator;
   @Column(name = "timestamp", nullable = false)
   public Date timestamp;
-
   @Column(name = "value", nullable = false)
   public boolean value;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JsonManagedReference
   public Relay relay;
@@ -44,6 +44,13 @@ public class RelayLog extends PanacheEntity {
     RelayLog lastAction = (RelayLog) RelayLog.find("relay=?1 ORDER BY timestamp DESC", relay).range(0, 1).list().get(0);
     return !lastAction.initiator.equals(QUARKUS_TIME_TRIGGER)
         && !lastAction.initiator.equals(QUARKUS_CONDITION_TRIGGER) && lastAction.value;
+  }
+
+  public static void cleanupOldEntries() {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date());
+    cal.add(Calendar.DATE, ONE_MONTH_PAST_IN_DAYS);
+    delete("timestamp<=?1", cal.getTime());
   }
 
   public static List<RelayLog> getRecentLog(int maxEntries) {

@@ -44,10 +44,10 @@ public class Sensor extends PanacheEntity {
   @Column(name = "max_alarm_value", nullable = false)
   public Double maxAlarmValue;
 
-  @Column(name = "sortkey", nullable = false)
+  @Column(name = "sortkey")
   public int sortkey;
 
-  @Column(name = "visible", nullable = false)
+  @Column(name = "visible")
   public boolean visible;
 
   public Sensor() {
