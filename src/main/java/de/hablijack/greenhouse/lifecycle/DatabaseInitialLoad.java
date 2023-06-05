@@ -33,14 +33,14 @@ public class DatabaseInitialLoad {
   private final Double MAX_SOIL_TEMP = 40.0;
   private final Double MIN_BATTERY = 60.0;
   private final Double MAX_BATTERY = 100.0;
-  private final Double MIN_AIR_HUMIDITY_INSIDE = 15.0;
-  private final Double MAX_AIR_HUMIDITY_INSIDE = 40.0;
+  private final Double MIN_AIR_HUMIDITY_INSIDE = 50.0;
+  private final Double MAX_AIR_HUMIDITY_INSIDE = 70.0;
   private final Double MIN_WIFI_STRENGTH = 60.0;
   private final Double MAX_WIFI_STRENGTH = 100.0;
   private final Double MIN_CO2_VALUE = 300.0;
   private final Double MAX_CO2_VALUE = 2800.0;
-  private final Double MIN_LIGHT_VALUE = 1000.0;
-  private final Double MAX_LIGHT_VALUE = 2800.0;
+  private final Double MIN_LIGHT_VALUE = 3000.0;
+  private final Double MAX_LIGHT_VALUE = 7000.0;
   private final Double MIN_SOIL_HUMIDITY_INSIDE = 10.0;
   private final Double MAX_SOIL_HUMIDITY_INSIDE = 30.0;
 
@@ -136,7 +136,7 @@ public class DatabaseInitialLoad {
     Sensor wifi = new Sensor(
         "wifi",
         "WiFi",
-        "%",
+        "dBm",
         0,
         "W-Lan Empfangsstärke im Gewächshaus",
         "mdi-wifi",
@@ -149,7 +149,7 @@ public class DatabaseInitialLoad {
     Sensor brightness = new Sensor(
         "brightness",
         "Helligkeit",
-        "%",
+        "lux",
         0,
         "Intensität der Sonneneinstrahlung im Gewächshaus",
         "mdi-white-balance-sunny",
@@ -162,7 +162,7 @@ public class DatabaseInitialLoad {
     Sensor co2 = new Sensor(
         "co2",
         "CO2",
-        "ppa",
+        "ppm",
         0,
         "CO2 Sättigung im Gewächshaus",
         "mdi-soundcloud",
@@ -249,6 +249,19 @@ public class DatabaseInitialLoad {
         13,
         true).persistIfNotExist();
     new Measurement(soilHumidityLine6, 88.8, new Date()).persistIfInitForThisSensor();
+    /* ============================================================================================================= */
+    Sensor rainIndicator = new Sensor(
+        "rain_indicator",
+        "Regensensor",
+        "%",
+        0,
+        "Regen oder nicht",
+        "mdi-water",
+        MIN_SOIL_HUMIDITY_INSIDE,
+        MAX_SOIL_HUMIDITY_INSIDE,
+        13,
+        true).persistIfNotExist();
+    new Measurement(rainIndicator, 0.0, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Relay relayLine1 = new Relay(
         "relay_line1",

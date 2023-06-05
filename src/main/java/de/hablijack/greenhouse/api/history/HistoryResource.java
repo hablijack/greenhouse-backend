@@ -8,6 +8,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.jboss.resteasy.reactive.RestQuery;
 @Path("/backend")
 public class HistoryResource {
 
-  private final int BORDER_WIDTH = 6;
+  private final int BORDER_WIDTH = 4;
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -78,7 +79,7 @@ public class HistoryResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("history/wifi")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<ChartjsDataset> getWifiStrengthHistory(@RestQuery String timerange) {
+  public List<ChartjsDataset> getWifiStrengthHistory(@QueryParam("timerange") String timerange) {
     if (timerange == null) {
       timerange = "week";
     }
@@ -100,7 +101,7 @@ public class HistoryResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("history/co2")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<ChartjsDataset> getCO2History(@RestQuery String timerange) {
+  public List<ChartjsDataset> getCO2History(@QueryParam("timerange") String timerange) {
     if (timerange == null) {
       timerange = "week";
     }
@@ -122,7 +123,7 @@ public class HistoryResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("history/brightness")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<ChartjsDataset> getBrightnessHistory(@RestQuery String timerange) {
+  public List<ChartjsDataset> getBrightnessHistory(@QueryParam("timerange") String timerange) {
     if (timerange == null) {
       timerange = "week";
     }
@@ -144,7 +145,7 @@ public class HistoryResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("history/battery")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<ChartjsDataset> getBatteryistory(@RestQuery String timerange) {
+  public List<ChartjsDataset> getBatteryistory(@QueryParam("timerange") String timerange) {
     if (timerange == null) {
       timerange = "week";
     }
