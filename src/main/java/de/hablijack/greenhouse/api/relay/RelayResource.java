@@ -42,8 +42,9 @@ public class RelayResource {
   @RestClient
   SatelliteClient satelliteClient;
 
+  @SuppressFBWarnings()
   public RelayResource() throws URISyntaxException, DeploymentException, IOException {
-    objectMapper = new ObjectMapper();
+    this.objectMapper = new ObjectMapper();
     this.session = ContainerProvider.getWebSocketContainer().connectToServer(
         Client.class,
         new URI("ws://localhost:8080/backend/relays/socket/system")
