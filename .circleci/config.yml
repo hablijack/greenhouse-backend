@@ -40,7 +40,7 @@ jobs:
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker buildx create --name armbuilder
             docker buildx use armbuilder
-            docker buildx build --platform linux/amd64,linux/arm64 -t hablijack/greenhouse-backend:2.10.4 --push .
+            docker buildx build -f ./src/main/docker/Dockerfile.native --platform linux/amd64,linux/arm64 -t hablijack/greenhouse-backend:2.10.4 --push .
 
 workflows:
   version: 2
