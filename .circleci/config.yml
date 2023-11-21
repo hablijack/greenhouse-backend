@@ -33,9 +33,6 @@ jobs:
             mv graalvm-community-openjdk-21.0.1+12.1/ .graalvm
             rm graalvm-community-jdk-21.0.1_linux-aarch64_bin.tar.gz
       - run:
-          name: Install native-image
-          command: $GRAALVM_HOME/bin/gu install native-image
-      - run:
           name: Build (Native)
           command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
           no_output_timeout: 30m
