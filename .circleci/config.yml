@@ -30,7 +30,7 @@ jobs:
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker buildx create --name armbuilder
             docker buildx use armbuilder
-            docker buildx build --platform linux/amd64,linux/arm64 -t hablijack/greenhouse-backend:2.10.4 --push .
+            docker buildx build --platform linux/arm64 -t hablijack/greenhouse-backend:2.10.4 --push .
     no_output_timeout: 30m
 
 workflows:
