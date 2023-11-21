@@ -3,6 +3,7 @@ USER root
 RUN mkdir -p /app
 WORKDIR /app
 COPY . .
+RUN ls -lisa
 RUN ./mvnw package -B -DskipTests -Dmaven.test.skip=true -Dquarkus.native.additional-build-args=-march=native -Pnative
 
 FROM quay.io/quarkus/quarkus-micro-image:2.0
