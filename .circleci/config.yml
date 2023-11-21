@@ -17,21 +17,36 @@ jobs:
           command: ./mvnw clean compile checkstyle:check
 
   build:
-    machine: true
-    resource_class: medium
+    machine:
+      image: ubuntu-2204:2023.07.1
+    resource_class: arm.medium
     working_directory: ~/repo
     environment:
       GRAALVM_HOME: /home/circleci/repo/.graalvm
     steps:
       - checkout
       - run:
+          name: Install GraalVM
+          command: | 
+            curl https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.2/graalvm-ce-java11-linux-amd64-22.3.2.tar.gz -O -J -L 
+            tar xfz graalvm-ce-java11-linux-amd64-22.3.2.tar.gz
+            mv graalvm-ce-java11-22.3.2 .graalvm
+            rm graalvm-ce-java11-linux-amd64-22.3.2.tar.gz
+      - run:
+          name: Install native-image
+          command: $GRAALVM_HOME/bin/gu install native-image
+      - run:
+          name: Build (Native)
+          command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
+          no_output_timeout: 30m
+      - run:
           name: Build and push Docker Image to Dockerhub
           command: |
+            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:2.10.3 .
+            docker build -f ./src/main/docker/Dockerfile.native -t hablijack/greenhouse-backend:2.10.4 .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx create --name armbuilder
-            docker buildx use armbuilder
-            docker buildx build --platform linux/arm64 -t hablijack/greenhouse-backend:2.10.4 --push .
-    no_output_timeout: 30m
+            docker push hablijack/greenhouse-backend:2.10.3
+            docker push hablijack/greenhouse-backend:2.10.4
 
 workflows:
   version: 2
