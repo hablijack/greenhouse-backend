@@ -67,6 +67,13 @@ public class DatabaseInitialLoad {
         "ESP32 Webserver mit Relays, Sensoren und Aktoren um das gesamte Gewächshaus fernzusteuern.",
         "192.168.178.37",
         true).persistIfNotExist();
+    Satellite wineSatellite = new Satellite(
+        "wine_satellite",
+        "Wein Bewässerung",
+        "satelite.png",
+        "ESP-Lolin32 Webserver mit einem Relays, um eine Pumpe für die Weinbewässerung anzustarten.",
+        "192.168.178.198",
+        true).persistIfNotExist();
     /* ============================================================================================================= */
     Sensor airTempInside = new Sensor(
         "air_temp_inside",
@@ -434,6 +441,25 @@ public class DatabaseInitialLoad {
     relayFans.conditionTrigger = fansConditionalTrigger;
     relayFans.timeTrigger = fansTimeTrigger;
     new RelayLog(relayFans, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
+
+    Relay relayWinePump = new Relay(
+        "relay_wine_pump",
+        "Wein Bewässerung Pumpe",
+        "Wein",
+        false,
+        "Schaltet die Pumpe für die Weinbewässerung um aus dem Regenfass zu saugen.",
+        "mdi-water",
+        "#0067AF",
+        wineSatellite,
+        9).persistIfNotExist();
+    TimeTrigger winePumpTimeTrigger = new TimeTrigger(
+        "0-2 8,18 * * *",
+        true,
+        relayWinePump
+    ).persistIfNotExist();
+    relayWinePump.timeTrigger = winePumpTimeTrigger;
+    relayLine1.persist();
+    new RelayLog(relayWinePump, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
     LOGGER.info("... database filled ...");
   }
 }
