@@ -452,11 +452,13 @@ public class DatabaseInitialLoad {
         "#0067AF",
         wineSatellite,
         9).persistIfNotExist();
+    ConditionTrigger wineConditionalTrigger = new ConditionTrigger(soilHumidityLine4, false, relayWinePump).persistIfNotExist();
     TimeTrigger winePumpTimeTrigger = new TimeTrigger(
-        "0-2 8,18 * * *",
+        "0-1 8,18 * * *",
         true,
         relayWinePump
     ).persistIfNotExist();
+    relayWinePump.conditionTrigger = wineConditionTrigger;
     relayWinePump.timeTrigger = winePumpTimeTrigger;
     relayLine1.persist();
     new RelayLog(relayWinePump, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
