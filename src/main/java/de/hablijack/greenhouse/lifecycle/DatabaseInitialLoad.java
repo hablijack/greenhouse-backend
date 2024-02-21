@@ -458,7 +458,7 @@ public class DatabaseInitialLoad {
         true,
         relayWinePump
     ).persistIfNotExist();
-    relayWinePump.conditionTrigger = wineConditionTrigger;
+    relayWinePump.conditionTrigger = wineConditionalTrigger;
     relayWinePump.timeTrigger = winePumpTimeTrigger;
     relayLine1.persist();
     new RelayLog(relayWinePump, "DB-INIT", new Date(), false).persistIfInitForThisRelay();
