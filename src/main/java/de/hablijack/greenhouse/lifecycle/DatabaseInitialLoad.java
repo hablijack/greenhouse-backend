@@ -268,6 +268,7 @@ public class DatabaseInitialLoad {
         MAX_SOIL_HUMIDITY_INSIDE,
         15,
         true).persistIfNotExist();
+    new Measurement(soilHumidityWine, 88.8, new Date()).persistIfInitForThisSensor();
     /* ============================================================================================================= */
     Sensor rainIndicator = new Sensor(
         "rain_indicator",
@@ -464,7 +465,8 @@ public class DatabaseInitialLoad {
         "#0067AF",
         wineSatellite,
         9).persistIfNotExist();
-    ConditionTrigger wineConditionalTrigger = new ConditionTrigger(soilHumidityWine, false, relayWinePump).persistIfNotExist();
+    ConditionTrigger wineConditionalTrigger =
+        new ConditionTrigger(soilHumidityWine, false, relayWinePump).persistIfNotExist();
     TimeTrigger winePumpTimeTrigger = new TimeTrigger(
         "0-1 8,18 * * *",
         true,

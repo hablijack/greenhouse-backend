@@ -11,6 +11,7 @@ import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.TransactionManager;
+import jakarta.transaction.Transactional;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
@@ -44,24 +45,24 @@ public class RelayLogSocket {
 
   @SuppressWarnings("checkstyle:MagicNumber")
   @OnOpen
+  @Transactional
   public void onOpen(Session session, @PathParam("userid") String userid) {
     sessions.put(userid, session);
-    managedExecutor.submit(() -> {
-      ObjectMapper objectMapper = new ObjectMapper();
-      try {
-        transactionManager.begin();
-        String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
-        transactionManager.commit();
-        session.getAsyncRemote().sendObject(jsonObject, result -> {
-          if (result.getException() != null) {
-            LOGGER.log(Level.ERROR, "Unable to send message!");
-          }
-        });
-      } catch (NotSupportedException | SystemException | JsonProcessingException | RollbackException
-               | HeuristicMixedException | HeuristicRollbackException e) {
-        throw new RuntimeException(e);
-      }
-    });
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      transactionManager.begin();
+      String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
+      transactionManager.commit();
+      session.getAsyncRemote().sendObject(jsonObject, result -> {
+        if (result.getException() != null) {
+          LOGGER.log(Level.ERROR, "Unable to send message!");
+        }
+      });
+    } catch (NotSupportedException | SystemException | JsonProcessingException | RollbackException
+             | HeuristicMixedException | HeuristicRollbackException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @OnMessage

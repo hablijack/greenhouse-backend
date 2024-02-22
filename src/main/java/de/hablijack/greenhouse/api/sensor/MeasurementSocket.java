@@ -5,12 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hablijack.greenhouse.service.SensorService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.HeuristicMixedException;
-import jakarta.transaction.HeuristicRollbackException;
-import jakarta.transaction.NotSupportedException;
-import jakarta.transaction.RollbackException;
-import jakarta.transaction.SystemException;
-import jakarta.transaction.TransactionManager;
+import jakarta.transaction.Transactional;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
@@ -28,29 +23,21 @@ public class MeasurementSocket {
   ManagedExecutor managedExecutor;
 
   @Inject
-  TransactionManager transactionManager;
-
-  @Inject
   SensorService sensorService;
 
   @OnOpen
+  @Transactional
   public void onOpen(Session session) {
-    managedExecutor.submit(() -> {
-      ObjectMapper objectMapper = new ObjectMapper();
-      try {
-        transactionManager.begin();
-        String jsonObject = null;
-        jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
-        transactionManager.commit();
-        session.getAsyncRemote().sendObject(jsonObject, result -> {
-          if (result.getException() != null) {
-            LOGGER.log(Level.ERROR, "Unable to send message!");
-          }
-        });
-      } catch (NotSupportedException | SystemException | JsonProcessingException | RollbackException
-               | HeuristicMixedException | HeuristicRollbackException e) {
-        throw new RuntimeException(e);
-      }
-    });
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      String jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
+      session.getAsyncRemote().sendObject(jsonObject, result -> {
+        if (result.getException() != null) {
+          LOGGER.log(Level.ERROR, "Unable to send message!");
+        }
+      });
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
