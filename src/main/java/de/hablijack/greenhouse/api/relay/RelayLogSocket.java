@@ -5,11 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hablijack.greenhouse.entity.RelayLog;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.HeuristicMixedException;
-import jakarta.transaction.HeuristicRollbackException;
-import jakarta.transaction.NotSupportedException;
-import jakarta.transaction.RollbackException;
-import jakarta.transaction.SystemException;
 import jakarta.transaction.TransactionManager;
 import jakarta.transaction.Transactional;
 import jakarta.websocket.OnClose;
@@ -51,16 +46,13 @@ public class RelayLogSocket {
 
     ObjectMapper objectMapper = new ObjectMapper();
     try {
-      transactionManager.begin();
       String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
-      transactionManager.commit();
       session.getAsyncRemote().sendObject(jsonObject, result -> {
         if (result.getException() != null) {
           LOGGER.log(Level.ERROR, "Unable to send message!");
         }
       });
-    } catch (NotSupportedException | SystemException | JsonProcessingException | RollbackException
-             | HeuristicMixedException | HeuristicRollbackException e) {
+    } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
   }
