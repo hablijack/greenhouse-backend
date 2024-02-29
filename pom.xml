@@ -108,7 +108,7 @@
             <plugin>
                 <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>3.7.4</version>
+                <version>3.8.1</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
