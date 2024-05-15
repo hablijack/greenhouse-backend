@@ -68,9 +68,10 @@ public class Sensor extends PanacheEntity {
   }
 
   public static Sensor findByIdentifier(String id) {
-    return Sensor.find("identifier = ?1", id).firstResult();
+    return find("identifier = ?1", id).firstResult();
   }
 
+  @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
   public Measurement findCurrentMeasurement() {
     return Measurement.find("sensor = ?1 ORDER BY timestamp DESC", this).firstResult();
   }
@@ -80,10 +81,11 @@ public class Sensor extends PanacheEntity {
       this.persist();
       return this;
     } else {
-      return (Sensor) find("identifier = ?1", identifier).list().get(0);
+      return find("identifier = ?1", identifier).firstResult();
     }
   }
 
+  @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
   public List<Measurement> findMeasurementsWithinTimeRange(String timeRange) {
     long days = 0;
     if (timeRange.equals("week")) {
@@ -94,6 +96,6 @@ public class Sensor extends PanacheEntity {
       days = ONE_DAY;
     }
     Date ago = new Date(System.currentTimeMillis() - (days * DAY_TO_MS_FACTOR));
-    return Measurement.find("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago).list();
+    return Measurement.list("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago);
   }
 }

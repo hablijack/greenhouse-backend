@@ -41,7 +41,7 @@ public class RelayLog extends PanacheEntity {
   }
 
   public static boolean isLastActionManualActivated(Relay relay) {
-    RelayLog lastAction = (RelayLog) RelayLog.find("relay=?1 ORDER BY timestamp DESC", relay).range(0, 1).list().get(0);
+    RelayLog lastAction = RelayLog.<RelayLog>find("relay=?1 ORDER BY timestamp DESC", relay).firstResult();
     return !lastAction.initiator.equals(QUARKUS_TIME_TRIGGER)
         && !lastAction.initiator.equals(QUARKUS_CONDITION_TRIGGER) && lastAction.value;
   }
@@ -54,7 +54,7 @@ public class RelayLog extends PanacheEntity {
   }
 
   public static List<RelayLog> getRecentLog(int maxEntries) {
-    return RelayLog.find("ORDER BY timestamp DESC").range(0, maxEntries).list();
+    return find("ORDER BY timestamp DESC").range(0, maxEntries).list();
   }
 
   public void persistIfInitForThisRelay() {

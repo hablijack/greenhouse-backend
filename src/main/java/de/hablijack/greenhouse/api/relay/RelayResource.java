@@ -23,7 +23,6 @@ import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -71,7 +70,7 @@ public class RelayResource {
       Relay relay = Relay.findByIdentifier(identifier);
       // TRIGGER REST ENDPOINT ON SATELLITE
       satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-          new URL("http://" + relay.satellite.ip)
+              URI.create("http://" + relay.satellite.ip).toURL()
       ).build(SatelliteClient.class);
       Map<String, Boolean> relayState = new HashMap<>();
       relayState.put(relay.identifier, event.getNewValue());
