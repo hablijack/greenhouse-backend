@@ -24,7 +24,7 @@ public class CameraScheduler {
   SatelliteService satelliteService;
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
-  @Scheduled(every = "20m", concurrentExecution = SKIP)
+  @Scheduled(every = "1m", concurrentExecution = SKIP)
   void takePicture() {
     boolean success = satelliteService.takeCameraSnapshot();
     if (!success) {

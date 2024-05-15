@@ -18,7 +18,7 @@ jobs:
 
   build:
     machine:
-      image: ubuntu-2204:2023.07.1
+      image: ubuntu-2204:2024.04.4
     resource_class: arm.medium
     working_directory: ~/repo
     environment:
@@ -28,10 +28,10 @@ jobs:
       - run:
           name: Install GraalVM
           command: |
-            curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.1/graalvm-community-jdk-21.0.1_linux-aarch64_bin.tar.gz -O -J -L 
-            tar xfz graalvm-community-jdk-21.0.1_linux-aarch64_bin.tar.gz
-            mv graalvm-community-openjdk-21.0.1+12.1/ .graalvm
-            rm graalvm-community-jdk-21.0.1_linux-aarch64_bin.tar.gz
+            curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_linux-aarch64_bin.tar.gz -O -J -L
+            tar xfz graalvm-community-jdk-22.0.1_linux-aarch64_bin.tar.gz
+            mv graalvm-community-openjdk-22.0.1+8.1/ .graalvm
+            rm graalvm-community-jdk-22.0.1_linux-aarch64_bin.tar.gz
       - run:
           name: Build (Native)
           command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
@@ -39,9 +39,9 @@ jobs:
       - run:
           name: Build and push Docker Image to Dockerhub
           command: |
-            docker build -t hablijack/greenhouse-backend:2.14.1 .
+            docker build -t hablijack/greenhouse-backend:2.15.0 .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push hablijack/greenhouse-backend:2.14.1
+            docker push hablijack/greenhouse-backend:2.15.0
 
 workflows:
   version: 2

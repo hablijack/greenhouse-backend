@@ -110,7 +110,7 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 void setup()
 {
   // FIRST OF ALL: configure all relays with their pins
-  relays.insert(std::make_pair("relay_line1", 19));
+  relays.insert(std::make_pair("relay_wine_pump", 19));
   for (it = relays.begin(); it != relays.end(); it++)
   {
     pinMode(it->second, OUTPUT);
