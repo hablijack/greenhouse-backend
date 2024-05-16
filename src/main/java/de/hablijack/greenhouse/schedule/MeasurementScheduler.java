@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRED;
 
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Satellite;
@@ -37,7 +38,7 @@ public class MeasurementScheduler {
   @Scheduled(every = "10m", concurrentExecution = SKIP)
   @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS",
       "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
-  @Transactional
+  @Transactional(REQUIRED)
   void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
     // Map<String, Boolean> relayState = new HashMap<>();

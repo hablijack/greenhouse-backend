@@ -60,7 +60,6 @@ public class SatelliteService {
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
       "REC_CATCH_EXCEPTION"})
-  @Transactional
   public boolean savePictureToDatabase() {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {

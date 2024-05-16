@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRED;
 
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.service.SatelliteService;
@@ -25,7 +26,7 @@ public class HealthCheckScheduler {
   SatelliteService satelliteService;
 
   @Scheduled(every = "1m", concurrentExecution = SKIP)
-  @Transactional
+  @Transactional(REQUIRED)
   void sateliteHealthCheck() {
     for (PanacheEntityBase entity : Satellite.listAll()) {
       Satellite satellite = (Satellite) entity;
@@ -34,7 +35,7 @@ public class HealthCheckScheduler {
         satelliteClient = satelliteService.createSatelliteClient(satellite.ip);
         JsonObject result = satelliteClient.healthcheck();
         String status = ((JsonString) result.get("status")).getString();
-        satellite.online = result != null && status.equals("ok");
+        satellite.online = status.equals("ok");
       } catch (Exception error) {
         if (!alreadyOffline) {
           LOGGER.warning(error.getMessage());

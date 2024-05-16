@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRED;
 
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
@@ -48,7 +49,7 @@ public class RelayScheduler {
 
   @SuppressFBWarnings("CRLF_INJECTION_LOGS")
   @Scheduled(every = "1m", concurrentExecution = SKIP)
-  @Transactional
+  @Transactional(REQUIRED)
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
