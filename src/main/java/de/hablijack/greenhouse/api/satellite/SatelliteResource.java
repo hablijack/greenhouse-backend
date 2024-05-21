@@ -17,6 +17,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -45,7 +47,7 @@ public class SatelliteResource {
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   @Transactional
   public Response getCurrentPicture() {
-    if (CameraPicture.findAll().list().size() > 0) {
+    if (!CameraPicture.findAll().list().isEmpty()) {
       CameraPicture picture = (CameraPicture) CameraPicture.findAll().list().get(0);
       Response.ResponseBuilder response = Response.ok(picture.imageByte);
       response.header("Content-Disposition", "inline; filename=\"picture.jpg\"");
@@ -61,20 +63,11 @@ public class SatelliteResource {
   @Path("/satellites/greenhouse-cam/snapshot")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   @Transactional
-  public Response takeSnapshot() throws InterruptedException {
-    boolean success = satelliteService.takeCameraSnapshot();
+  public Response takeSnapshot() throws InterruptedException, IOException, URISyntaxException {
+    satelliteService.takeCameraSnapshot();
     Response.ResponseBuilder response = Response.ok();
-    if (!success) {
-      response = Response.serverError();
-      response.entity("Could not take snapshot from camera!");
-    } else {
-      TimeUnit.SECONDS.sleep(SatelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
-      success = satelliteService.savePictureToDatabase();
-      if (!success) {
-        response = Response.serverError();
-        response.entity("Could not persist snapshot in database!");
-      }
-    }
+    TimeUnit.SECONDS.sleep(SatelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
+    satelliteService.savePictureToDatabase();
     return response.build();
   }
 
@@ -83,8 +76,7 @@ public class SatelliteResource {
   @Path("/satellite/{identifier}")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public Satellite findSatelliteByIdentifier(@PathParam("identifier") String identifier) {
-    Satellite satellite = Satellite.findByIdentifier(identifier);
-    return satellite;
+    return Satellite.findByIdentifier(identifier);
   }
 
   @POST

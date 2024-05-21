@@ -296,7 +296,7 @@ public class DatabaseInitialLoad {
     ConditionTrigger line1ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine1, false, relayLine1).persistIfNotExist();
     TimeTrigger line1TimeTrigger = new TimeTrigger(
-        "0-3 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         true,
         relayLine1
     ).persistIfNotExist();
@@ -318,7 +318,7 @@ public class DatabaseInitialLoad {
     ConditionTrigger line2ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine2, false, relayLine2).persistIfNotExist();
     TimeTrigger line2TimeTrigger = new TimeTrigger(
-        "3-6 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         true,
         relayLine2).persistIfNotExist();
     relayLine2.conditionTrigger = line2ConditionalTrigger;
@@ -340,7 +340,7 @@ public class DatabaseInitialLoad {
     ConditionTrigger line3ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine3, false, relayLine3).persistIfNotExist();
     TimeTrigger line3TimeTrigger = new TimeTrigger(
-        "6-9 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         true,
         relayLine3).persistIfNotExist();
     relayLine3.conditionTrigger = line3ConditionalTrigger;
@@ -362,7 +362,7 @@ public class DatabaseInitialLoad {
     ConditionTrigger line4ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine4, false, relayLine4).persistIfNotExist();
     TimeTrigger line4TimeTrigger = new TimeTrigger(
-        "9-12 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         true,
         relayLine4).persistIfNotExist();
     relayLine4.conditionTrigger = line4ConditionalTrigger;
@@ -384,7 +384,7 @@ public class DatabaseInitialLoad {
     ConditionTrigger line5ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine5, false, relayLine5).persistIfNotExist();
     TimeTrigger line5TimeTrigger = new TimeTrigger(
-        "12-15 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         true,
         relayLine5).persistIfNotExist();
     relayLine5.conditionTrigger = line5ConditionalTrigger;
@@ -406,7 +406,7 @@ public class DatabaseInitialLoad {
     ConditionTrigger line6ConditionalTrigger =
         new ConditionTrigger(soilHumidityLine6, false, relayLine6).persistIfNotExist();
     TimeTrigger line6TimeTrigger = new TimeTrigger(
-        "15-18 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         true,
         relayLine6).persistIfNotExist();
     relayLine6.conditionTrigger = line6ConditionalTrigger;
@@ -427,7 +427,7 @@ public class DatabaseInitialLoad {
     ).persistIfNotExist();
     ConditionTrigger lightConditionalTrigger = new ConditionTrigger(brightness, false, relayLight).persistIfNotExist();
     TimeTrigger lightTimeTrigger = new TimeTrigger(
-        "0-2 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         false,
         relayLight).persistIfNotExist();
     relayLight.conditionTrigger = lightConditionalTrigger;
@@ -448,7 +448,7 @@ public class DatabaseInitialLoad {
     ).persistIfNotExist();
     ConditionTrigger fansConditionalTrigger = new ConditionTrigger(airTempInside, false, relayFans).persistIfNotExist();
     TimeTrigger fansTimeTrigger = new TimeTrigger(
-        "0-2 8,12,18 * * *",
+        "0-30 0 8,17 ? * * *",
         false,
         relayFans).persistIfNotExist();
     relayFans.conditionTrigger = fansConditionalTrigger;
@@ -468,7 +468,7 @@ public class DatabaseInitialLoad {
     ConditionTrigger wineConditionalTrigger =
         new ConditionTrigger(soilHumidityWine, false, relayWinePump).persistIfNotExist();
     TimeTrigger winePumpTimeTrigger = new TimeTrigger(
-        "0-1 8,18 * * *",
+        "0-30 0 8,17 ? * * *",
         true,
         relayWinePump
     ).persistIfNotExist();

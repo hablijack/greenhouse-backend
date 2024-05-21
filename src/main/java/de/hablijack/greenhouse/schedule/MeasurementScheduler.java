@@ -1,7 +1,6 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
-import static jakarta.transaction.Transactional.TxType.REQUIRED;
 
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Satellite;
@@ -9,6 +8,7 @@ import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,7 +16,6 @@ import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -35,23 +34,18 @@ public class MeasurementScheduler {
   @Inject
   SatelliteService satelliteService;
 
+  private static final int TRANSACTION_TIMEOUT = 300;
+
   @Scheduled(every = "10m", concurrentExecution = SKIP)
   @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS",
-      "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
-  @Transactional(REQUIRED)
+      "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", "REC_CATCH_EXCEPTION"})
   void requestMeasurements() {
-    Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
-    // Map<String, Boolean> relayState = new HashMap<>();
-    if (greenhouseControl != null && greenhouseControl.online) {
-      try {
+    QuarkusTransaction.begin(QuarkusTransaction.beginOptions().timeout(TRANSACTION_TIMEOUT));
+    try {
+      Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
+      if (greenhouseControl != null && greenhouseControl.online) {
         satelliteClient = satelliteService.createSatelliteClient(greenhouseControl.ip);
-        // SWITCH LIGHT ON BEFORE MEASURING
-        // relayState.put(LIGHT_RELAY_IDENTIFIER, true);
-        // satelliteClient.updateRelayState(relayState);
         JsonObject currentValues = satelliteClient.getMeasurements();
-        // SWITCH LIGHT OFF AFTER MEASURING
-        // relayState.replace(LIGHT_RELAY_IDENTIFIER, false);
-        // satelliteClient.updateRelayState(relayState);
         for (Sensor sensor : Sensor.<Sensor>listAll()) {
           if (currentValues.containsKey(sensor.identifier)) {
             Measurement measurement = new Measurement();
@@ -73,9 +67,11 @@ public class MeasurementScheduler {
             }
           }
         }
-      } catch (Exception error) {
-        LOGGER.warning(error.getMessage());
       }
+    } catch (Exception exception) {
+      LOGGER.warning("ERROR on Measurement Scheduler: " + exception.getMessage());
+    } finally {
+      QuarkusTransaction.commit();
     }
   }
 }

@@ -70,7 +70,7 @@ public class RelayResource {
       Relay relay = Relay.findByIdentifier(identifier);
       // TRIGGER REST ENDPOINT ON SATELLITE
       satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-              URI.create("http://" + relay.satellite.ip).toURL()
+          URI.create("http://" + relay.satellite.ip).toURL()
       ).build(SatelliteClient.class);
       Map<String, Boolean> relayState = new HashMap<>();
       relayState.put(relay.identifier, event.getNewValue());
