@@ -20,7 +20,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 @ApplicationScoped
 public class SatelliteService {
 
-  public static final int CAMERA_SNAPSHOT_WAIT_TIME = 5;
+  public static final int CAMERA_SNAPSHOT_WAIT_TIME = 10;
   private static final Logger LOGGER = Logger.getLogger(SatelliteService.class.getName());
   private static final Long CONNECT_TIMEOUT = 6000L;
   private static final Long READ_TIMEOUT = 5000L;
@@ -65,5 +65,4 @@ public class SatelliteService {
       }
     }
   }
-
 }
