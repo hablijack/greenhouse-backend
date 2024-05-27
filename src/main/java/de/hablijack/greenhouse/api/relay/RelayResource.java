@@ -113,6 +113,15 @@ public class RelayResource {
   }
 
   @GET
+  @Path("/relays/{identifier}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  @Transactional
+  public Relay getRelay(@PathParam("identifier") String identifier) {
+    return Relay.findByIdentifier(identifier);
+  }
+
+  @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/relays/log")
   @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
