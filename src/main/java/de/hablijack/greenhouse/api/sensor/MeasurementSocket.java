@@ -27,17 +27,13 @@ public class MeasurementSocket {
 
   @OnOpen
   @Transactional
-  public void onOpen(Session session) {
+  public void onOpen(Session session) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      String jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
-      session.getAsyncRemote().sendObject(jsonObject, result -> {
-        if (result.getException() != null) {
-          LOGGER.log(Level.ERROR, "Unable to send message!");
-        }
-      });
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    String jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
+    session.getAsyncRemote().sendObject(jsonObject, result -> {
+      if (result.getException() != null) {
+        LOGGER.log(Level.ERROR, "Unable to send message!");
+      }
+    });
   }
 }

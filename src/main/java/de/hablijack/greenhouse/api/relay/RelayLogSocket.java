@@ -41,20 +41,16 @@ public class RelayLogSocket {
   @SuppressWarnings("checkstyle:MagicNumber")
   @OnOpen
   @Transactional
-  public void onOpen(Session session, @PathParam("userid") String userid) {
+  public void onOpen(Session session, @PathParam("userid") String userid) throws JsonProcessingException {
     sessions.put(userid, session);
 
     ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
-      session.getAsyncRemote().sendObject(jsonObject, result -> {
-        if (result.getException() != null) {
-          LOGGER.log(Level.ERROR, "Unable to send message!");
-        }
-      });
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
+    session.getAsyncRemote().sendObject(jsonObject, result -> {
+      if (result.getException() != null) {
+        LOGGER.log(Level.ERROR, "Unable to send message!");
+      }
+    });
   }
 
   @OnMessage
