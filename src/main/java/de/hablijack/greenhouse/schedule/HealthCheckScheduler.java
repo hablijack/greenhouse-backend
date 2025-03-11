@@ -1,5 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
@@ -11,22 +13,18 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import java.util.logging.Logger;
-
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class HealthCheckScheduler {
 
   private static final Logger LOGGER = Logger.getLogger(HealthCheckScheduler.class.getName());
-
+  private static final int TRANSACTION_TIMEOUT = 70;
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
   SatelliteService satelliteService;
-  private static final int TRANSACTION_TIMEOUT = 70;
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "REC_CATCH_EXCEPTION"})
   @Scheduled(every = "1m", concurrentExecution = SKIP)

@@ -1,6 +1,12 @@
 package de.hablijack.greenhouse.lifecycle;
 
-import de.hablijack.greenhouse.entity.*;
+import de.hablijack.greenhouse.entity.ConditionTrigger;
+import de.hablijack.greenhouse.entity.Measurement;
+import de.hablijack.greenhouse.entity.Relay;
+import de.hablijack.greenhouse.entity.RelayLog;
+import de.hablijack.greenhouse.entity.Satellite;
+import de.hablijack.greenhouse.entity.Sensor;
+import de.hablijack.greenhouse.entity.TimeTrigger;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import io.quarkus.runtime.Startup;
@@ -9,10 +15,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import java.util.Date;
 import java.util.logging.Logger;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @SuppressWarnings("checkstyle:RegexpSingleline")
 @Startup

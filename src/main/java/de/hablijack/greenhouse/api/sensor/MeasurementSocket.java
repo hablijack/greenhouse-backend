@@ -9,10 +9,9 @@ import jakarta.transaction.Transactional;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
+import java.util.logging.Logger;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logmanager.Level;
-
-import java.util.logging.Logger;
 
 @ServerEndpoint("/backend/sensors/measurements/socket")
 @ApplicationScoped

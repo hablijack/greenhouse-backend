@@ -1,5 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinition;
@@ -17,16 +19,13 @@ import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class RelayScheduler {
@@ -34,7 +33,7 @@ public class RelayScheduler {
   public static final String QUARKUS_TIME_TRIGGER = "TIME-TRIGGER";
   public static final String QUARKUS_CONDITION_TRIGGER = "CONDITION-TRIGGER";
   private static final Logger LOGGER = Logger.getLogger(RelayScheduler.class.getName());
-
+  private static final int TRANSACTION_TIMEOUT = 8;
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
@@ -46,9 +45,6 @@ public class RelayScheduler {
   String botToken;
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
-
-  private static final int TRANSACTION_TIMEOUT = 8;
-
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "REC_CATCH_EXCEPTION"})
   @Scheduled(every = "5s", concurrentExecution = SKIP)

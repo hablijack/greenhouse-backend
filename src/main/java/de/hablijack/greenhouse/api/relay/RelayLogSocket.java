@@ -13,12 +13,11 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
-import org.eclipse.microprofile.context.ManagedExecutor;
-import org.jboss.logmanager.Level;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import org.eclipse.microprofile.context.ManagedExecutor;
+import org.jboss.logmanager.Level;
 
 @ServerEndpoint("/backend/relays/socket/{userid}")
 @ApplicationScoped

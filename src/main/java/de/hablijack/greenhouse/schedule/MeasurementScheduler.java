@@ -1,5 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
@@ -14,12 +16,9 @@ import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import java.util.Date;
 import java.util.logging.Logger;
-
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class MeasurementScheduler {
@@ -30,12 +29,11 @@ public class MeasurementScheduler {
   private static final Logger LOGGER = Logger.getLogger(MeasurementScheduler.class.getName());
 
   private static final String LIGHT_RELAY_IDENTIFIER = "relay_line7";
+  private static final int TRANSACTION_TIMEOUT = 300;
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
   SatelliteService satelliteService;
-
-  private static final int TRANSACTION_TIMEOUT = 300;
 
   @Scheduled(every = "10m", concurrentExecution = SKIP)
   @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS",

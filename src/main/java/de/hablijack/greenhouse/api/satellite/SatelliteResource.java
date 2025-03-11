@@ -7,16 +7,21 @@ import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/backend")
 public class SatelliteResource {
@@ -30,7 +35,7 @@ public class SatelliteResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/satellites")
-  
+
   public List<Relay> getAllSatellites() {
     return Satellite.listAll();
   }
@@ -38,7 +43,7 @@ public class SatelliteResource {
   @GET
   @Produces("image/jpg")
   @Path("/satellites/greenhouse-cam/picture.jpg")
-  
+
   @Transactional
   public Response getCurrentPicture() {
     if (!CameraPicture.findAll().list().isEmpty()) {
@@ -55,7 +60,7 @@ public class SatelliteResource {
   @GET
   @Produces("text/plain")
   @Path("/satellites/greenhouse-cam/snapshot")
-  
+
   @Transactional
   public Response takeSnapshot() throws InterruptedException, IOException, URISyntaxException {
     satelliteService.takeCameraSnapshot();
@@ -68,7 +73,7 @@ public class SatelliteResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/satellite/{identifier}")
-  
+
   public Satellite findSatelliteByIdentifier(@PathParam("identifier") String identifier) {
     return Satellite.findByIdentifier(identifier);
   }
@@ -76,7 +81,7 @@ public class SatelliteResource {
   @POST
   @Path("/satellites")
   @Consumes(MediaType.APPLICATION_JSON)
-  
+
   @Transactional
   public Satellite createSatellite(Satellite satellite) {
     satellite.persist();
@@ -86,7 +91,7 @@ public class SatelliteResource {
   @PUT
   @Path("/satellite/{identifier}")
   @Consumes(MediaType.APPLICATION_JSON)
-  
+
   @Transactional
   public Satellite createSatellite(@PathParam("identifier") String identifier, Satellite newSatelliteData) {
     Satellite oldSatellite = Satellite.findByIdentifier(identifier);
