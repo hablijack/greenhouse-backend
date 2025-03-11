@@ -1,10 +1,10 @@
 package de.hablijack.greenhouse.entity;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+
 import java.util.Date;
 import java.util.List;
 

@@ -1,14 +1,15 @@
 package de.hablijack.greenhouse.schedule;
 
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
-
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.RelayLog;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.logging.Logger;
+
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 
 @ApplicationScoped
 public class CleanupScheduler {

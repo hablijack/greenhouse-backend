@@ -1,14 +1,10 @@
 package de.hablijack.greenhouse.api.sensor;
 
 import de.hablijack.greenhouse.entity.Sensor;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.List;
 
 @Path("/backend")

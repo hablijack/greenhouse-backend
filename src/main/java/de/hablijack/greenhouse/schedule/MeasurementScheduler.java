@@ -1,7 +1,5 @@
 package de.hablijack.greenhouse.schedule;
 
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
-
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
@@ -16,9 +14,12 @@ import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import java.util.Date;
 import java.util.logging.Logger;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 
 @ApplicationScoped
 public class MeasurementScheduler {

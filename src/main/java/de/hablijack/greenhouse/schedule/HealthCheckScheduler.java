@@ -1,7 +1,5 @@
 package de.hablijack.greenhouse.schedule;
 
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
-
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
@@ -13,8 +11,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
-import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import java.util.logging.Logger;
+
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 
 @ApplicationScoped
 public class HealthCheckScheduler {

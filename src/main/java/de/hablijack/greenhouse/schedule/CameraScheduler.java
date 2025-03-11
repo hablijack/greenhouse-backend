@@ -1,15 +1,16 @@
 package de.hablijack.greenhouse.schedule;
 
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
-
 import de.hablijack.greenhouse.service.SatelliteService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 
 @ApplicationScoped
 public class CameraScheduler {

@@ -5,24 +5,18 @@ import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @Path("/backend")
 public class SatelliteResource {

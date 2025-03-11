@@ -1,15 +1,9 @@
 package de.hablijack.greenhouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
+
 import java.util.Calendar;
 import java.util.Date;
 

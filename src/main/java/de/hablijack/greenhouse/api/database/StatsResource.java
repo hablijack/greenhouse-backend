@@ -2,7 +2,6 @@ package de.hablijack.greenhouse.api.database;
 
 import de.hablijack.greenhouse.api.pojo.TableSize;
 import de.hablijack.greenhouse.service.DatabaseStatsService;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

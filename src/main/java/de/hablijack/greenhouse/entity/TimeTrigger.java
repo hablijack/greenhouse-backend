@@ -2,11 +2,7 @@ package de.hablijack.greenhouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "time_trigger", schema = "greenhouse")

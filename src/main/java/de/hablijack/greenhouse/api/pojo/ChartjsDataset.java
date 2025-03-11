@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.api.pojo;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.List;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP"})

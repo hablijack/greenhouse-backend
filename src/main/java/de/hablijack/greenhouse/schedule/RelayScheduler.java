@@ -1,7 +1,5 @@
 package de.hablijack.greenhouse.schedule;
 
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
-
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinition;
@@ -19,13 +17,16 @@ import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 
 @ApplicationScoped
 public class RelayScheduler {
