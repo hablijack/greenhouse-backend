@@ -12,125 +12,117 @@ import jakarta.websocket.ClientEndpoint;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.DeploymentException;
 import jakarta.websocket.Session;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.logging.Logger;
+
 @Path("/backend")
 public class RelayResource {
-  private static final int NUMBER_OF_LOG_ENTRIES = 30;
-  private static final Logger LOGGER = Logger.getLogger(RelayResource.class.getName());
-  private final Session session;
-  private final ObjectMapper objectMapper;
-  @RestClient
-  SatelliteClient satelliteClient;
+    private static final int NUMBER_OF_LOG_ENTRIES = 30;
+    private static final Logger LOGGER = Logger.getLogger(RelayResource.class.getName());
+    private Session session;
+    private final ObjectMapper objectMapper;
+    @RestClient
+    SatelliteClient satelliteClient;
 
-  @SuppressFBWarnings()
-  public RelayResource() throws URISyntaxException, DeploymentException, IOException {
-    this.objectMapper = new ObjectMapper();
-    this.session = ContainerProvider.getWebSocketContainer().connectToServer(
-        Client.class,
-        new URI("ws://localhost:8080/backend/relays/socket/system")
-    );
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/relays")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<Relay> getAllRelays() {
-    return Relay.list("order by sortkey");
-  }
-
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/relay/{identifier}/switch")
-  @Transactional
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event)
-      throws JsonProcessingException {
-    try {
-      // FIND CORRESPONDING RELAY
-      Relay relay = Relay.findByIdentifier(identifier);
-      // TRIGGER REST ENDPOINT ON SATELLITE
-      satelliteClient = RestClientBuilder.newBuilder().baseUrl(
-          URI.create("http://" + relay.satellite.ip).toURL()
-      ).build(SatelliteClient.class);
-      Map<String, Boolean> relayState = new HashMap<>();
-      relayState.put(relay.identifier, event.getNewValue());
-      satelliteClient.updateRelayState(relayState);
-      // REFRESH RELAY IN DB
-      relay.value = event.getNewValue();
-      relay.persist();
-      // RELAY LOG REFRESH IN DB AND WEBSOCKET
-      List<RelayLog> logs = new ArrayList<>();
-      RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
-      log.persist();
-      logs.add(log);
-      session.getAsyncRemote().sendText(objectMapper.writeValueAsString(logs));
-      return true;
-    } catch (Exception exception) {
-      LOGGER.warning(exception.getMessage());
-      return false;
+    public RelayResource() {
+        this.objectMapper = new ObjectMapper();
+        try {
+            this.session = ContainerProvider.getWebSocketContainer().connectToServer(
+                    Client.class,
+                    new URI("ws://localhost:8080/backend/relays/socket/system")
+            );
+        } catch (DeploymentException | IOException | URISyntaxException e) {
+            this.session = null;
+        }
     }
-  }
 
-  @PUT
-  @Path("/relays/{identifier}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  @Transactional
-  public Relay updateRelay(@PathParam("identifier") String identifier, Relay newRelayData) {
-    Relay oldRelay = Relay.findByIdentifier(identifier);
-    oldRelay.color = newRelayData.color;
-    oldRelay.conditionTrigger = newRelayData.conditionTrigger;
-    oldRelay.description = newRelayData.description;
-    oldRelay.icon = newRelayData.icon;
-    oldRelay.identifier = newRelayData.identifier;
-    oldRelay.name = newRelayData.name;
-    oldRelay.target = newRelayData.target;
-    oldRelay.satellite = newRelayData.satellite;
-    oldRelay.timeTrigger = newRelayData.timeTrigger;
-    oldRelay.value = newRelayData.value;
-    oldRelay.persist();
-    return oldRelay;
-  }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/relays")
+    public List<Relay> getAllRelays() {
+        return Relay.list("order by sortkey");
+    }
 
-  @GET
-  @Path("/relays/{identifier}")
-  @Produces(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public Relay getRelay(@PathParam("identifier") String identifier) {
-    return Relay.findByIdentifier(identifier);
-  }
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/relay/{identifier}/switch")
+    @Transactional
+    @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS", justification = "")
+    public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event)
+            throws JsonProcessingException {
+        try {
+            // FIND CORRESPONDING RELAY
+            Relay relay = Relay.findByIdentifier(identifier);
+            // TRIGGER REST ENDPOINT ON SATELLITE
+            satelliteClient = RestClientBuilder.newBuilder().baseUrl(
+                    URI.create("http://" + relay.satellite.ip).toURL()
+            ).build(SatelliteClient.class);
+            Map<String, Boolean> relayState = new HashMap<>();
+            relayState.put(relay.identifier, event.getNewValue());
+            satelliteClient.updateRelayState(relayState);
+            // REFRESH RELAY IN DB
+            relay.value = event.getNewValue();
+            relay.persist();
+            // RELAY LOG REFRESH IN DB AND WEBSOCKET
+            List<RelayLog> logs = new ArrayList<>();
+            RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
+            log.persist();
+            logs.add(log);
+            session.getAsyncRemote().sendText(objectMapper.writeValueAsString(logs));
+            return true;
+        } catch (MalformedURLException exception) {
+            LOGGER.warning(exception.getMessage());
+            return false;
+        }
+    }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/relays/log")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
-  public List<RelayLog> getRecentLog() {
-    return RelayLog.getRecentLog(NUMBER_OF_LOG_ENTRIES);
-  }
+    @PUT
+    @Path("/relays/{identifier}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Relay updateRelay(@PathParam("identifier") String identifier, Relay newRelayData) {
+        Relay oldRelay = Relay.findByIdentifier(identifier);
+        oldRelay.color = newRelayData.color;
+        oldRelay.conditionTrigger = newRelayData.conditionTrigger;
+        oldRelay.description = newRelayData.description;
+        oldRelay.icon = newRelayData.icon;
+        oldRelay.identifier = newRelayData.identifier;
+        oldRelay.name = newRelayData.name;
+        oldRelay.target = newRelayData.target;
+        oldRelay.satellite = newRelayData.satellite;
+        oldRelay.timeTrigger = newRelayData.timeTrigger;
+        oldRelay.value = newRelayData.value;
+        oldRelay.persist();
+        return oldRelay;
+    }
+
+    @GET
+    @Path("/relays/{identifier}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Relay getRelay(@PathParam("identifier") String identifier) {
+        return Relay.findByIdentifier(identifier);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/relays/log")
+
+    public List<RelayLog> getRecentLog() {
+        return RelayLog.getRecentLog(NUMBER_OF_LOG_ENTRIES);
+    }
 
 
-  @ClientEndpoint
-  public static class Client {
+    @ClientEndpoint
+    public static class Client {
 
-  }
+    }
 }

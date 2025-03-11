@@ -18,7 +18,7 @@ public class MeasurementResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensors/measurements/live")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   public Map<String, Double> live() {
     return sensorService.getCurrentSensorValues();
   }

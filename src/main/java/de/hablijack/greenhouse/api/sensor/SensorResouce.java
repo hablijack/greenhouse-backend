@@ -17,7 +17,7 @@ public class SensorResouce {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensors")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   public List<Sensor> getAllSensors() {
     return Sensor.list("visible = true order by sortkey");
   }
@@ -25,7 +25,7 @@ public class SensorResouce {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensor/{identifier}")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   public Sensor getOneSensor(@PathParam("identifier") Long identifier) {
     return Sensor.findById(identifier);
   }
@@ -34,7 +34,7 @@ public class SensorResouce {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensor/{identifier}")
   @Transactional
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   public Sensor updateOneSensor(@PathParam("identifier") Long identifier, Sensor newSensor) {
     Sensor oldSensor = Sensor.findById(identifier);
     oldSensor.identifier = newSensor.identifier;

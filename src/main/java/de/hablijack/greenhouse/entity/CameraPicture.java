@@ -12,7 +12,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "camera_picture", schema = "greenhouse")
-@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class CameraPicture extends PanacheEntity {
 
   @Column(nullable = false)

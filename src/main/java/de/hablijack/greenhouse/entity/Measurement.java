@@ -15,7 +15,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "measurement", schema = "greenhouse")
-@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class Measurement extends PanacheEntity {
 
   private static final int ONE_MONTH_PAST_IN_DAYS = -31;

@@ -11,10 +11,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "relay", schema = "greenhouse")
-@SuppressFBWarnings(
-    value = {"UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"},
-    justification = "Yes we fill dependencies in dbinit"
-)
 public class Relay extends PanacheEntity {
 
   @Column(name = "identifier", nullable = false, unique = true)

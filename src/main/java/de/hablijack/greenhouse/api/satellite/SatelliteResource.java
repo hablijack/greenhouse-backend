@@ -36,7 +36,7 @@ public class SatelliteResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/satellites")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   public List<Relay> getAllSatellites() {
     return Satellite.listAll();
   }
@@ -44,7 +44,7 @@ public class SatelliteResource {
   @GET
   @Produces("image/jpg")
   @Path("/satellites/greenhouse-cam/picture.jpg")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   @Transactional
   public Response getCurrentPicture() {
     if (!CameraPicture.findAll().list().isEmpty()) {
@@ -61,7 +61,7 @@ public class SatelliteResource {
   @GET
   @Produces("text/plain")
   @Path("/satellites/greenhouse-cam/snapshot")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   @Transactional
   public Response takeSnapshot() throws InterruptedException, IOException, URISyntaxException {
     satelliteService.takeCameraSnapshot();
@@ -74,7 +74,7 @@ public class SatelliteResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/satellite/{identifier}")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   public Satellite findSatelliteByIdentifier(@PathParam("identifier") String identifier) {
     return Satellite.findByIdentifier(identifier);
   }
@@ -82,7 +82,7 @@ public class SatelliteResource {
   @POST
   @Path("/satellites")
   @Consumes(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   @Transactional
   public Satellite createSatellite(Satellite satellite) {
     satellite.persist();
@@ -92,7 +92,7 @@ public class SatelliteResource {
   @PUT
   @Path("/satellite/{identifier}")
   @Consumes(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
+  
   @Transactional
   public Satellite createSatellite(@PathParam("identifier") String identifier, Satellite newSatelliteData) {
     Satellite oldSatellite = Satellite.findByIdentifier(identifier);

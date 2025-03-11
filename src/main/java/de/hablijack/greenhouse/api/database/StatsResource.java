@@ -18,7 +18,6 @@ public class StatsResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/database/stats")
-  @SuppressFBWarnings(value = "", justification = "Security is another Epic and on TODO")
   public TableSize getDatabaseStatistics() {
     return databaseStatsService.getCurrentDatabaseSize();
   }

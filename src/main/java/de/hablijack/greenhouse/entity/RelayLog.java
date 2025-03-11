@@ -17,7 +17,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "relay_log", schema = "greenhouse")
-@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class RelayLog extends PanacheEntity {
   private static final int ONE_MONTH_PAST_IN_DAYS = -31;
   @Column(name = "initiator", nullable = false)

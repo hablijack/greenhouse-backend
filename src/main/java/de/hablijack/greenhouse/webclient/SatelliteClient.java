@@ -18,42 +18,42 @@ public interface SatelliteClient {
   @GET
   @Path("/health")
   @Produces(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
+  
   JsonObject healthcheck();
 
   @GET
   @Path("/capture")
   @Produces(MediaType.TEXT_PLAIN)
-  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
+  
   String takePicture();
 
   @GET
   @Path("/saved-photo")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
+  
   File savePicture();
 
   @GET
   @Path("/sensors/measurements")
   @Produces(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
+  
   JsonObject getMeasurements();
 
   @GET
   @Path("/relays/state")
   @Produces(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
+  
   JsonObject getRelayState();
 
   @POST
   @Path("/relays/set")
   @Produces(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
+  
   JsonObject updateRelayState(Map<String, Boolean> relaysState);
 
   @POST
   @Path("/system/deepsleep")
   @Produces(MediaType.APPLICATION_JSON)
-  @SuppressFBWarnings(value = "", justification = "Yes it is a REST endpoint o.O ?!")
+  
   JsonObject deepSleep(SleepTime sleepTime);
 }

@@ -10,10 +10,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "sensor", schema = "greenhouse")
-@SuppressFBWarnings(
-    value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD",
-    justification = "Yes we fill dependencies in dbinit"
-)
 public class Sensor extends PanacheEntity {
 
   private static final int DAYS_A_WEEK = 7;
