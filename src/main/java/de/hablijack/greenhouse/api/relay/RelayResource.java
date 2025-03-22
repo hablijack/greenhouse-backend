@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-@Path("/backend/rest")
+@Path("/api/backend/rest")
 public class RelayResource {
   private static final int NUMBER_OF_LOG_ENTRIES = 30;
   private static final Logger LOGGER = Logger.getLogger(RelayResource.class.getName());

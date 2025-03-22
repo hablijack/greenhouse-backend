@@ -12,7 +12,7 @@ import jakarta.websocket.server.ServerEndpoint;
 import java.util.logging.Logger;
 import org.jboss.logmanager.Level;
 
-@ServerEndpoint("/backend/socket/sensors/measurements")
+@ServerEndpoint("/api/backend/socket/sensors/measurements")
 @ApplicationScoped
 public class MeasurementSocket {
 

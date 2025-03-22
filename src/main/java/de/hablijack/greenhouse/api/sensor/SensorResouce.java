@@ -10,7 +10,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/backend/rest")
+@Path("/api/backend/rest")
 public class SensorResouce {
 
   @GET

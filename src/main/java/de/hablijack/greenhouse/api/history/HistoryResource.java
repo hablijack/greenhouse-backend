@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jboss.resteasy.reactive.RestQuery;
 
-@Path("/backend/rest")
+@Path("/api/backend/rest")
 public class HistoryResource {
 
   private static final int BORDER_WIDTH = 4;

@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logmanager.Level;
 
-@ServerEndpoint("/backend/socket/relays/{userid}")
+@ServerEndpoint("/api/backend/socket/relays/{userid}")
 @ApplicationScoped
 public class RelayLogSocket {
 

@@ -39,9 +39,9 @@ jobs:
       - run:
           name: Build and push Docker Image to Dockerhub
           command: |
-            docker build -t hablijack/greenhouse-backend:2.20.3 .
+            docker build -t hablijack/greenhouse-backend:2.20.4 .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push hablijack/greenhouse-backend:2.20.3
+            docker push hablijack/greenhouse-backend:2.20.4
 
 workflows:
   version: 2
