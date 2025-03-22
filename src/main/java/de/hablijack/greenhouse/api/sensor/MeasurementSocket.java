@@ -10,7 +10,6 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 import java.util.logging.Logger;
-import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logmanager.Level;
 
 @ServerEndpoint("/backend/socket/sensors/measurements")
@@ -18,9 +17,6 @@ import org.jboss.logmanager.Level;
 public class MeasurementSocket {
 
   private static final Logger LOGGER = Logger.getLogger(MeasurementSocket.class.getName());
-
-  @Inject
-  ManagedExecutor managedExecutor;
 
   @Inject
   SensorService sensorService;
@@ -32,7 +28,7 @@ public class MeasurementSocket {
     String jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
     session.getAsyncRemote().sendObject(jsonObject, result -> {
       if (result.getException() != null) {
-        LOGGER.log(Level.ERROR, "Unable to send message! " + result.getException().getMessage());
+        LOGGER.log(Level.ERROR, "Unable to send message! " + result.getException());
       }
     });
   }

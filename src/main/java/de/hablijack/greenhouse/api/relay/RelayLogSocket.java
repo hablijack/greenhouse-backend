@@ -48,7 +48,7 @@ public class RelayLogSocket {
     String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
     session.getAsyncRemote().sendObject(jsonObject, result -> {
       if (result.getException() != null) {
-        LOGGER.log(Level.ERROR, "Unable to send message! " + result.getException().getMessage());
+        LOGGER.log(Level.ERROR, "Unable to send message! " + result.getException());
       }
     });
   }
@@ -62,7 +62,7 @@ public class RelayLogSocket {
     sessions.values().forEach(s -> {
       s.getAsyncRemote().sendObject(message, result -> {
         if (result.getException() != null) {
-          LOGGER.log(Level.ERROR, "Unable to send message! " + result.getException().getMessage());
+          LOGGER.log(Level.ERROR, "Unable to send broadcast message! " + result.getException());
         }
       });
     });
