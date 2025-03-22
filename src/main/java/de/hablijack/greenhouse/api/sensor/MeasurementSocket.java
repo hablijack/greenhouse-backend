@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logmanager.Level;
 
-@ServerEndpoint("/backend/sensors/measurements/socket")
+@ServerEndpoint("/backend/socket/sensors/measurements")
 @ApplicationScoped
 public class MeasurementSocket {
 
