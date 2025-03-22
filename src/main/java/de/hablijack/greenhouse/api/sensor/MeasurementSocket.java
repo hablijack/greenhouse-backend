@@ -32,7 +32,7 @@ public class MeasurementSocket {
     String jsonObject = objectMapper.writeValueAsString(sensorService.getCurrentSensorValues());
     session.getAsyncRemote().sendObject(jsonObject, result -> {
       if (result.getException() != null) {
-        LOGGER.log(Level.ERROR, "Unable to send message!");
+        LOGGER.log(Level.ERROR, "Unable to send message! " + result.getException().getMessage());
       }
     });
   }
