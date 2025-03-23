@@ -8,7 +8,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.Map;
 
-@Path("/api/backend/rest")
+@Path("/api/rest")
 public class MeasurementResource {
 
   @Inject

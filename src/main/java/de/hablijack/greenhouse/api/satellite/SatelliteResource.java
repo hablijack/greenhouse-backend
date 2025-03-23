@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-@Path("/api/backend/rest")
+@Path("/api/rest")
 public class SatelliteResource {
   private static final Logger LOGGER = Logger.getLogger(SatelliteResource.class.getName());
 

@@ -15,10 +15,10 @@ import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,59 +48,53 @@ public class RelayScheduler {
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "REC_CATCH_EXCEPTION"})
   @Scheduled(every = "5s", concurrentExecution = SKIP)
+  @Transactional
   void switchRelaysConditionally() {
-    QuarkusTransaction.begin(QuarkusTransaction.beginOptions().timeout(TRANSACTION_TIMEOUT));
-    try {
-      Boolean newState = null;
-      String trigger = null;
-      for (Relay relay : Relay.<Relay>listAll()) {
-        if (!relay.satellite.online || RelayLog.isLastActionManualActivated(relay)) {
-          return;
-        }
-        if (relay.timeTrigger.active) {
-          if (isWithinTriggerTime(relay)) {
-            trigger = QUARKUS_TIME_TRIGGER;
-            newState = true;
-          } else {
-            trigger = QUARKUS_TIME_TRIGGER;
-            newState = false;
-          }
-        }
-        if (relay.conditionTrigger.active) {
-          if (isConditionTriggered(relay)) {
-            trigger = QUARKUS_CONDITION_TRIGGER;
-            newState = true;
-          } else {
-            trigger = QUARKUS_CONDITION_TRIGGER;
-            newState = false;
-          }
-        }
-
-        if (newState != null && newState != relay.value) {
-          Map<String, Boolean> relayState = new HashMap<>();
-          relay.value = newState;
-          relayState.put(relay.identifier, relay.value);
-          try {
-            satelliteClient = satelliteService.createSatelliteClient(relay.satellite.ip);
-            satelliteClient.updateRelayState(relayState);
-            relay.persist();
-            new RelayLog(relay, trigger, new Date(), newState).persist();
-          } catch (Exception error) {
-            LOGGER.warning("Error on RelayScheduler - could not switch relay: " + error.getMessage());
-            telegramClient.sendMessage(botToken, chatId,
-                "Fehler beim Schalten des Relays! \r\n\r\n"
-                    + "Konnte das Relay: " + relay.name + " nicht auf: "
-                    + relay.value + " schalten.\r\n\r\n"
-                    + error.getMessage());
-          }
-        }
-        newState = null;
-        trigger = null;
+    Boolean newState = null;
+    String trigger = null;
+    for (Relay relay : Relay.<Relay>listAll()) {
+      if (!relay.satellite.online || RelayLog.isLastActionManualActivated(relay)) {
+        return;
       }
-    } catch (Exception exception) {
-      LOGGER.warning("ERROR on RelayScheduler: " + exception.getMessage());
-    } finally {
-      QuarkusTransaction.commit();
+      if (relay.timeTrigger.active) {
+        if (isWithinTriggerTime(relay)) {
+          trigger = QUARKUS_TIME_TRIGGER;
+          newState = true;
+        } else {
+          trigger = QUARKUS_TIME_TRIGGER;
+          newState = false;
+        }
+      }
+      if (relay.conditionTrigger.active) {
+        if (isConditionTriggered(relay)) {
+          trigger = QUARKUS_CONDITION_TRIGGER;
+          newState = true;
+        } else {
+          trigger = QUARKUS_CONDITION_TRIGGER;
+          newState = false;
+        }
+      }
+
+      if (newState != null && newState != relay.value) {
+        Map<String, Boolean> relayState = new HashMap<>();
+        relay.value = newState;
+        relayState.put(relay.identifier, relay.value);
+        try {
+          satelliteClient = satelliteService.createSatelliteClient(relay.satellite.ip);
+          satelliteClient.updateRelayState(relayState);
+          relay.persist();
+          new RelayLog(relay, trigger, new Date(), newState).persist();
+        } catch (Exception error) {
+          LOGGER.warning("Error on RelayScheduler - could not switch relay: " + error.getMessage());
+          telegramClient.sendMessage(botToken, chatId,
+              "Fehler beim Schalten des Relays! \r\n\r\n"
+                  + "Konnte das Relay: " + relay.name + " nicht auf: "
+                  + relay.value + " schalten.\r\n\r\n"
+                  + error.getMessage());
+        }
+      }
+      newState = null;
+      trigger = null;
     }
   }
 

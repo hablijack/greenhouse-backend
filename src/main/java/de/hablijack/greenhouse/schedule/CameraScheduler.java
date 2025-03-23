@@ -4,10 +4,10 @@ import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 
 import de.hablijack.greenhouse.service.SatelliteService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -23,16 +23,13 @@ public class CameraScheduler {
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS"})
   @Scheduled(every = "2m", concurrentExecution = SKIP)
+  @Transactional
   void takePicture() {
-    QuarkusTransaction.begin(QuarkusTransaction.beginOptions().timeout(TRANSACTION_TIMEOUT));
     try {
       satelliteService.takeCameraSnapshot();
       TimeUnit.SECONDS.sleep(SatelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
       satelliteService.savePictureToDatabase();
-    } catch (Exception exception) {
-      LOGGER.warning("ERROR on takePicture Scheduler: " + exception.getMessage());
-    } finally {
-      QuarkusTransaction.commit();
+    } catch (Exception e) {
     }
   }
 }

@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logmanager.Level;
 
-@ServerEndpoint("/api/backend/socket/relays/{userid}")
+@ServerEndpoint("/api/socket/relays/{userid}")
 @ApplicationScoped
 public class RelayLogSocket {
 
@@ -43,6 +43,7 @@ public class RelayLogSocket {
   @Transactional
   public void onOpen(Session session, @PathParam("userid") String userid) throws JsonProcessingException {
     sessions.put(userid, session);
+
 
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
