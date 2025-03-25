@@ -7,6 +7,7 @@ import de.hablijack.greenhouse.entity.RelayLog;
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.entity.TimeTrigger;
+import de.hablijack.greenhouse.entity.User;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import io.quarkus.runtime.Startup;
@@ -53,6 +54,9 @@ public class DatabaseInitialLoad {
   @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength", "PMD"})
   public void initializeWithBaseData(@Observes StartupEvent event) throws InterruptedException {
     LOGGER.info("... filling database...");
+    new User("christoph.habel@posteo.de", "Christoph Habel", "XXX", "admin").persistIfNotExist();
+    new User("barbara.habel@posteo.de", "Barbara Habel", "XXX", "admin").persistIfNotExist();
+    /* ============================================================================================================= */
     new Satellite(
         "greenhouse_cam",
         "Gewächshaus Webcam",
