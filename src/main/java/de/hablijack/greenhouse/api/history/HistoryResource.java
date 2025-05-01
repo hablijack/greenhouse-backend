@@ -24,7 +24,7 @@ public class HistoryResource {
 
   public List<ChartjsDataset> getAirtemperatureHistory(@RestQuery String timerange) {
     if (timerange == null) {
-      timerange = "week";
+      timerange = "day";
     }
     List<ChartjsDataset> datalist = new ArrayList<>();
     Sensor airTempInsideSensor = Sensor.findByIdentifier("air_temp_inside");
