@@ -7,7 +7,6 @@ import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -38,8 +37,6 @@ public class MeasurementScheduler {
   SatelliteService satelliteService;
 
   @Scheduled(every = "10m", concurrentExecution = SKIP)
-  @SuppressFBWarnings(value = {"DLS_DEAD_LOCAL_STORE", "CRLF_INJECTION_LOGS",
-      "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", "REC_CATCH_EXCEPTION"})
   @Transactional
   void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");

@@ -5,7 +5,6 @@ import de.hablijack.greenhouse.api.pojo.RelayLogEvent;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.transaction.Transactional;
 import jakarta.websocket.ClientEndpoint;
 import jakarta.websocket.ContainerProvider;
@@ -56,11 +55,12 @@ public class RelayResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/relay/{identifier}/switch")
   @Transactional
-  @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS", justification = "")
-  public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event)
-      throws DeploymentException, URISyntaxException, IOException {
+  public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event) throws IOException {
     // FIND CORRESPONDING RELAY
     Relay relay = Relay.findByIdentifier(identifier);
+    if (relay == null) {
+      return false;
+    }
     // TRIGGER REST ENDPOINT ON SATELLITE
     satelliteClient = RestClientBuilder.newBuilder().baseUrl(
         URI.create("http://" + relay.satellite.ip).toURL()

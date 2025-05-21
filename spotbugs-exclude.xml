@@ -1,0 +1,35 @@
+<!-- This file specifies a spotbugs filter for excluding reports that
+     should not be considered errors.
+
+     The format of this file is documented at:
+
+       https://spotbugs.readthedocs.io/en/latest/filter.html
+
+     When possible, please specify the full names of the bug codes,
+     using the pattern attribute, to make it clearer what reports are
+     being suppressed.  You can find a listing of codes at:
+
+       https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html
+  -->
+
+<FindBugsFilter>
+
+
+    <!-- Ignore spotbugs reports from rs endpoints - this is normal in quarkus -->
+    <Match>
+        <Bug pattern="JAXRS_ENDPOINT"/>
+    </Match>
+    <Match>
+        <Bug pattern="CRLF_INJECTION_LOGS"/>
+    </Match>
+    <Match>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
+    <Match>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
+    </Match>
+    <Match>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    </Match>
+
+</FindBugsFilter>

@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "relay", schema = "greenhouse")
@@ -55,7 +56,12 @@ public class Relay extends PanacheEntity {
   }
 
   public static Relay findByIdentifier(String id) {
-    return (Relay) find("identifier = ?1", id).list().get(0);
+    List<Relay> relays = list("identifier = ?1", id);
+    if (relays.isEmpty()) {
+      return null;
+    } else {
+      return relays.getFirst();
+    }
   }
 
   public Relay persistIfNotExist() {

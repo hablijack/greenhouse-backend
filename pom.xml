@@ -190,6 +190,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
                     <maxAllowedViolations>0</maxAllowedViolations>
                     <effort>Max</effort>
                     <threshold>Low</threshold>

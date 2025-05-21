@@ -33,7 +33,6 @@ public class RelayScheduler {
   public static final String QUARKUS_TIME_TRIGGER = "TIME-TRIGGER";
   public static final String QUARKUS_CONDITION_TRIGGER = "CONDITION-TRIGGER";
   private static final Logger LOGGER = Logger.getLogger(RelayScheduler.class.getName());
-  private static final int TRANSACTION_TIMEOUT = 8;
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
@@ -46,7 +45,7 @@ public class RelayScheduler {
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
 
-  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "REC_CATCH_EXCEPTION"})
+  @SuppressFBWarnings(value = {"REC_CATCH_EXCEPTION"})
   @Scheduled(every = "5s", concurrentExecution = SKIP)
   @Transactional
   void switchRelaysConditionally() {

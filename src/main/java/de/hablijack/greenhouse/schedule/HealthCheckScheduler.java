@@ -26,7 +26,7 @@ public class HealthCheckScheduler {
   @Inject
   SatelliteService satelliteService;
 
-  @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "REC_CATCH_EXCEPTION"})
+  @SuppressFBWarnings(value = {"REC_CATCH_EXCEPTION"})
   @Scheduled(every = "1m", concurrentExecution = SKIP)
   @Transactional
   void sateliteHealthCheck() {
