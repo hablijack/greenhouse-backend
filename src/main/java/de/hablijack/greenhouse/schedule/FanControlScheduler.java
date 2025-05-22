@@ -51,7 +51,7 @@ public class FanControlScheduler {
   @Transactional
   void switchFansConditionally() {
     Relay fan = Relay.findByIdentifier("relay_line8");
-    if (fan == null || !fan.satellite.online || RelayLog.isLastActionManualActivated(fan)) {
+    if (fan == null || !fan.satellite.online) {
       return;
     }
 
