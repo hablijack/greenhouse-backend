@@ -1,7 +1,7 @@
 package de.hablijack.greenhouse.entity;
 
-import static de.hablijack.greenhouse.schedule.RelayScheduler.QUARKUS_CONDITION_TRIGGER;
-import static de.hablijack.greenhouse.schedule.RelayScheduler.QUARKUS_TIME_TRIGGER;
+import static de.hablijack.greenhouse.schedule.WaterControlScheduler.QUARKUS_CONDITION_TRIGGER;
+import static de.hablijack.greenhouse.schedule.WaterControlScheduler.QUARKUS_TIME_TRIGGER;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;

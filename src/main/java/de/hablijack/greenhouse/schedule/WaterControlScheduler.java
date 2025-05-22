@@ -22,17 +22,18 @@ import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
-public class RelayScheduler {
+public class WaterControlScheduler {
 
   public static final String QUARKUS_TIME_TRIGGER = "TIME-TRIGGER";
   public static final String QUARKUS_CONDITION_TRIGGER = "CONDITION-TRIGGER";
-  private static final Logger LOGGER = Logger.getLogger(RelayScheduler.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(WaterControlScheduler.class.getName());
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
@@ -51,7 +52,11 @@ public class RelayScheduler {
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
-    for (Relay relay : Relay.<Relay>listAll()) {
+    List<Relay> waterRelays = Relay.listAllWaterRelays();
+    if (waterRelays == null || waterRelays.isEmpty()) {
+      return;
+    }
+    for (Relay relay : waterRelays) {
       if (!relay.satellite.online || RelayLog.isLastActionManualActivated(relay)) {
         return;
       }

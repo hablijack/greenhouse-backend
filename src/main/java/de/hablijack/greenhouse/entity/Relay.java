@@ -64,6 +64,17 @@ public class Relay extends PanacheEntity {
     }
   }
 
+  public static List<Relay> listAllWaterRelays() {
+    String[] waterRelays =
+        new String[] {"relay_line1", "relay_line2", "relay_line3", "relay_line4", "relay_line5", "relay_line6"};
+    List<Relay> foundWaterRelays = list("identifier in (?1)", List.of(waterRelays));
+    if (foundWaterRelays != null && !foundWaterRelays.isEmpty()) {
+      return foundWaterRelays;
+    } else {
+      return null;
+    }
+  }
+
   public Relay persistIfNotExist() {
     if (find("identifier = ?1", identifier).count() == 0) {
       this.persist();
