@@ -36,7 +36,7 @@ public class MeasurementScheduler {
   @Inject
   SatelliteService satelliteService;
 
-  @Scheduled(every = "10m", concurrentExecution = SKIP)
+  @Scheduled(every = "30s", concurrentExecution = SKIP)
   @Transactional
   void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");

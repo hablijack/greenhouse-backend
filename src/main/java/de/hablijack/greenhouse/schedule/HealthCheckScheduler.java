@@ -20,14 +20,14 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 public class HealthCheckScheduler {
 
   private static final Logger LOGGER = Logger.getLogger(HealthCheckScheduler.class.getName());
-  private static final int TRANSACTION_TIMEOUT = 70;
+
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
   SatelliteService satelliteService;
 
   @SuppressFBWarnings(value = {"REC_CATCH_EXCEPTION"})
-  @Scheduled(every = "1m", concurrentExecution = SKIP)
+  @Scheduled(every = "10s", concurrentExecution = SKIP)
   @Transactional
   void sateliteHealthCheck() {
     for (PanacheEntityBase entity : Satellite.listAll()) {
