@@ -29,7 +29,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class FanControlScheduler {
-  private static final Logger LOGGER = Logger.getLogger(FanControlScheduler.class.getName());
+  static final Logger LOGGER = Logger.getLogger(FanControlScheduler.class.getName());
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
@@ -42,14 +42,14 @@ public class FanControlScheduler {
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
 
-  private static final int MAXIMUM_HUMIDIY = 92;
-  private static final int MAXIMUM_TEMP = 35;
-  private static final String CRON_ACTIVATION_RANGE = "* * 9-16 ? * * *";
+  static final int MAXIMUM_HUMIDIY = 92; // more is bad for our tomatos
+  static final int MAXIMUM_TEMP = 35; // more is bad for every plant growing
+  static final int MINIMUM_SUNSHINE_LUX = 3800; // if we have no sunshine, we cant ventilate - battery!!!
+  static final String CRON_ACTIVATION_RANGE = "* * 9-16 ? * * *";
 
-  @Scheduled(every = "20s", concurrentExecution = SKIP)
+  @Scheduled(every = "10s", concurrentExecution = SKIP)
   @Transactional
   void switchFansConditionally() {
-    boolean newState;
     Relay fan = Relay.findByIdentifier("relay_line8");
     if (fan == null || !fan.satellite.online || RelayLog.isLastActionManualActivated(fan)) {
       return;
@@ -61,7 +61,14 @@ public class FanControlScheduler {
     Sensor tempInsideSensor = Sensor.findByIdentifier("air_temp_inside");
     Measurement currentTemp = tempInsideSensor.findCurrentMeasurement();
 
-    newState = isWithinTriggerTime() && (currentHumidity.value >= MAXIMUM_HUMIDIY || currentTemp.value >= MAXIMUM_TEMP);
+    Sensor brightnessSensor = Sensor.findByIdentifier("brightness");
+    Measurement currentLux = brightnessSensor.findCurrentMeasurement();
+
+    boolean triggerTimeFlag = isWithinTriggerTime();
+
+    boolean newState = triggerTimeFlag
+        && currentLux.value >= MINIMUM_SUNSHINE_LUX
+        && (currentHumidity.value >= MAXIMUM_HUMIDIY || currentTemp.value >= MAXIMUM_TEMP);
     if (newState != fan.value) {
       switchRelay(fan, newState);
     }
