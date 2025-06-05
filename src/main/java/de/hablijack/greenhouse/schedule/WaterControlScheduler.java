@@ -81,20 +81,27 @@ public class WaterControlScheduler {
       }
 
       if (newState != null && newState != relay.value) {
-        Map<String, Boolean> relayState = new HashMap<>();
-        relay.value = newState;
-        relayState.put(relay.identifier, relay.value);
         try {
+          // PREPARE REQUEST
+          Map<String, Boolean> relayState = new HashMap<>();
+          relayState.put(relay.identifier, newState);
           satelliteClient = satelliteService.createSatelliteClient(relay.satellite.ip);
+          // FIRE UP SATELLITE REQUEST
           satelliteClient.updateRelayState(relayState);
+          // UPDATE DATABASE WITH NEW STATES
+          relay.value = newState;
           new RelayLog(relay, trigger, new Date(), newState).persist();
         } catch (Exception error) {
           LOGGER.warning("Error on RelayScheduler - could not switch relay: " + error.getMessage());
-          telegramClient.sendMessage(botToken, chatId,
-              "Fehler beim Schalten des Relays! \r\n\r\n"
-                  + "Konnte das Relay: " + relay.name + " nicht auf: "
-                  + relay.value + " schalten.\r\n\r\n"
-                  + error.getMessage());
+          try {
+            telegramClient.sendMessage(botToken, chatId,
+                "Fehler beim Schalten des Relays! \r\n\r\n"
+                    + "Konnte das Relay: " + relay.name + " nicht auf: "
+                    + relay.value + " schalten.\r\n\r\n"
+                    + error.getMessage());
+          } catch (Exception e) {
+            LOGGER.warning("Fehler beim versenden der Telegramm Nachricht: " + e.getMessage());
+          }
         }
       }
       newState = null;

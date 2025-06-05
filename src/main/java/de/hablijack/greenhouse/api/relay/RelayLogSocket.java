@@ -40,11 +40,9 @@ public class RelayLogSocket {
 
   @SuppressWarnings("checkstyle:MagicNumber")
   @OnOpen
-  @Transactional
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void onOpen(Session session, @PathParam("userid") String userid) throws JsonProcessingException {
     sessions.put(userid, session);
-
-
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonObject = objectMapper.writeValueAsString(RelayLog.getRecentLog(30));
     session.getAsyncRemote().sendObject(jsonObject, result -> {

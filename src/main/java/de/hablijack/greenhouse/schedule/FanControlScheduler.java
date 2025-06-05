@@ -44,7 +44,7 @@ public class FanControlScheduler {
 
   static final int MAXIMUM_HUMIDIY = 95; // more is bad for our tomatos
   static final int MAXIMUM_TEMP = 35; // more is bad for every plant growing
-  static final int MINIMUM_SUNSHINE_LUX = 5000; // if we have no sunshine, we cant ventilate - battery!!!
+  static final int MINIMUM_SUNSHINE_LUX = 4000; // if we have no sunshine, we cant ventilate - battery!!!
   static final String CRON_ACTIVATION_RANGE = "* * 9-16 ? * * *";
 
   @Scheduled(every = "10s", concurrentExecution = SKIP)

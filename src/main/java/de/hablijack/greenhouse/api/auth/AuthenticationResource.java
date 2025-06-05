@@ -16,7 +16,7 @@ public class AuthenticationResource {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/authenticate")
-  @Transactional
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public de.hablijack.greenhouse.api.pojo.User authenticate(Auth authentication) {
     User existingUser = User.findByUsername(authentication.getUsername());
     if (existingUser == null) {

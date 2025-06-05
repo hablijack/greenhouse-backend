@@ -32,8 +32,7 @@ public class SensorResouce {
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/sensor/{identifier}")
-  @Transactional
-
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public Sensor updateOneSensor(@PathParam("identifier") Long identifier, Sensor newSensor) {
     Sensor oldSensor = Sensor.findById(identifier);
     oldSensor.identifier = newSensor.identifier;

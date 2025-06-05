@@ -50,7 +50,7 @@ public class DatabaseInitialLoad {
   @Inject
   SatelliteService satelliteService;
 
-  @Transactional
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:LineLength", "PMD"})
   public void initializeWithBaseData(@Observes StartupEvent event) throws InterruptedException {
     LOGGER.info("... filling database...");

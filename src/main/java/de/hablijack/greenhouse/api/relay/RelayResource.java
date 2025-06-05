@@ -54,11 +54,11 @@ public class RelayResource {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/relay/{identifier}/switch")
-  @Transactional
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event) throws IOException {
     // FIND CORRESPONDING RELAY
     Relay relay = Relay.findByIdentifier(identifier);
-    if (relay == null) {
+    if (relay == null || !relay.satellite.online) {
       return false;
     }
     // TRIGGER REST ENDPOINT ON SATELLITE
@@ -99,7 +99,7 @@ public class RelayResource {
   @PUT
   @Path("/relays/{identifier}")
   @Consumes(MediaType.APPLICATION_JSON)
-  @Transactional
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public Relay updateRelay(@PathParam("identifier") String identifier, Relay newRelayData) {
     Relay oldRelay = Relay.findByIdentifier(identifier);
     oldRelay.color = newRelayData.color;

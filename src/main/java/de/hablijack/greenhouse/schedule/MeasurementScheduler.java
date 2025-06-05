@@ -37,6 +37,7 @@ public class MeasurementScheduler {
   @Inject
   SatelliteService satelliteService;
 
+  @SuppressWarnings("checkstyle:MagicNumber")
   @Scheduled(every = "30s", concurrentExecution = SKIP)
   @Transactional(REQUIRES_NEW)
   void requestMeasurements() {
@@ -64,7 +65,7 @@ public class MeasurementScheduler {
             } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
               measurement.value = ((JsonNumber) value).doubleValue();
             }
-            if (measurement.value != null) {
+            if (measurement.value != null && measurement.value > -40.0) {
               measurement.timestamp = new Date();
               measurement.persist();
             }
