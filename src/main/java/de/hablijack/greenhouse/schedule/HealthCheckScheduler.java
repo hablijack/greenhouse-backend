@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 import de.hablijack.greenhouse.entity.Satellite;
 import de.hablijack.greenhouse.service.SatelliteService;
@@ -28,7 +29,7 @@ public class HealthCheckScheduler {
 
   @SuppressFBWarnings(value = {"REC_CATCH_EXCEPTION"})
   @Scheduled(every = "10s", concurrentExecution = SKIP)
-  @Transactional
+  @Transactional(REQUIRES_NEW)
   void sateliteHealthCheck() {
     for (PanacheEntityBase entity : Satellite.listAll()) {
       Satellite satellite = (Satellite) entity;

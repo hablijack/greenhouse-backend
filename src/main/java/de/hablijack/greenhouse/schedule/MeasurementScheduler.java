@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.Satellite;
@@ -37,7 +38,7 @@ public class MeasurementScheduler {
   SatelliteService satelliteService;
 
   @Scheduled(every = "30s", concurrentExecution = SKIP)
-  @Transactional
+  @Transactional(REQUIRES_NEW)
   void requestMeasurements() {
     Satellite greenhouseControl = Satellite.findByIdentifier("greenhouse_control");
     if (greenhouseControl != null && greenhouseControl.online) {

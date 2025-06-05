@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 import de.hablijack.greenhouse.entity.Measurement;
 import de.hablijack.greenhouse.entity.RelayLog;
@@ -16,7 +17,7 @@ public class CleanupScheduler {
   private static final int TRANSACTION_TIMEOUT = 120;
 
   @Scheduled(every = "3h", concurrentExecution = SKIP)
-  @Transactional
+  @Transactional(REQUIRES_NEW)
   void cleanup() {
     RelayLog.cleanupOldEntries();
     Measurement.cleanupOldEntries();

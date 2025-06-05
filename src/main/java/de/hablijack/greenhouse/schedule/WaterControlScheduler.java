@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
@@ -48,7 +49,7 @@ public class WaterControlScheduler {
 
   @SuppressFBWarnings(value = {"REC_CATCH_EXCEPTION"})
   @Scheduled(every = "5s", concurrentExecution = SKIP)
-  @Transactional
+  @Transactional(REQUIRES_NEW)
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
