@@ -62,7 +62,7 @@ public class DatabaseInitialLoad {
         "Gewächshaus Webcam",
         "satelite.png",
         "ESP-EYE Webcam-webserver um regelmäßig Bilder innerhalb des Gewächshauses aufzunehmen.",
-        "192.168.178.73",
+        "192.168.178.60",
         true).persistIfNotExist();
     Satellite greenhouseControl = new Satellite(
         "greenhouse_control",

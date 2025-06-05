@@ -81,7 +81,6 @@ public class FanControlScheduler {
     try {
       satelliteClient = satelliteService.createSatelliteClient(fan.satellite.ip);
       satelliteClient.updateRelayState(relayState);
-      fan.persist();
       new RelayLog(fan, "CONDITION-INTELLIGENCE", new Date(), value).persist();
     } catch (Exception error) {
       LOGGER.warning("Error on FanControlScheduler - could not switch relay: " + error.getMessage());

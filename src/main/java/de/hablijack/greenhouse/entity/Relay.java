@@ -80,7 +80,7 @@ public class Relay extends PanacheEntity {
       this.persist();
       return this;
     } else {
-      return (Relay) find("identifier = ?1", identifier).list().get(0);
+      return (Relay) find("identifier = ?1", identifier).list().getFirst();
     }
   }
 }

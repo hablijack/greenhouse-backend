@@ -32,7 +32,7 @@ public class CameraPicture extends PanacheEntity {
     if (findAll().count() == 0) {
       return new CameraPicture();
     } else {
-      return (CameraPicture) findAll().list().get(0);
+      return (CameraPicture) listAll().getFirst();
     }
   }
 }

@@ -27,7 +27,7 @@ public interface SatelliteClient {
   @GET
   @Path("/saved-photo")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  File savePicture();
+  File requestPhoto();
 
   @GET
   @Path("/sensors/measurements")

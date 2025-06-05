@@ -86,7 +86,6 @@ public class WaterControlScheduler {
         try {
           satelliteClient = satelliteService.createSatelliteClient(relay.satellite.ip);
           satelliteClient.updateRelayState(relayState);
-          relay.persist();
           new RelayLog(relay, trigger, new Date(), newState).persist();
         } catch (Exception error) {
           LOGGER.warning("Error on RelayScheduler - could not switch relay: " + error.getMessage());

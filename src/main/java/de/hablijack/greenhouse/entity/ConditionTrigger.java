@@ -35,7 +35,7 @@ public class ConditionTrigger extends PanacheEntity {
       this.persist();
       return this;
     } else {
-      return (ConditionTrigger) find("relay = ?1", relay).list().get(0);
+      return (ConditionTrigger) list("relay = ?1", relay).getFirst();
     }
   }
 }

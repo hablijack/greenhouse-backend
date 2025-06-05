@@ -3,6 +3,7 @@
 #include "esp_timer.h"
 #include "img_converters.h"
 #include "Arduino.h"
+#include "ArduinoJson.h"
 #include "soc/soc.h"           // Disable brownour problems
 #include "soc/rtc_cntl_reg.h"  // Disable brownour problems
 #include "driver/rtc_io.h"
@@ -13,8 +14,8 @@
 #include <FS.h>
 
 // Replace with your network credentials
-const char *SSID = "SSID";
-const char *PWD = "PWD";
+const char *SSID = "XX";
+const char *PWD = "XXXXX";
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -24,13 +25,13 @@ boolean takeNewPhoto = false;
 // Photo File Name to save in SPIFFS
 #define FILE_PHOTO "/photo.jpg"
 
+
 // OV2640 camera module pins (CAMERA_MODEL_AI_THINKER)
 #define PWDN_GPIO_NUM    -1
 #define RESET_GPIO_NUM   -1
 #define XCLK_GPIO_NUM    4
 #define SIOD_GPIO_NUM    18
 #define SIOC_GPIO_NUM    23
-
 #define Y9_GPIO_NUM      36
 #define Y8_GPIO_NUM      37
 #define Y7_GPIO_NUM      38
@@ -42,7 +43,6 @@ boolean takeNewPhoto = false;
 #define VSYNC_GPIO_NUM   5
 #define HREF_GPIO_NUM    27
 #define PCLK_GPIO_NUM    25
-
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -88,6 +88,15 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info){
   WiFi.begin(SSID, PWD);
 }
 
+void healthcheckHandler(AsyncWebServerRequest *request)
+{
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  DynamicJsonDocument json(1024);
+  json["status"] = "ok";
+  serializeJson(json, *response);
+  request->send(response);
+}
+
 void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
@@ -116,7 +125,10 @@ void setup() {
   // Turn-off the 'brownout detector'
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 
-  // OV2640 camera module
+  pinMode(13, INPUT_PULLUP);
+  pinMode(14, INPUT_PULLUP);
+
+
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -132,25 +144,17 @@ void setup() {
   config.pin_pclk = PCLK_GPIO_NUM;
   config.pin_vsync = VSYNC_GPIO_NUM;
   config.pin_href = HREF_GPIO_NUM;
-  config.pin_sscb_sda = SIOD_GPIO_NUM;
-  config.pin_sscb_scl = SIOC_GPIO_NUM;
+  config.pin_sccb_sda = SIOD_GPIO_NUM;
+  config.pin_sccb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
-
-  Serial.println("STEP3 ==================");
-
-  if (psramFound()) {
-    config.frame_size = FRAMESIZE_UXGA;
-    config.jpeg_quality = 10;
-    config.fb_count = 2;
-  } else {
-    config.frame_size = FRAMESIZE_SVGA;
-    config.jpeg_quality = 12;
-    config.fb_count = 1;
-  }
-
+  config.frame_size = FRAMESIZE_UXGA;
+  config.grab_mode = CAMERA_GRAB_LATEST;
+  config.fb_location = CAMERA_FB_IN_PSRAM;
+  config.jpeg_quality = 12;
+  config.fb_count = 2;
 
   Serial.println("STEP4 ==================");
   
@@ -161,6 +165,12 @@ void setup() {
     ESP.restart();
   }
 
+  sensor_t *s = esp_camera_sensor_get();
+  // initial sensors are flipped vertically and colors are a bit saturated
+  if (s->id.PID == OV3660_PID) {
+    s->set_brightness(s, 1);   // up the brightness just a bit
+    s->set_saturation(s, -2);  // lower the saturation
+  }
 
   Serial.println("STEP5 ==================");
 
@@ -177,16 +187,11 @@ void setup() {
   server.on("/saved-photo", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, FILE_PHOTO, "image/jpg", false);
   });
+
+  server.on("/health", HTTP_GET, healthcheckHandler);
+  
   // Start server
   server.begin();
-}
-
-void loop() {
-  if (takeNewPhoto) {
-    capturePhotoSaveSpiffs();
-    takeNewPhoto = false;
-  }
-  delay(1);
 }
 
 // Check if photo capture was successful
@@ -234,4 +239,12 @@ void capturePhotoSaveSpiffs( void ) {
     // check if file has been correctly saved in SPIFFS
     ok = checkPhoto(SPIFFS);
   } while ( !ok );
+}
+
+void loop() {
+  if (takeNewPhoto) {
+    capturePhotoSaveSpiffs();
+    takeNewPhoto = false;
+  }
+  delay(1);
 }

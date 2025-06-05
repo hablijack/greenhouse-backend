@@ -30,7 +30,7 @@ public class MeasurementScheduler {
   private static final Logger LOGGER = Logger.getLogger(MeasurementScheduler.class.getName());
 
   private static final String LIGHT_RELAY_IDENTIFIER = "relay_line7";
-  private static final int TRANSACTION_TIMEOUT = 300;
+
   @RestClient
   SatelliteClient satelliteClient;
   @Inject
@@ -46,27 +46,31 @@ public class MeasurementScheduler {
       } catch (URISyntaxException | MalformedURLException e) {
         return;
       }
-      JsonObject currentValues = satelliteClient.getMeasurements();
-      for (Sensor sensor : Sensor.<Sensor>listAll()) {
-        if (currentValues.containsKey(sensor.identifier)) {
-          Measurement measurement = new Measurement();
-          measurement.sensor = sensor;
-          JsonValue value = currentValues.get(sensor.identifier);
-          if (value.getValueType() == JsonValue.ValueType.STRING) {
-            String measuredValue = ((JsonString) value).getString();
-            if (measuredValue.equals("wet")) {
-              measurement.value = HUNDRED_PERCENT_VALUE;
-            } else {
-              measurement.value = ZERO_PERCENT_VALUE;
+      try {
+        JsonObject currentValues = satelliteClient.getMeasurements();
+        for (Sensor sensor : Sensor.<Sensor>listAll()) {
+          if (currentValues.containsKey(sensor.identifier)) {
+            Measurement measurement = new Measurement();
+            measurement.sensor = sensor;
+            JsonValue value = currentValues.get(sensor.identifier);
+            if (value.getValueType() == JsonValue.ValueType.STRING) {
+              String measuredValue = ((JsonString) value).getString();
+              if (measuredValue.equals("wet")) {
+                measurement.value = HUNDRED_PERCENT_VALUE;
+              } else {
+                measurement.value = ZERO_PERCENT_VALUE;
+              }
+            } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
+              measurement.value = ((JsonNumber) value).doubleValue();
             }
-          } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
-            measurement.value = ((JsonNumber) value).doubleValue();
-          }
-          if (measurement.value != null) {
-            measurement.timestamp = new Date();
-            measurement.persist();
+            if (measurement.value != null) {
+              measurement.timestamp = new Date();
+              measurement.persist();
+            }
           }
         }
+      } catch (Exception exception) {
+        LOGGER.warning("Error on reading measurements: " + exception.getMessage());
       }
     }
   }
