@@ -14,8 +14,8 @@
 #include <FS.h>
 
 // Replace with your network credentials
-const char *SSID = "XX";
-const char *PWD = "XXXXX";
+const char *SSID = "XXX";
+const char *PWD = "XXX";
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -58,30 +58,9 @@ const char index_html[] PROGMEM = R"rawliteral(
   <div id="container">
     <h2>ESP32-CAM Last Photo</h2>
     <p>It might take more than 5 seconds to capture a photo.</p>
-    <p>
-      <button onclick="rotatePhoto();">ROTATE</button>
-      <button onclick="capturePhoto()">CAPTURE PHOTO</button>
-      <button onclick="location.reload();">REFRESH PAGE</button>
-    </p>
   </div>
   <div><img src="saved-photo" id="photo" width="70%"></div>
 </body>
-<script>
-  var deg = 0;
-  function capturePhoto() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/capture", true);
-    xhr.send();
-  }
-  function rotatePhoto() {
-    var img = document.getElementById("photo");
-    deg += 90;
-    if(isOdd(deg/90)){ document.getElementById("container").className = "vert"; }
-    else{ document.getElementById("container").className = "hori"; }
-    img.style.transform = "rotate(" + deg + "deg)";
-  }
-  function isOdd(n) { return Math.abs(n % 2) == 1; }
-</script>
 </html>)rawliteral";
 
 void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info){
@@ -122,12 +101,10 @@ void setup() {
   Serial.print("IP Address: http://");
   Serial.println(WiFi.localIP());
 
-  // Turn-off the 'brownout detector'
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
-
   pinMode(13, INPUT_PULLUP);
   pinMode(14, INPUT_PULLUP);
 
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // Brownout Detector
 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -152,9 +129,8 @@ void setup() {
   config.pixel_format = PIXFORMAT_JPEG;
   config.frame_size = FRAMESIZE_UXGA;
   config.grab_mode = CAMERA_GRAB_LATEST;
-  config.fb_location = CAMERA_FB_IN_PSRAM;
-  config.jpeg_quality = 12;
-  config.fb_count = 2;
+  config.jpeg_quality = 9;
+  config.fb_count = 1;
 
   Serial.println("STEP4 ==================");
   
@@ -179,13 +155,23 @@ void setup() {
     request->send_P(200, "text/html", index_html);
   });
 
-  server.on("/capture", HTTP_GET, [](AsyncWebServerRequest * request) {
-    takeNewPhoto = true;
-    request->send_P(200, "text/plain", "Taking Photo");
-  });
-
   server.on("/saved-photo", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, FILE_PHOTO, "image/jpg", false);
+     // Take a photo with the camera
+    Serial.println("Taking a photo...");
+
+    camera_fb_t * fb;
+    fb = esp_camera_fb_get();
+    esp_camera_fb_return(fb);
+    fb = esp_camera_fb_get();
+    if (!fb) {
+      Serial.println("Camera capture failed");
+      return;
+    }
+    AsyncResponseStream *response =
+      request->beginResponseStream("application/jpeg", fb->len);
+    response->write(fb->buf, fb->len);
+    request->send(response);
+    esp_camera_fb_return(fb);
   });
 
   server.on("/health", HTTP_GET, healthcheckHandler);
@@ -194,57 +180,6 @@ void setup() {
   server.begin();
 }
 
-// Check if photo capture was successful
-bool checkPhoto( fs::FS &fs ) {
-  File f_pic = fs.open( FILE_PHOTO );
-  unsigned int pic_sz = f_pic.size();
-  return ( pic_sz > 100 );
-}
-
-// Capture Photo and Save it to SPIFFS
-void capturePhotoSaveSpiffs( void ) {
-  camera_fb_t * fb = NULL; // pointer
-  bool ok = 0; // Boolean indicating if the picture has been taken correctly
-
-  do {
-    // Take a photo with the camera
-    Serial.println("Taking a photo...");
-
-    fb = esp_camera_fb_get();
-    if (!fb) {
-      Serial.println("Camera capture failed");
-      return;
-    }
-
-    // Photo file name
-    Serial.printf("Picture file name: %s\n", FILE_PHOTO);
-    File file = SPIFFS.open(FILE_PHOTO, FILE_WRITE);
-
-    // Insert the data in the photo file
-    if (!file) {
-      Serial.println("Failed to open file in writing mode");
-    }
-    else {
-      file.write(fb->buf, fb->len); // payload (image), payload length
-      Serial.print("The picture has been saved in ");
-      Serial.print(FILE_PHOTO);
-      Serial.print(" - Size: ");
-      Serial.print(file.size());
-      Serial.println(" bytes");
-    }
-    // Close the file
-    file.close();
-    esp_camera_fb_return(fb);
-
-    // check if file has been correctly saved in SPIFFS
-    ok = checkPhoto(SPIFFS);
-  } while ( !ok );
-}
-
 void loop() {
-  if (takeNewPhoto) {
-    capturePhotoSaveSpiffs();
-    takeNewPhoto = false;
-  }
-  delay(1);
+
 }

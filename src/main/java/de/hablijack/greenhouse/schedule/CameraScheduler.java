@@ -6,7 +6,6 @@ import de.hablijack.greenhouse.service.SatelliteService;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 @ApplicationScoped
@@ -20,8 +19,6 @@ public class CameraScheduler {
   @Scheduled(every = "2m", concurrentExecution = SKIP)
   void takePicture() {
     try {
-      satelliteService.takeCameraSnapshot();
-      TimeUnit.SECONDS.sleep(SatelliteService.CAMERA_SNAPSHOT_WAIT_TIME);
       satelliteService.savePictureToDatabase();
     } catch (Exception e) {
       LOGGER.warning("Error on taking camera shot: " + e.getMessage());
