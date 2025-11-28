@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 jobs:
   qualitygate:
@@ -28,10 +28,10 @@ jobs:
       - run:
           name: Install GraalVM
           command: |
-            curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.2/graalvm-community-jdk-22.0.2_linux-aarch64_bin.tar.gz -O -J -L
-            tar xfz graalvm-community-jdk-22.0.2_linux-aarch64_bin.tar.gz
-            mv graalvm-community-openjdk-22.0.2+9.1 .graalvm
-            rm graalvm-community-jdk-22.0.2_linux-aarch64_bin.tar.gz
+            curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.2/graalvm-community-jdk-25.0.2_linux-aarch64_bin.tar.gz -O -J -L
+            tar xfz graalvm-community-jdk-25.0.2_linux-aarch64_bin.tar.gz
+            mv graalvm-community-openjdk-25.0.2+9.1 .graalvm
+            rm graalvm-community-jdk-25.0.2_linux-aarch64_bin.tar.gz
       - run:
           name: Build (Native)
           command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
