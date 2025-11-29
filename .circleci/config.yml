@@ -26,12 +26,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install GraalVM
-          command: |
-            curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.1/graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz -O -J -L
-            tar xfz graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz
-            mv graalvm-community-openjdk-25.0.1+8.1 .graalvm
-            rm graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz
+          name: Download GraalVM archive
+          command: curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.1/graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz -O -J -L
+      - run:
+          name: Unpack downloaded GraalVM archive
+          command: tar xfz graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz
+      - run:
+          name: Move directory
+          command: mv graalvm-community-jdk-25.0.1+8.1 .graalvm
+      - run:
+          name: Cleanup GraalVM installer
+          command: rm graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz
       - run:
           name: Build (Native)
           command: ./mvnw clean package -Pnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
