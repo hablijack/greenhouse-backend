@@ -2,7 +2,8 @@ version: 2.1
 
 jobs:
   qualitygate:
-    machine: true
+    docker:
+      - image: cimg/openjdk:25.0.0
     resource_class: medium
     steps:
       - checkout
@@ -18,7 +19,7 @@ jobs:
 
   build:
     machine:
-      image: ubuntu-2404:2024.11.1
+      image: ubuntu-2404:2025.09.1
     resource_class: arm.medium
     working_directory: ~/repo
     environment:
