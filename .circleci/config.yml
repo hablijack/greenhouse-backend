@@ -24,9 +24,12 @@ jobs:
     environment:
       GRAALVM_HOME: /home/circleci/repo/.graalvm/
       JAVA_HOME: /home/circleci/repo/.graalvm
-      PATH: ${GRAALVM_HOME}/bin:$PATH
+
     steps:
       - checkout
+      - run:
+          name: add graalvm to path
+          command: export PATH=${GRAALVM_HOME}/bin:$PATH
       - run:
           name: Download GraalVM archive
           command: curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.1/graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz -O -J -L
