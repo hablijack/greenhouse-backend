@@ -17,8 +17,8 @@ jobs:
           command: ./mvnw clean compile checkstyle:check
 
   build:
-    machine:
-      image: ubuntu-2404:2025.09.1
+    docker:
+      - image: cimg/openjdk:25.0
     resource_class: arm.medium
     working_directory: ~/repo
     environment:
