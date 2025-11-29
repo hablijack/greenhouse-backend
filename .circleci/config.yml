@@ -3,8 +3,7 @@ version: 2.1
 jobs:
   qualitygate:
     docker:
-      - image: cimg/openjdk:25.0.0
-    resource_class: medium
+      - image: cimg/openjdk:25.0
     steps:
       - checkout
       - run:
