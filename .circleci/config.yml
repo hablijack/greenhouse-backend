@@ -44,7 +44,7 @@ jobs:
           command: rm graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz
       - run:
           name: Build (Native)
-          command: ./mvnw install -Dnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=true
+          command: ./mvnw install -Dnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=false
           no_output_timeout: 30m
       - run:
           name: Build and push Docker Image to Dockerhub
