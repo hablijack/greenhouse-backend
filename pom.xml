@@ -244,7 +244,7 @@
                 <quarkus.package.jar.enabled>false</quarkus.package.jar.enabled>
                 <skipITs>false</skipITs>
                 <quarkus.native.enabled>true</quarkus.native.enabled>
-                <quarkus.native.additional-build-args>-J-Xmx7G -march=armv8-a</quarkus.native.additional-build-args>
+                <quarkus.native.additional-build-args>-march=armv8-a</quarkus.native.additional-build-args>
             </properties>
         </profile>
     </profiles>
