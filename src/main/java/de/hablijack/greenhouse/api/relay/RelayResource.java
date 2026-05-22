@@ -65,16 +65,16 @@ public class RelayResource {
     Map<String, Boolean> relayState = new HashMap<>();
     relayState.put(relay.identifier, event.getNewValue());
     satelliteClient.updateRelayState(relayState);
-    List<RelayLog> logs = persistRelayToggle(identifier, event);
-    sendToSocket(logs);
+    String jsonPayload = persistRelayToggleAndSerialize(identifier, event);
+    sendToSocket(jsonPayload);
     return true;
   }
 
   @Transactional(Transactional.TxType.REQUIRES_NEW)
-  List<RelayLog> persistRelayToggle(String identifier, RelayLogEvent event) {
+  String persistRelayToggleAndSerialize(String identifier, RelayLogEvent event) {
     Relay relay = Relay.findByIdentifier(identifier);
     if (relay == null) {
-      return List.of();
+      return "[]";
     }
     relay.value = event.getNewValue();
     relay.persist();
@@ -82,16 +82,20 @@ public class RelayResource {
     RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
     log.persist();
     logs.add(log);
-    return logs;
+    try {
+      return objectMapper.writeValueAsString(logs);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to serialize relay log: {0}", e.getMessage());
+      return "[]";
+    }
   }
 
-  private void sendToSocket(List<RelayLog> relayLogs) {
+  private void sendToSocket(String jsonPayload) {
     try (Session session = ContainerProvider.getWebSocketContainer().connectToServer(
         Client.class,
         new URI("ws://localhost:8080/api/socket/relays/system")
     )) {
-
-      session.getAsyncRemote().sendObject(objectMapper.writeValueAsString(relayLogs), result -> {
+      session.getAsyncRemote().sendObject(jsonPayload, result -> {
         if (result.getException() != null) {
           LOGGER.log(Level.ERROR, "Unable to send socket message! " + result.getException());
         }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hablijack.greenhouse.entity.RelayLog;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
@@ -30,6 +31,7 @@ public class RelayLogSocket {
 
   @SuppressWarnings("checkstyle:MagicNumber")
   @OnOpen
+  @Transactional
   public void onOpen(Session session, @PathParam("userid") String userid) throws JsonProcessingException {
     sessions.put(userid, session);
     ObjectMapper objectMapper = new ObjectMapper();
