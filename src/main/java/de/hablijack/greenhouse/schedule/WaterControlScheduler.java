@@ -49,7 +49,6 @@ public class WaterControlScheduler {
 
   @SuppressFBWarnings(value = {"REC_CATCH_EXCEPTION"})
   @Scheduled(every = "5s", concurrentExecution = SKIP)
-  @Transactional(REQUIRES_NEW)
   void switchRelaysConditionally() {
     Boolean newState = null;
     String trigger = null;
@@ -82,15 +81,11 @@ public class WaterControlScheduler {
 
       if (newState != null && newState != relay.value) {
         try {
-          // PREPARE REQUEST
           Map<String, Boolean> relayState = new HashMap<>();
           relayState.put(relay.identifier, newState);
           satelliteClient = satelliteService.createSatelliteClient(relay.satellite.ip);
-          // FIRE UP SATELLITE REQUEST
           satelliteClient.updateRelayState(relayState);
-          // UPDATE DATABASE WITH NEW STATES
-          relay.value = newState;
-          new RelayLog(relay, trigger, new Date(), newState).persist();
+          persistRelaySwitch(relay, trigger, newState);
         } catch (Exception error) {
           LOGGER.warning("Error on RelayScheduler - could not switch relay: " + error.getMessage());
           try {
@@ -107,6 +102,12 @@ public class WaterControlScheduler {
       newState = null;
       trigger = null;
     }
+  }
+
+  @Transactional(REQUIRES_NEW)
+  void persistRelaySwitch(Relay relay, String trigger, boolean newState) {
+    relay.value = newState;
+    new RelayLog(relay, trigger, new Date(), newState).persist();
   }
 
   private boolean isWithinTriggerTime(Relay relay) {

@@ -49,7 +49,6 @@ public class SatelliteService {
   }
 
   @SuppressFBWarnings(value = {"CRLF_INJECTION_LOGS", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"})
-  @Transactional
   public void takeCameraSnapshot() throws MalformedURLException, URISyntaxException {
     Satellite greenhouseCamera = Satellite.findByIdentifier("greenhouse_cam");
     if (greenhouseCamera != null && greenhouseCamera.online) {

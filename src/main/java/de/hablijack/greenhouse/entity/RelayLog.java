@@ -40,6 +40,9 @@ public class RelayLog extends PanacheEntity {
 
   public static boolean isLastActionManualActivated(Relay relay) {
     RelayLog lastAction = RelayLog.<RelayLog>find("relay=?1 ORDER BY timestamp DESC", relay).firstResult();
+    if (lastAction == null) {
+      return false;
+    }
     return !lastAction.initiator.equals(QUARKUS_TIME_TRIGGER)
         && !lastAction.initiator.equals(QUARKUS_CONDITION_TRIGGER) && lastAction.value;
   }

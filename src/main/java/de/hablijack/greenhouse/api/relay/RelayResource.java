@@ -54,30 +54,31 @@ public class RelayResource {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/relay/{identifier}/switch")
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public boolean toggleRelay(@PathParam("identifier") String identifier, RelayLogEvent event) throws IOException {
-    // FIND CORRESPONDING RELAY
     Relay relay = Relay.findByIdentifier(identifier);
     if (relay == null || !relay.satellite.online) {
       return false;
     }
-    // TRIGGER REST ENDPOINT ON SATELLITE
     satelliteClient = RestClientBuilder.newBuilder().baseUrl(
         URI.create("http://" + relay.satellite.ip).toURL()
     ).build(SatelliteClient.class);
     Map<String, Boolean> relayState = new HashMap<>();
     relayState.put(relay.identifier, event.getNewValue());
     satelliteClient.updateRelayState(relayState);
-    // REFRESH RELAY IN DB
+    List<RelayLog> logs = persistRelayToggle(relay, event);
+    sendToSocket(logs);
+    return true;
+  }
+
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  List<RelayLog> persistRelayToggle(Relay relay, RelayLogEvent event) {
     relay.value = event.getNewValue();
     relay.persist();
-    // RELAY LOG REFRESH IN DB AND WEBSOCKET
     List<RelayLog> logs = new ArrayList<>();
     RelayLog log = new RelayLog(relay, event.getInitiator(), new Date(), event.getNewValue());
     log.persist();
     logs.add(log);
-    sendToSocket(logs);
-    return true;
+    return logs;
   }
 
   private void sendToSocket(List<RelayLog> relayLogs) {

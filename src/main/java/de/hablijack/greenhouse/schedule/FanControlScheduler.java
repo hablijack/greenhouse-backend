@@ -1,6 +1,7 @@
 package de.hablijack.greenhouse.schedule;
 
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
@@ -48,7 +49,6 @@ public class FanControlScheduler {
   static final String CRON_ACTIVATION_RANGE = "* * 9-16 ? * * *";
 
   @Scheduled(every = "10s", concurrentExecution = SKIP)
-  @Transactional
   void switchFansConditionally() {
     Relay fan = Relay.findByIdentifier("relay_line8");
     if (fan == null || !fan.satellite.online) {
@@ -75,18 +75,23 @@ public class FanControlScheduler {
   }
 
   private void switchRelay(Relay fan, boolean value) {
-    fan.value = value;
     Map<String, Boolean> relayState = new HashMap<>();
     relayState.put(fan.identifier, value);
     try {
       satelliteClient = satelliteService.createSatelliteClient(fan.satellite.ip);
       satelliteClient.updateRelayState(relayState);
-      new RelayLog(fan, "CONDITION-INTELLIGENCE", new Date(), value).persist();
+      persistFanRelaySwitch(fan, value);
     } catch (Exception error) {
       LOGGER.warning("Error on FanControlScheduler - could not switch relay: " + error.getMessage());
       telegramClient.sendMessage(botToken, chatId, "Fehler beim Schalten der Ventilatoren: \r\n\r\n"
           + error.getMessage());
     }
+  }
+
+  @Transactional(REQUIRES_NEW)
+  void persistFanRelaySwitch(Relay fan, boolean value) {
+    fan.value = value;
+    new RelayLog(fan, "CONDITION-INTELLIGENCE", new Date(), value).persist();
   }
 
   private boolean isWithinTriggerTime() {
