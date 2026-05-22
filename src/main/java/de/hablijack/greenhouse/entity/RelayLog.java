@@ -58,6 +58,14 @@ public class RelayLog extends PanacheEntity {
     return find("ORDER BY timestamp DESC").range(0, maxEntries).list();
   }
 
+  public static boolean isRelayOnTooLong(Relay relay, long maxDurationMs) {
+    RelayLog lastOn = find("relay=?1 AND value=true ORDER BY timestamp DESC", relay).firstResult();
+    if (lastOn == null) {
+      return false;
+    }
+    return System.currentTimeMillis() - lastOn.timestamp.getTime() > maxDurationMs;
+  }
+
   public void persistIfInitForThisRelay() {
     if (find("relay = ?1", relay).count() == 0) {
       this.persist();

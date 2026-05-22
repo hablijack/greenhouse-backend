@@ -43,6 +43,7 @@ public class SatelliteResource {
   @GET
   @Produces("image/jpg")
   @Path("/satellites/greenhouse-cam/picture.jpg")
+  @Transactional
   public Response getCurrentPicture() {
     if (!CameraPicture.findAll().list().isEmpty()) {
       CameraPicture picture = (CameraPicture) CameraPicture.findAll().list().get(0);

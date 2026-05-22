@@ -65,13 +65,17 @@ public class RelayResource {
     Map<String, Boolean> relayState = new HashMap<>();
     relayState.put(relay.identifier, event.getNewValue());
     satelliteClient.updateRelayState(relayState);
-    List<RelayLog> logs = persistRelayToggle(relay, event);
+    List<RelayLog> logs = persistRelayToggle(identifier, event);
     sendToSocket(logs);
     return true;
   }
 
   @Transactional(Transactional.TxType.REQUIRES_NEW)
-  List<RelayLog> persistRelayToggle(Relay relay, RelayLogEvent event) {
+  List<RelayLog> persistRelayToggle(String identifier, RelayLogEvent event) {
+    Relay relay = Relay.findByIdentifier(identifier);
+    if (relay == null) {
+      return List.of();
+    }
     relay.value = event.getNewValue();
     relay.persist();
     List<RelayLog> logs = new ArrayList<>();

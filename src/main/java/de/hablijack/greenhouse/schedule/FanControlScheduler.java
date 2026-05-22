@@ -80,7 +80,7 @@ public class FanControlScheduler {
     try {
       satelliteClient = satelliteService.createSatelliteClient(fan.satellite.ip);
       satelliteClient.updateRelayState(relayState);
-      persistFanRelaySwitch(fan, value);
+      persistFanRelaySwitch(fan.identifier, value);
     } catch (Exception error) {
       LOGGER.warning("Error on FanControlScheduler - could not switch relay: " + error.getMessage());
       telegramClient.sendMessage(botToken, chatId, "Fehler beim Schalten der Ventilatoren: \r\n\r\n"
@@ -89,7 +89,11 @@ public class FanControlScheduler {
   }
 
   @Transactional(REQUIRES_NEW)
-  void persistFanRelaySwitch(Relay fan, boolean value) {
+  void persistFanRelaySwitch(String relayIdentifier, boolean value) {
+    Relay fan = Relay.findByIdentifier(relayIdentifier);
+    if (fan == null) {
+      return;
+    }
     fan.value = value;
     new RelayLog(fan, "CONDITION-INTELLIGENCE", new Date(), value).persist();
   }
