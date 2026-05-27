@@ -1,5 +1,6 @@
 package de.hablijack.greenhouse.schedule;
 
+import static de.hablijack.greenhouse.schedule.WaterControlScheduler.QUARKUS_CONDITION_TRIGGER;
 import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
 import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
@@ -24,6 +25,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -43,15 +45,30 @@ public class FanControlScheduler {
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
 
-  static final int MAXIMUM_HUMIDIY = 95; // more is bad for our tomatos
-  static final int MAXIMUM_TEMP = 35; // more is bad for every plant growing
-  static final int MINIMUM_SUNSHINE_LUX = 4000; // if we have no sunshine, we cant ventilate - battery!!!
-  static final String CRON_ACTIVATION_RANGE = "* * 9-16 ? * * *";
+  @ConfigProperty(name = "fan.maximum.temp", defaultValue = "35")
+  int maximumTemp;
+  @ConfigProperty(name = "fan.maximum.humidity", defaultValue = "95")
+  int maximumHumidity;
+  @ConfigProperty(name = "fan.minimum.sunshine.lux", defaultValue = "2500")
+  int minimumSunshineLux;
+  @ConfigProperty(name = "fan.hysteresis.temp.off", defaultValue = "32")
+  int hysteresisTempOff;
+  @ConfigProperty(name = "fan.hysteresis.humidity.off", defaultValue = "90")
+  int hysteresisHumidityOff;
+  @ConfigProperty(name = "fan.max.on.duration.ms", defaultValue = "300000")
+  long maxFanOnDurationMs;
+  @ConfigProperty(name = "fan.cron.activation.range", defaultValue = "* * 9-16 ? * * *")
+  String cronActivationRange;
 
   @Scheduled(every = "10s", concurrentExecution = SKIP)
   void switchFansConditionally() {
     Relay fan = Relay.findByIdentifier("relay_line8");
     if (fan == null || !fan.satellite.online) {
+      return;
+    }
+
+    if (RelayLog.isLastActionManualActivated(fan)) {
+      LOGGER.log(Level.INFO, "Fan relay {0} skipped: last action was manual", fan.identifier);
       return;
     }
 
@@ -65,12 +82,30 @@ public class FanControlScheduler {
     Measurement currentLux = brightnessSensor.findCurrentMeasurement();
 
     boolean triggerTimeFlag = isWithinTriggerTime();
+    boolean environmentOk = triggerTimeFlag && currentLux.value >= minimumSunshineLux;
 
-    boolean newState = triggerTimeFlag
-        && currentLux.value >= MINIMUM_SUNSHINE_LUX
-        && (currentHumidity.value >= MAXIMUM_HUMIDIY || currentTemp.value >= MAXIMUM_TEMP);
-    if (fan.satellite.online && newState != fan.value) {
-      switchRelay(fan, newState);
+    boolean shouldBeOn = false;
+
+    // Safety: force OFF if fan has been running too long
+    if (fan.value && RelayLog.isRelayOnTooLong(fan, maxFanOnDurationMs)) {
+      LOGGER.log(Level.WARNING, "Fan relay {0} forced OFF: exceeded max ON duration", fan.identifier);
+      shouldBeOn = false;
+    }
+    // Only consider normal logic if within allowed time and brightness
+    else if (environmentOk) {
+      if (fan.value) {
+        // Hysteresis: use lower thresholds to decide when to turn OFF
+        shouldBeOn = currentTemp.value >= hysteresisTempOff
+            || currentHumidity.value >= hysteresisHumidityOff;
+      } else {
+        // Upper thresholds to decide when to turn ON
+        shouldBeOn = currentTemp.value >= maximumTemp
+            || currentHumidity.value >= maximumHumidity;
+      }
+    }
+
+    if (shouldBeOn != fan.value) {
+      switchRelay(fan, shouldBeOn);
     }
   }
 
@@ -82,9 +117,16 @@ public class FanControlScheduler {
       satelliteClient.updateRelayState(relayState);
       persistFanRelaySwitch(fan.identifier, value);
     } catch (Exception error) {
-      LOGGER.warning("Error on FanControlScheduler - could not switch relay: " + error.getMessage());
-      telegramClient.sendMessage(botToken, chatId, "Fehler beim Schalten der Ventilatoren: \r\n\r\n"
-          + error.getMessage());
+      LOGGER.log(Level.WARNING, "Error on FanControlScheduler - could not switch relay: {0}", error.getMessage());
+      try {
+        telegramClient.sendMessage(botToken, chatId,
+            "Fehler beim Schalten der Ventilatoren! \r\n\r\n"
+                + "Konnte das Relay: " + fan.name + " nicht auf: "
+                + value + " schalten.\r\n\r\n"
+                + error.getMessage());
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Telegram notification failed: {0}", e.getMessage());
+      }
     }
   }
 
@@ -95,13 +137,13 @@ public class FanControlScheduler {
       return;
     }
     fan.value = value;
-    new RelayLog(fan, "CONDITION-INTELLIGENCE", new Date(), value).persist();
+    new RelayLog(fan, QUARKUS_CONDITION_TRIGGER, new Date(), value).persist();
   }
 
   private boolean isWithinTriggerTime() {
     CronDefinition cronDefinition = CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ);
     CronParser parser = new CronParser(cronDefinition);
-    Cron unixCron = parser.parse(CRON_ACTIVATION_RANGE);
+    Cron unixCron = parser.parse(cronActivationRange);
     ExecutionTime executionTime = ExecutionTime.forCron(unixCron);
     return executionTime.isMatch(ZonedDateTime.now());
   }
