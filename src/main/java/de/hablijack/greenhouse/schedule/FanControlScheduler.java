@@ -90,9 +90,8 @@ public class FanControlScheduler {
     if (fan.value && RelayLog.isRelayOnTooLong(fan, maxFanOnDurationMs)) {
       LOGGER.log(Level.WARNING, "Fan relay {0} forced OFF: exceeded max ON duration", fan.identifier);
       shouldBeOn = false;
-    }
-    // Only consider normal logic if within allowed time and brightness
-    else if (environmentOk) {
+    } else if (environmentOk) {
+      // Only consider normal logic if within allowed time and brightness
       if (fan.value) {
         // Hysteresis: use lower thresholds to decide when to turn OFF
         shouldBeOn = currentTemp.value >= hysteresisTempOff
