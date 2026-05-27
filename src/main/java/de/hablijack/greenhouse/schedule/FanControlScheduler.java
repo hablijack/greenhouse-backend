@@ -55,10 +55,14 @@ public class FanControlScheduler {
   int hysteresisTempOff;
   @ConfigProperty(name = "fan.hysteresis.humidity.off", defaultValue = "90")
   int hysteresisHumidityOff;
-  @ConfigProperty(name = "fan.max.on.duration.ms", defaultValue = "300000")
+  @ConfigProperty(name = "fan.max.on.duration.ms", defaultValue = "7200000")
   long maxFanOnDurationMs;
+  @ConfigProperty(name = "fan.cooldown.after.max.duration.ms", defaultValue = "900000")
+  long fanCooldownAfterMaxDurationMs;
   @ConfigProperty(name = "fan.cron.activation.range", defaultValue = "* * 9-16 ? * * *")
   String cronActivationRange;
+
+  volatile long lastForcedOffTimestamp = 0;
 
   @Scheduled(every = "10s", concurrentExecution = SKIP)
   void switchFansConditionally() {
@@ -90,14 +94,15 @@ public class FanControlScheduler {
     if (fan.value && RelayLog.isRelayOnTooLong(fan, maxFanOnDurationMs)) {
       LOGGER.log(Level.WARNING, "Fan relay {0} forced OFF: exceeded max ON duration", fan.identifier);
       shouldBeOn = false;
+      lastForcedOffTimestamp = System.currentTimeMillis();
     } else if (environmentOk) {
       // Only consider normal logic if within allowed time and brightness
       if (fan.value) {
         // Hysteresis: use lower thresholds to decide when to turn OFF
         shouldBeOn = currentTemp.value >= hysteresisTempOff
             || currentHumidity.value >= hysteresisHumidityOff;
-      } else {
-        // Upper thresholds to decide when to turn ON
+      } else if (!isInCooldown()) {
+        // Upper thresholds to decide when to turn ON (only if not in cooldown)
         shouldBeOn = currentTemp.value >= maximumTemp
             || currentHumidity.value >= maximumHumidity;
       }
@@ -106,6 +111,13 @@ public class FanControlScheduler {
     if (shouldBeOn != fan.value) {
       switchRelay(fan, shouldBeOn);
     }
+  }
+
+  private boolean isInCooldown() {
+    if (lastForcedOffTimestamp == 0) {
+      return false;
+    }
+    return System.currentTimeMillis() - lastForcedOffTimestamp < fanCooldownAfterMaxDurationMs;
   }
 
   private void switchRelay(Relay fan, boolean value) {
