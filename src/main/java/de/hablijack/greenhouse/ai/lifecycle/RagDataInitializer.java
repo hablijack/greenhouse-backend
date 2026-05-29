@@ -30,184 +30,582 @@ public class RagDataInitializer {
   @PostConstruct
   @Transactional
   public void init() {
+
     if (PlantKnowledgeDocument.count() > 0) {
       LOG.info("RAG documents already exist, skipping initialization");
       return;
     }
 
-    LOG.info("Initializing RAG knowledge base with plant care documents");
+    LOG.info("Initializing advanced greenhouse RAG knowledge base");
 
     List<DocumentIngestionService.DocumentInput> documents = new ArrayList<>();
+
     documents.addAll(initTomatoDocuments());
     documents.addAll(initCucumberDocuments());
-    documents.addAll(initGeneralDocuments());
+    documents.addAll(initClimateDocuments());
+    documents.addAll(initSensorInterpretationDocuments());
+    documents.addAll(initVpdDocuments());
+    documents.addAll(initAutomationDocuments());
+    documents.addAll(initDiseaseDocuments());
+    documents.addAll(initPestDocuments());
+    documents.addAll(initHydroponicDocuments());
+    documents.addAll(initLightingDocuments());
+    documents.addAll(initDiagnosticsDocuments());
+    documents.addAll(initEmergencyDocuments());
+    documents.addAll(initPollinationDocuments());
+    documents.addAll(initYieldOptimizationDocuments());
+    documents.addAll(initWaterQualityDocuments());
+    documents.addAll(initSensorFaultDocuments());
 
     documentIngestionService.ingestBatch(documents);
-    LOG.info("RAG knowledge base initialized with {} documents", documents.size());
+
+    LOG.info("Advanced greenhouse RAG initialized with {} documents", documents.size());
   }
+
+  // ===========================================================================
+  // TOMATO
+  // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initTomatoDocuments() {
+
     return List.of(
-        new DocumentIngestionService.DocumentInput("tomato",
-        "Ideal temperature ranges for tomatoes",
-        "Tomatoes (Solanum lycopersicum) thrive in daytime temperatures between 18-30°C. "
-        + "Night temperatures should stay above 15°C. Below 10°C causes cold stress and "
-        + "prevents fruit set. Above 32°C reduces pollination and causes flower drop. "
-        + "Optimal fruit development occurs at 21-24°C.",
-        "temperature"),
 
-        new DocumentIngestionService.DocumentInput("tomato",
-        "Tomato watering schedule and requirements",
-        "Tomatoes need consistent moisture: 2-3 cm of water per week. "
-        + "Water deeply 2-3 times per week rather than daily shallow watering. "
-        + "Soil should be moist but not waterlogged. Reduce watering when fruits ripen. "
-        + "Drip irrigation is preferred to avoid wetting foliage. "
-        + "Overwatering causes root rot and blossom-end rot. "
-        + "Underwatering causes blossom drop and cracked fruits.",
-        "watering"),
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato vegetative growth climate",
+            "During vegetative growth tomatoes prefer 22-28°C daytime temperatures "
+                + "and 18-22°C nighttime temperatures. Humidity should remain between "
+                + "60-75%. Excess humidity increases fungal disease risk while low humidity "
+                + "increases transpiration stress and calcium deficiency risk.",
+            "tomato_climate"),
 
-        new DocumentIngestionService.DocumentInput("tomato",
-        "Tomato disease prevention",
-        "Common tomato diseases: early blight (Alternaria), late blight (Phytophthora), "
-        + "powdery mildew, fusarium wilt, and bacterial spot. "
-        + "Prevention: ensure good air circulation, avoid overhead watering, "
-        + "rotate crops every 3 years, use disease-resistant varieties. "
-        + "Remove lower leaves touching soil. Space plants 60-90cm apart. "
-        + "Apply mulch to prevent soil splash. Copper fungicide for prevention.",
-        "disease"),
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato flowering climate management",
+            "During flowering tomatoes require 21-27°C daytime and 16-20°C nighttime "
+                + "temperatures. Humidity above 80% reduces pollen viability and causes "
+                + "poor fruit set. Maintain strong airflow and moderate humidity "
+                + "to maximize pollination success.",
+            "tomato_flowering"),
 
-        new DocumentIngestionService.DocumentInput("tomato",
-        "Tomato nutrient requirements",
-        "Tomatoes are heavy feeders. Nitrogen (N): important for vegetative growth, "
-        + "reduce when flowering begins. Phosphorus (P): essential for flowers and fruits. "
-        + "Potassium (K): crucial for fruit development and disease resistance. "
-        + "Calcium: prevents blossom-end rot. Magnesium: prevents leaf yellowing. "
-        + "Apply balanced 10-10-10 fertilizer at planting, side-dress monthly. "
-        + "Epsom salt (magnesium sulfate) every 2 weeks during fruiting.",
-        "nutrients"),
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato fruiting nutrient management",
+            "During fruiting tomatoes require elevated potassium and calcium levels. "
+                + "Reduce excessive nitrogen during heavy fruit production. "
+                + "Calcium deficiencies during fruit expansion cause blossom-end rot. "
+                + "Maintain stable irrigation to support nutrient transport.",
+            "tomato_nutrients"),
 
-        new DocumentIngestionService.DocumentInput("tomato",
-        "Tomato pruning and support",
-        "Prune indeterminate tomatoes to 1-2 main stems for best yields. "
-        + "Remove suckers (side shoots) when 5-10cm long. "
-        + "Use stakes, cages, or trellises for support. "
-        + "Remove lower leaves to improve airflow. "
-        + "Pinch growing tips 4 weeks before first frost to redirect energy to fruits. "
-        + "Regular pruning reduces disease risk and improves fruit size.",
-        "pruning"),
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato irrigation strategy",
+            "Tomatoes require deep irrigation with moderate dry-back cycles. "
+                + "Frequent shallow watering weakens root development. "
+                + "Allow moderate substrate drying between irrigation cycles "
+                + "to improve oxygen availability in the root zone.",
+            "tomato_irrigation"),
 
-        new DocumentIngestionService.DocumentInput("tomato",
-        "Tomato humidity requirements",
-        "Tomatoes prefer 50-75% relative humidity. "
-        + "High humidity (>85%) promotes fungal diseases like late blight and powdery mildew. "
-        + "Low humidity (<40%) reduces pollination and causes blossom drop. "
-        + "In high humidity greenhouses, increase ventilation and use fans. "
-        + "Avoid overcrowding plants. Space vines for good air circulation. "
-        + "Heat and vent in the morning to reduce leaf wetness duration.",
-        "humidity")
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato heat stress response",
+            "Temperatures above 32°C cause tomato pollen sterility, flower abortion, "
+                + "reduced fruit set, and elevated transpiration stress. "
+                + "Immediately increase ventilation and cooling during heat stress events.",
+            "tomato_heat"),
+
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato pruning and airflow",
+            "Prune indeterminate tomatoes regularly to maintain airflow and light penetration. "
+                + "Remove lower leaves touching the soil to reduce fungal disease risk. "
+                + "Proper pruning improves fruit quality and reduces humidity accumulation.",
+            "tomato_pruning"),
+
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato pollination strategy",
+            "Tomatoes are self-pollinating but require vibration for efficient pollen release. "
+                + "High humidity causes pollen clumping and poor pollination. "
+                + "Use airflow, bumblebees, or mechanical vibration to improve fruit set.",
+            "tomato_pollination"),
+
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato blossom-end rot diagnosis",
+            "Blossom-end rot is primarily caused by calcium transport disruption rather "
+                + "than lack of calcium in soil. High VPD, irregular irrigation, root stress, "
+                + "and excessive salinity increase blossom-end rot risk.",
+            "tomato_diagnostics")
+
     );
   }
+
+  // ===========================================================================
+  // CUCUMBER
+  // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initCucumberDocuments() {
+
     return List.of(
-        new DocumentIngestionService.DocumentInput("cucumber",
-        "Ideal temperature ranges for cucumbers",
-        "Cucumbers (Cucumis sativus) thrive in warm conditions: 20-28°C daytime, "
-        + "16-22°C nighttime. Growth stops below 15°C. Frost kills plants. "
-        + "Above 35°C causes bitter fruits and flower abortion. "
-        + "Soil temperature should be at least 18°C for germination. "
-        + "Optimal fruit quality at 21-26°C. Use row covers for cold protection.",
-        "temperature"),
 
-        new DocumentIngestionService.DocumentInput("cucumber",
-        "Cucumber watering and moisture",
-        "Cucumbers need consistent moisture: 2.5-4 cm of water per week. "
-        + "Water deeply 2-3 times weekly. Soil must stay evenly moist. "
-        + "Inconsistent watering causes bitter fruits. "
-        + "Use drip irrigation or soaker hoses to keep foliage dry. "
-        + "Mulch heavily to retain moisture and regulate soil temperature. "
-        + "Overwatering leads to root rot and fungal diseases. "
-        + "Reduce watering slightly as fruits mature.",
-        "watering"),
+        new DocumentIngestionService.DocumentInput(
+            "cucumber",
+            "Cucumber climate management",
+            "Cucumbers thrive between 22-30°C daytime temperatures and "
+                + "18-22°C nighttime temperatures. Temperatures below 15°C slow growth "
+                + "while temperatures above 35°C increase bitter fruit formation.",
+            "cucumber_climate"),
 
-        new DocumentIngestionService.DocumentInput("cucumber",
-        "Cucumber disease prevention",
-        "Common cucumber diseases: powdery mildew, downy mildew, "
-        + "angular leaf spot, bacterial wilt (spread by cucumber beetles), "
-        + "and anthracnose. Prevention: plant resistant varieties, "
-        + "ensure good airflow, rotate crops yearly, "
-        + "use drip irrigation, remove infected leaves promptly. "
-        + "Apply sulfur or neem oil for powdery mildew. "
-        + "Control cucumber beetles to prevent bacterial wilt.",
-        "disease"),
+        new DocumentIngestionService.DocumentInput(
+            "cucumber",
+            "Cucumber irrigation requirements",
+            "Cucumbers require consistently moist substrates but should not remain waterlogged. "
+                + "Irregular irrigation causes bitter fruits and poor fruit development. "
+                + "Drip irrigation is preferred to maintain stable root-zone moisture.",
+            "cucumber_irrigation"),
 
-        new DocumentIngestionService.DocumentInput("cucumber",
-        "Cucumber nutrient requirements",
-        "Cucumbers require balanced nutrition. Nitrogen: supports vine growth. "
-        + "Phosphorus: important for flowers and fruit set. "
-        + "Potassium: improves fruit quality and disease resistance. "
-        + "Apply 5-10-10 fertilizer before planting. "
-        + "Side-dress with compost tea or balanced fertilizer every 2-3 weeks. "
-        + "Magnesium deficiency causes leaf yellowing between veins. "
-        + "Avoid excess nitrogen which reduces fruit production.",
-        "nutrients"),
+        new DocumentIngestionService.DocumentInput(
+            "cucumber",
+            "Cucumber humidity and disease",
+            "Humidity above 85% increases powdery mildew and downy mildew risk in cucumbers. "
+                + "Ensure continuous airflow and proper plant spacing to reduce disease pressure.",
+            "cucumber_humidity"),
 
-        new DocumentIngestionService.DocumentInput("cucumber",
-        "Cucumber pruning and trellising",
-        "Cucumbers benefit from trellising: saves space, improves airflow, "
-        + "keeps fruits clean, reduces disease. Use A-frame or vertical trellises. "
-        + "Train main vine upward, remove lower lateral branches. "
-        + "Prune suckers and excess foliage to improve light penetration. "
-        + "Harvest regularly to encourage continued production. "
-        + "Space plants 30-60cm apart on trellises.",
-        "pruning"),
+        new DocumentIngestionService.DocumentInput(
+            "cucumber",
+            "Cucumber trellising and airflow",
+            "Vertical trellising improves airflow, reduces disease pressure, "
+                + "improves fruit quality, and simplifies harvesting operations.",
+            "cucumber_pruning")
 
-        new DocumentIngestionService.DocumentInput("cucumber",
-        "Cucumber humidity and ventilation",
-        "Cucumbers prefer 60-75% relative humidity. "
-        + "High humidity (>85%) promotes downy mildew and powdery mildew. "
-        + "Ensure good greenhouse ventilation with side and roof vents. "
-        + "Use horizontal airflow fans to reduce humidity pockets. "
-        + "Avoid overhead watering. Water in morning so foliage dries by night. "
-        + "In humid conditions, space plants wider and prune for airflow.",
-        "humidity")
     );
   }
 
-  private List<DocumentIngestionService.DocumentInput> initGeneralDocuments() {
+  // ===========================================================================
+  // CLIMATE
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initClimateDocuments() {
+
     return List.of(
-        new DocumentIngestionService.DocumentInput("general",
-        "General greenhouse environmental control",
-        "Optimal greenhouse conditions: temperature 18-28°C, humidity 50-75%, "
-        + "CO2 400-1200 ppm, light 200-1000 µmol/m²/s. "
-        + "Use automated ventilation when temperature exceeds 26°C. "
-        + "CO2 enrichment to 800-1000 ppm boosts photosynthesis by 30-40%. "
-        + "Supplemental lighting when natural light below 200 µmol/m²/s. "
-        + "Monitor daily for pest outbreaks and environmental stress.",
-        "general"),
 
-        new DocumentIngestionService.DocumentInput("general",
-        "Overwatering prevention and root health",
-        "Overwatering is the most common cause of greenhouse plant problems. "
-        + "Symptoms: yellowing lower leaves, wilting despite wet soil, "
-        + "algae on soil surface, fungal gnats, root rot odor. "
-        + "Prevention: use well-draining soil mix, pots with drainage holes, "
-        + "water based on soil moisture not schedule, "
-        + "allow soil to dry slightly between waterings. "
-        + "Most plants prefer soil moisture between 40-75%.",
-        "watering"),
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Greenhouse climate balancing",
+            "Optimal greenhouse climate management balances temperature, humidity, "
+                + "CO2, airflow, and light simultaneously. Stable conditions reduce "
+                + "plant stress and improve growth consistency.",
+            "climate"),
 
-        new DocumentIngestionService.DocumentInput("general",
-        "Fungal disease prevention in greenhouses",
-        "Fungal diseases thrive in high humidity (>85%), poor air circulation, "
-        + "and leaf wetness. Prevention strategies: "
-        + "1) Maintain humidity below 80%, 2) Use horizontal airflow fans, "
-        + "3) Space plants for air circulation, 4) Water at soil level, "
-        + "5) Remove infected plant material immediately, "
-        + "6) Sterilize tools between plants, "
-        + "7) Apply preventative fungicides (copper, sulfur, neem oil), "
-        + "8) Use disease-resistant varieties.",
-        "disease")
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Greenhouse ventilation strategy",
+            "When outside temperature is significantly lower than greenhouse temperature, "
+                + "aggressive ventilation efficiently removes heat and humidity. "
+                + "Roof ventilation removes accumulated hot air most effectively.",
+            "ventilation"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Humidity management strategy",
+            "Maintain greenhouse humidity between 55-75% for most crops. "
+                + "Humidity above 85% dramatically increases fungal disease risk "
+                + "while humidity below 40% increases transpiration stress.",
+            "humidity"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "CO2 enrichment strategy",
+            "CO2 concentrations between 800-1200 ppm improve photosynthesis "
+                + "under high light conditions. CO2 above 1500 ppm provides "
+                + "limited additional benefit and may indicate insufficient ventilation.",
+            "co2")
+
+    );
+  }
+
+  // ===========================================================================
+  // SENSOR INTERPRETATION
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initSensorInterpretationDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "High greenhouse temperature interpretation",
+            "Greenhouse temperatures above 30°C increase transpiration demand "
+                + "and stress sensitive crops. Tomatoes experience pollination problems "
+                + "while cucumbers may produce bitter fruits.",
+            "sensor_interpretation"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Dry soil moisture interpretation",
+            "Multiple dry soil moisture sensors during high greenhouse temperatures "
+                + "indicate elevated drought stress risk and possible calcium transport problems.",
+            "soil_moisture"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Combined stress interpretation",
+            "High temperature combined with dry substrate conditions significantly "
+                + "increases plant stress, nutrient transport disruption, and fruit quality problems.",
+            "combined_stress"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Outside climate cooling opportunity",
+            "If outside temperature is at least 5°C lower than inside greenhouse temperature, "
+                + "ventilation can rapidly reduce heat stress and humidity accumulation.",
+            "cooling")
+
+    );
+  }
+
+  // ===========================================================================
+  // VPD
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initVpdDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "VPD greenhouse management",
+            "Vapor Pressure Deficit controls transpiration and nutrient transport. "
+                + "Low VPD increases fungal disease risk while high VPD increases "
+                + "water stress and calcium deficiency risk.",
+            "vpd"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "High VPD conditions",
+            "High temperature combined with moderate or low humidity increases VPD "
+                + "and causes excessive transpiration demand. "
+                + "Plants may wilt despite adequate irrigation.",
+            "vpd_high"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Low VPD conditions",
+            "Low VPD caused by excessive humidity reduces transpiration "
+                + "and increases fungal disease pressure and edema risk.",
+            "vpd_low")
+
+    );
+  }
+
+  // ===========================================================================
+  // AUTOMATION
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initAutomationDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Ventilation automation rules",
+            "If greenhouse temperature exceeds 30°C and outside air is cooler, "
+                + "increase ventilation immediately. "
+                + "Prioritize heat stress prevention over CO2 retention.",
+            "automation"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Irrigation automation rules",
+            "If substrate moisture sensors indicate dry conditions during high temperature periods, "
+                + "increase irrigation frequency while monitoring root-zone oxygen levels.",
+            "automation_irrigation"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Humidity automation strategy",
+            "Reduce humidity aggressively during nighttime and early morning periods "
+                + "to prevent fungal disease outbreaks and condensation.",
+            "automation_humidity"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Greenhouse AI reasoning strategy",
+            "Always prioritize prevention of irreversible plant stress. "
+                + "High temperature damage occurs faster than moderate CO2 reduction.",
+            "reasoning")
+
+    );
+  }
+
+  // ===========================================================================
+  // DISEASE
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initDiseaseDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Fungal disease prevention",
+            "Fungal diseases thrive under high humidity, leaf wetness, and poor airflow. "
+                + "Maintain airflow, avoid overhead irrigation, and reduce nighttime humidity.",
+            "disease"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Root rot conditions",
+            "Overwatering combined with low oxygen conditions promotes root rot pathogens. "
+                + "Plants may wilt despite wet substrate conditions.",
+            "root_rot"),
+
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato late blight prevention",
+            "Late blight spreads rapidly under cool humid conditions. "
+                + "Maintain airflow and avoid prolonged leaf wetness periods.",
+            "tomato_blight")
+
+    );
+  }
+
+  // ===========================================================================
+  // PESTS
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initPestDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Spider mite management",
+            "Spider mites thrive under hot dry greenhouse conditions. "
+                + "Increase humidity temporarily and introduce predatory mites if necessary.",
+            "pests"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Whitefly greenhouse management",
+            "Whiteflies reproduce rapidly in warm protected environments. "
+                + "Monitor undersides of leaves and use sticky traps for early detection.",
+            "whitefly"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Fungus gnat prevention",
+            "Excessively wet substrates promote fungus gnat reproduction. "
+                + "Allow moderate substrate drying between irrigation cycles.",
+            "fungus_gnat")
+
+    );
+  }
+
+  // ===========================================================================
+  // HYDROPONICS
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initHydroponicDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Hydroponic pH management",
+            "Most greenhouse crops prefer nutrient solution pH between 5.5 and 6.5. "
+                + "Incorrect pH reduces nutrient availability and causes deficiency symptoms.",
+            "hydroponics"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Hydroponic EC management",
+            "Excessively high EC increases salinity stress and root damage. "
+                + "Low EC reduces nutrient availability and plant vigor.",
+            "ec")
+
+    );
+  }
+
+  // ===========================================================================
+  // LIGHTING
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initLightingDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Greenhouse lighting management",
+            "Low light conditions reduce photosynthesis and fruit quality. "
+                + "During cloudy periods reduce irrigation frequency to prevent overwatering.",
+            "lighting"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Supplemental LED strategy",
+            "Supplemental LED lighting improves winter production and "
+                + "maintains consistent plant growth during low solar radiation periods.",
+            "led"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Daily light integral management",
+            "Daily Light Integral strongly influences crop yield and fruit quality. "
+                + "Tomatoes require high cumulative light levels for maximum productivity.",
+            "dli")
+
+    );
+  }
+
+  // ===========================================================================
+  // DIAGNOSTICS
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initDiagnosticsDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Leaf yellowing diagnostics",
+            "Uniform leaf yellowing may indicate nitrogen deficiency or root stress. "
+                + "Yellowing combined with wet substrate suggests root disease.",
+            "diagnostics"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Wilting diagnostics",
+            "Wilting during hot conditions may indicate excessive transpiration demand. "
+                + "Wilting despite wet soil suggests root damage or oxygen deficiency.",
+            "wilting"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Leaf curl diagnostics",
+            "Leaf curl under high temperatures often indicates excessive VPD and water stress.",
+            "leaf_curl")
+
+    );
+  }
+
+  // ===========================================================================
+  // EMERGENCY
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initEmergencyDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Emergency heat response",
+            "When greenhouse temperatures exceed 35°C immediately maximize ventilation, "
+                + "deploy shading systems, and ensure adequate irrigation availability.",
+            "emergency"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Emergency drought response",
+            "Dry substrate conditions during heat stress require immediate deep irrigation "
+                + "to restore transpiration and nutrient transport.",
+            "drought"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Emergency humidity response",
+            "Condensation and excessive humidity require aggressive airflow and ventilation "
+                + "to prevent rapid fungal disease outbreaks.",
+            "humidity_emergency")
+
+    );
+  }
+
+  // ===========================================================================
+  // POLLINATION
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initPollinationDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Greenhouse pollination management",
+            "Pollination success depends on moderate humidity, stable temperatures, "
+                + "and adequate airflow. Excess heat and humidity reduce pollen viability.",
+            "pollination")
+
+    );
+  }
+
+  // ===========================================================================
+  // YIELD
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initYieldOptimizationDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Yield optimization strategy",
+            "Stable environmental conditions produce higher quality fruits "
+                + "than aggressive growth strategies with fluctuating climate conditions.",
+            "yield"),
+
+        new DocumentIngestionService.DocumentInput(
+            "tomato",
+            "Tomato flavor optimization",
+            "Moderate EC increase during fruit ripening improves sugar concentration "
+                + "and flavor intensity in tomatoes.",
+            "tomato_quality")
+
+    );
+  }
+
+  // ===========================================================================
+  // WATER QUALITY
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initWaterQualityDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Irrigation water quality",
+            "Poor irrigation water quality can cause nutrient lockout and salinity buildup. "
+                + "Monitor pH, bicarbonates, and sodium concentrations regularly.",
+            "water_quality")
+
+    );
+  }
+
+  // ===========================================================================
+  // SENSOR FAULTS
+  // ===========================================================================
+
+  private List<DocumentIngestionService.DocumentInput> initSensorFaultDocuments() {
+
+    return List.of(
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Soil temperature sensor anomaly",
+            "Soil temperatures above 45°C are unlikely in normal greenhouse conditions "
+                + "and may indicate sensor calibration or hardware failure.",
+            "sensor_fault"),
+
+        new DocumentIngestionService.DocumentInput(
+            "general",
+            "Sensor validation strategy",
+            "Always compare sensor readings against environmental context. "
+                + "Extreme values inconsistent with surrounding conditions may indicate sensor malfunction.",
+            "sensor_validation")
+
     );
   }
 }
