@@ -26,36 +26,40 @@ public class RagDataInitializer {
   @PostConstruct
   @Transactional
   public void init() {
+    try {
+      if (PlantKnowledgeDocument.count() > 0) {
+        LOG.info("RAG documents already exist, skipping initialization");
+        return;
+      }
 
-    if (PlantKnowledgeDocument.count() > 0) {
-      LOG.info("RAG documents already exist, skipping initialization");
-      return;
+      LOG.info("Initializing advanced greenhouse RAG knowledge base");
+
+      List<DocumentIngestionService.DocumentInput> documents = new ArrayList<>();
+
+      documents.addAll(initTomatoDocuments());
+      documents.addAll(initCucumberDocuments());
+      documents.addAll(initClimateDocuments());
+      documents.addAll(initSensorInterpretationDocuments());
+      documents.addAll(initVpdDocuments());
+      documents.addAll(initAutomationDocuments());
+      documents.addAll(initDiseaseDocuments());
+      documents.addAll(initPestDocuments());
+      documents.addAll(initHydroponicDocuments());
+      documents.addAll(initLightingDocuments());
+      documents.addAll(initDiagnosticsDocuments());
+      documents.addAll(initEmergencyDocuments());
+      documents.addAll(initPollinationDocuments());
+      documents.addAll(initYieldOptimizationDocuments());
+      documents.addAll(initWaterQualityDocuments());
+      documents.addAll(initSensorFaultDocuments());
+
+      documentIngestionService.ingestBatch(documents);
+
+      LOG.info("Advanced greenhouse RAG initialized with {} documents", documents.size());
+    } catch (Exception e) {
+      LOG.error("Failed to initialize RAG knowledge base (application will continue): {}",
+          e.getMessage(), e);
     }
-
-    LOG.info("Initializing advanced greenhouse RAG knowledge base");
-
-    List<DocumentIngestionService.DocumentInput> documents = new ArrayList<>();
-
-    documents.addAll(initTomatoDocuments());
-    documents.addAll(initCucumberDocuments());
-    documents.addAll(initClimateDocuments());
-    documents.addAll(initSensorInterpretationDocuments());
-    documents.addAll(initVpdDocuments());
-    documents.addAll(initAutomationDocuments());
-    documents.addAll(initDiseaseDocuments());
-    documents.addAll(initPestDocuments());
-    documents.addAll(initHydroponicDocuments());
-    documents.addAll(initLightingDocuments());
-    documents.addAll(initDiagnosticsDocuments());
-    documents.addAll(initEmergencyDocuments());
-    documents.addAll(initPollinationDocuments());
-    documents.addAll(initYieldOptimizationDocuments());
-    documents.addAll(initWaterQualityDocuments());
-    documents.addAll(initSensorFaultDocuments());
-
-    documentIngestionService.ingestBatch(documents);
-
-    LOG.info("Advanced greenhouse RAG initialized with {} documents", documents.size());
   }
 
   // ===========================================================================

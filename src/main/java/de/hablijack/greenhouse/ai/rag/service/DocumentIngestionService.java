@@ -21,7 +21,7 @@ public class DocumentIngestionService {
     this.vectorSearchService = vectorSearchService;
   }
 
-  @Transactional
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public PlantKnowledgeDocument ingestDocument(String plantType, String title,
       String content, String category) {
     PlantKnowledgeDocument doc = new PlantKnowledgeDocument(plantType, title, content, category);
