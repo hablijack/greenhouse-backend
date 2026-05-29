@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: greenhouse-postgres
+    environment:
+      POSTGRES_DB: greenhouse
+      POSTGRES_USER: greenhouse
+      POSTGRES_PASSWORD: greenhouse_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvector-data:/var/lib/postgresql/data
+      - ./init-pgvector.sql:/docker-entrypoint-initdb.d/init-pgvector.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U greenhouse -d greenhouse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  llama-cpp:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    container_name: greenhouse-llm
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./models:/models:ro
+    command:
+      - "--model"
+      - "/models/llama-3.2-3b-instruct.gguf"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+      - "--n-gpu-layers"
+      - "99"
+      - "--ctx-size"
+      - "4096"
+      - "--embedding"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  greenhouse-backend:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: greenhouse-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_USER: greenhouse
+      DB_PASSWORD: greenhouse_secret
+      AI_LLM_BASE_URL: http://llama-cpp:8080
+      AI_LLM_TIMEOUT: "60000"
+      AI_LLM_MAX_RETRIES: "3"
+      AI_RAG_ENABLED: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgvector-data:

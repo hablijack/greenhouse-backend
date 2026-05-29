@@ -1,0 +1,24 @@
+package de.hablijack.greenhouse.ai.api.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class ErrorResponse {
+
+  @JsonProperty("error")
+  public String error;
+
+  @JsonProperty("message")
+  public String message;
+
+  @JsonProperty("status")
+  public int status;
+
+  public ErrorResponse() {
+  }
+
+  public ErrorResponse(String error, String message, int status) {
+    this.error = error;
+    this.message = message;
+    this.status = status;
+  }
+}

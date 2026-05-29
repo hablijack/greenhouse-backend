@@ -16,5 +16,8 @@ CMD ["./application", \
      "-Dquarkus.datasource.username=${DB_USER}", \
      "-Dquarkus.datasource.password=${DB_PASSWORD}", \
      "-Dtelegram.bot.token=${TELEGRAM_TOKEN}", \
-     "-Dtelegram.bot.chatid=${TELEGRAM_CHATID}" \
+     "-Dtelegram.bot.chatid=${TELEGRAM_CHATID}", \
+     "-Dai.llm.base-url=${AI_LLM_BASE_URL}", \
+     "-Dai.llm.timeout=${AI_LLM_TIMEOUT}", \
+     "-Dai.llm.max-retries=${AI_LLM_MAX_RETRIES}" \
      ]

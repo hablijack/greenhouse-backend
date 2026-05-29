@@ -101,6 +101,28 @@
             <artifactId>spotbugs-annotations</artifactId>
             <version>4.9.8</version>
         </dependency>
+        <!-- pgvector -->
+        <dependency>
+            <groupId>com.pgvector</groupId>
+            <artifactId>pgvector</artifactId>
+            <version>0.1.6</version>
+        </dependency>
+        <!-- Mutiny for reactive streams -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-mutiny</artifactId>
+        </dependency>
+        <!-- Mockito for testing -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
