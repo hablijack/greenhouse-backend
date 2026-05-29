@@ -45,6 +45,6 @@ public class EmbeddingResponse {
       }
       return result;
     }
-    return null;
+    return new float[0];
   }
 }

@@ -52,7 +52,7 @@ public class PromptEnrichmentService {
 
     LOG.debug("Enriched prompt with {} relevant documents", relevantDocs.size());
     return String.format(
-        "Relevant plant knowledge:\n%s\n\nUser query: %s",
+        "Relevant plant knowledge:%n%s%n%nUser query: %s",
         knowledgeContext, userQuery);
   }
 
@@ -88,7 +88,7 @@ public class PromptEnrichmentService {
   }
 
   private String formatDocument(PlantKnowledgeDocument doc) {
-    return String.format("[%s] %s\n%s",
+    return String.format("[%s] %s%n%s",
         doc.category != null ? doc.category : "General",
         doc.title != null ? doc.title : "Untitled",
         doc.content);

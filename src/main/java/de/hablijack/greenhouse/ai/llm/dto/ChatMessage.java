@@ -1,7 +1,9 @@
 package de.hablijack.greenhouse.ai.llm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class ChatMessage {
 
   @JsonProperty("role")

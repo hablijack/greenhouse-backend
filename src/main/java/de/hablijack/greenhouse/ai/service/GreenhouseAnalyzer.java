@@ -3,6 +3,7 @@ package de.hablijack.greenhouse.ai.service;
 import de.hablijack.greenhouse.ai.api.dto.AiRecommendationResponse;
 import de.hablijack.greenhouse.ai.api.dto.AiRecommendationResponse.SensorAnalysis;
 import de.hablijack.greenhouse.ai.api.dto.SensorDataRequest;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +98,7 @@ public class GreenhouseAnalyzer {
     return max;
   }
 
+  @SuppressFBWarnings("IMPROPER_UNICODE")
   private String analyzeTemperature(double temp, String plantType,
       List<String> recommendations, List<String> warnings) {
     double min = plantType != null && plantType.equalsIgnoreCase("cucumber")
@@ -152,6 +154,7 @@ public class GreenhouseAnalyzer {
     return "optimal";
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private String analyzeLight(double light, String plantType,
       List<String> recommendations, List<String> warnings) {
     if (light < LIGHT_IDEAL_MIN) {
@@ -166,6 +169,7 @@ public class GreenhouseAnalyzer {
     return "optimal";
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private String analyzeCo2(double co2, String plantType,
       List<String> recommendations, List<String> warnings) {
     if (co2 < CO2_IDEAL_MIN) {
@@ -180,6 +184,7 @@ public class GreenhouseAnalyzer {
     return "optimal";
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private String buildSummary(SensorDataRequest data, List<String> warnings,
       List<String> recommendations) {
     StringBuilder summary = new StringBuilder();

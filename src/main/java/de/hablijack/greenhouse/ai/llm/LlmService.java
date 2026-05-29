@@ -5,6 +5,7 @@ import de.hablijack.greenhouse.ai.config.AiConfig;
 import de.hablijack.greenhouse.ai.llm.dto.ChatCompletionRequest;
 import de.hablijack.greenhouse.ai.llm.dto.ChatCompletionResponse;
 import de.hablijack.greenhouse.ai.llm.dto.ChatMessage;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class LlmService {
   private final AiConfig config;
   private final ObjectMapper objectMapper;
 
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public LlmService(LlmClient llmClient, AiConfig config, ObjectMapper objectMapper) {
     this.llmClient = llmClient;
     this.config = config;

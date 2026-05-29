@@ -23,10 +23,6 @@ public class SensorDataRequest {
   @NotNull
   public Double co2Level;
 
-  public String wateringTimestamp;
-
-  public String greenhouseId;
-
   public SensorDataRequest() {
   }
 

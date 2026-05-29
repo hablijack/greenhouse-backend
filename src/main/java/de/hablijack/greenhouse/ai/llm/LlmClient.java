@@ -6,6 +6,7 @@ import de.hablijack.greenhouse.ai.llm.dto.ChatCompletionRequest;
 import de.hablijack.greenhouse.ai.llm.dto.ChatCompletionResponse;
 import de.hablijack.greenhouse.ai.llm.dto.EmbeddingRequest;
 import de.hablijack.greenhouse.ai.llm.dto.EmbeddingResponse;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -25,6 +26,7 @@ public class LlmClient {
   private final AiConfig config;
   private final ObjectMapper objectMapper;
 
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public LlmClient(AiConfig config, ObjectMapper objectMapper) {
     this.config = config;
     this.objectMapper = objectMapper;

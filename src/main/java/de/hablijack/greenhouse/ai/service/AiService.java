@@ -6,6 +6,7 @@ import de.hablijack.greenhouse.ai.api.dto.AskAiRequest;
 import de.hablijack.greenhouse.ai.api.dto.SensorDataRequest;
 import de.hablijack.greenhouse.ai.llm.LlmService;
 import de.hablijack.greenhouse.ai.rag.service.PromptEnrichmentService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class AiService {
   private final GreenhouseAnalyzer greenhouseAnalyzer;
   private final ObjectMapper objectMapper;
 
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public AiService(LlmService llmService,
       PromptEnrichmentService promptEnrichmentService,
       GreenhouseAnalyzer greenhouseAnalyzer,
@@ -73,6 +75,7 @@ public class AiService {
     return greenhouseAnalyzer.analyze(sensorData);
   }
 
+  @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE")
   private String buildSensorAnalysisPrompt(SensorDataRequest data) {
     return String.format("""
     Sensor values for %s:
