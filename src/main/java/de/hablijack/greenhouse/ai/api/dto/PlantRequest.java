@@ -1,7 +1,9 @@
 package de.hablijack.greenhouse.ai.api.dto;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
 
+@RegisterForReflection
 public class PlantRequest {
 
   @NotBlank

@@ -5,6 +5,8 @@ import de.hablijack.greenhouse.ai.rag.service.DocumentIngestionService;
 import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -18,17 +20,21 @@ public class RagDataInitializer {
 
   private final DocumentIngestionService documentIngestionService;
 
+  @Inject
+  RagDataInitializer self;
+
   public RagDataInitializer(DocumentIngestionService documentIngestionService) {
     this.documentIngestionService = documentIngestionService;
   }
 
   @PostConstruct
-  public void init() {
+  void init() {
     LOG.info("RAG initialization scheduled in background thread");
-    Thread.startVirtualThread(this::initInternal);
+    Thread.startVirtualThread(() -> self.initInternal());
   }
 
-  private void initInternal() {
+  @Transactional
+  void initInternal() {
     try {
       if (PlantKnowledgeDocument.count() > 0) {
         LOG.info("RAG documents already exist, skipping initialization");

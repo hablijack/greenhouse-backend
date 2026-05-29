@@ -32,13 +32,6 @@ public class AiService {
     this.objectMapper = objectMapper;
   }
 
-  AiService() {
-    this.llmService = null;
-    this.promptEnrichmentService = null;
-    this.greenhouseAnalyzer = null;
-    this.objectMapper = null;
-  }
-
   public AiRecommendationResponse analyzeSensorData(SensorDataRequest sensorData) {
     LOG.info("Analyzing sensor data for plant: {}", sensorData.plantType);
 

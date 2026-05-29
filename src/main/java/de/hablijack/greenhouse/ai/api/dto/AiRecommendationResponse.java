@@ -2,8 +2,10 @@ package de.hablijack.greenhouse.ai.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 
+@RegisterForReflection
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class AiRecommendationResponse {
 
@@ -38,6 +40,7 @@ public class AiRecommendationResponse {
     this.analysis = analysis;
   }
 
+  @RegisterForReflection
   public static class SensorAnalysis {
     @JsonProperty("temperatureStatus")
     public String temperatureStatus;

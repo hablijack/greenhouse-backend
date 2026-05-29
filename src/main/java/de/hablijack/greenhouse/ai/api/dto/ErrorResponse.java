@@ -2,7 +2,9 @@ package de.hablijack.greenhouse.ai.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
+@RegisterForReflection
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class ErrorResponse {
 

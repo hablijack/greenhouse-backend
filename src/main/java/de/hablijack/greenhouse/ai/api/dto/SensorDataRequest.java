@@ -1,8 +1,10 @@
 package de.hablijack.greenhouse.ai.api.dto;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+@RegisterForReflection
 public class SensorDataRequest {
 
   @NotBlank
