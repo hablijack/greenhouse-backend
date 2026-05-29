@@ -23,10 +23,6 @@ public class RagDataInitializer {
     this.documentIngestionService = documentIngestionService;
   }
 
-  RagDataInitializer() {
-    this.documentIngestionService = null;
-  }
-
   @PostConstruct
   @Transactional
   public void init() {

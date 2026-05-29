@@ -45,21 +45,21 @@ public class FanControlScheduler {
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
 
-  @ConfigProperty(name = "fan.maximum.temp", defaultValue = "35")
+  @ConfigProperty(name = "fan.maximum.temp", defaultValue = "29")
   int maximumTemp;
-  @ConfigProperty(name = "fan.maximum.humidity", defaultValue = "95")
+  @ConfigProperty(name = "fan.maximum.humidity", defaultValue = "90")
   int maximumHumidity;
   @ConfigProperty(name = "fan.minimum.sunshine.lux", defaultValue = "2500")
   int minimumSunshineLux;
-  @ConfigProperty(name = "fan.hysteresis.temp.off", defaultValue = "32")
+  @ConfigProperty(name = "fan.hysteresis.temp.off", defaultValue = "27")
   int hysteresisTempOff;
-  @ConfigProperty(name = "fan.hysteresis.humidity.off", defaultValue = "90")
+  @ConfigProperty(name = "fan.hysteresis.humidity.off", defaultValue = "85")
   int hysteresisHumidityOff;
-  @ConfigProperty(name = "fan.max.on.duration.ms", defaultValue = "7200000")
+  @ConfigProperty(name = "fan.max.on.duration.ms", defaultValue = "14400000")
   long maxFanOnDurationMs;
-  @ConfigProperty(name = "fan.cooldown.after.max.duration.ms", defaultValue = "900000")
+  @ConfigProperty(name = "fan.cooldown.after.max.duration.ms", defaultValue = "300000")
   long fanCooldownAfterMaxDurationMs;
-  @ConfigProperty(name = "fan.cron.activation.range", defaultValue = "* * 9-16 ? * * *")
+  @ConfigProperty(name = "fan.cron.activation.range", defaultValue = "* * 8-17 ? * * *")
   String cronActivationRange;
 
   volatile long lastForcedOffTimestamp = 0;

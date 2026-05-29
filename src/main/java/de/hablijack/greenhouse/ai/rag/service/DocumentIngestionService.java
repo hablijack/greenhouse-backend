@@ -21,11 +21,6 @@ public class DocumentIngestionService {
     this.vectorSearchService = vectorSearchService;
   }
 
-  DocumentIngestionService() {
-    this.embeddingService = null;
-    this.vectorSearchService = null;
-  }
-
   @Transactional
   public PlantKnowledgeDocument ingestDocument(String plantType, String title,
       String content, String category) {
