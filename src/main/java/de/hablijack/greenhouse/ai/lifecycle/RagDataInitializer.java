@@ -24,7 +24,6 @@ public class RagDataInitializer {
   }
 
   @PostConstruct
-  @Transactional
   public void init() {
     try {
       if (PlantKnowledgeDocument.count() > 0) {

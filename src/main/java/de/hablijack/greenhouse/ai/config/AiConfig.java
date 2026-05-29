@@ -36,6 +36,9 @@ public interface AiConfig {
     @WithDefault("384")
     @WithName("embedding-dimension")
     int embeddingDimension();
+
+    @WithName("embedding-base-url")
+    String embeddingBaseUrl();
   }
 
   interface RagConfig {

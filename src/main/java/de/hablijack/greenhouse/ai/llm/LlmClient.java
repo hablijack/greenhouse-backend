@@ -72,8 +72,9 @@ public class LlmClient {
       String json = objectMapper.writeValueAsString(request);
       LOG.debug("Sending embedding request for text length={}", text.length());
 
+      String embeddingUrl = config.llm().embeddingBaseUrl();
       HttpRequest httpRequest = HttpRequest.newBuilder()
-          .uri(URI.create(config.llm().baseUrl() + "/v1/embeddings"))
+          .uri(URI.create(embeddingUrl + "/v1/embeddings"))
           .header("Content-Type", "application/json")
           .timeout(Duration.ofMillis(config.llm().timeout()))
           .POST(HttpRequest.BodyPublishers.ofString(json))

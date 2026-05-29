@@ -41,7 +41,6 @@ public class DocumentIngestionService {
     return doc;
   }
 
-  @Transactional
   public void ingestBatch(List<DocumentInput> documents) {
     for (DocumentInput input : documents) {
       try {
