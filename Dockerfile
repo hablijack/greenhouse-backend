@@ -4,20 +4,11 @@ RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
 COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
+COPY --chown=1001:root --chmod=0755 docker-entrypoint.sh /work/entrypoint.sh
 
 ENV TZ=Europe/Berlin
 
 EXPOSE 8080
 USER 1001
 
-CMD ["./application", \
-     "-Dquarkus.http.host=0.0.0.0", \
-     "-Dquarkus.datasource.jdbc.url=jdbc:postgresql://${DB_HOST}:5432/greenhouse", \
-     "-Dquarkus.datasource.username=${DB_USER}", \
-     "-Dquarkus.datasource.password=${DB_PASSWORD}", \
-     "-Dtelegram.bot.token=${TELEGRAM_TOKEN}", \
-     "-Dtelegram.bot.chatid=${TELEGRAM_CHATID}", \
-     "-Dai.llm.base-url=${AI_LLM_BASE_URL}", \
-     "-Dai.llm.timeout=${AI_LLM_TIMEOUT}", \
-     "-Dai.llm.max-retries=${AI_LLM_MAX_RETRIES}" \
-     ]
+ENTRYPOINT ["/work/entrypoint.sh"]
