@@ -7,5 +7,5 @@ exec ./application \
   -Dtelegram.bot.token="${TELEGRAM_TOKEN}" \
   -Dtelegram.bot.chatid="${TELEGRAM_CHATID}" \
   -Dai.llm.base-url="${AI_LLM_BASE_URL}" \
-  -Dai.llm.timeout="${AI_LLM_TIMEOUT}" \
-  -Dai.llm.max-retries="${AI_LLM_MAX_RETRIES}"
+  -Dai.llm.timeout="${AI_LLM_TIMEOUT:-60000}" \
+  -Dai.llm.max-retries="${AI_LLM_MAX_RETRIES:-3}"
