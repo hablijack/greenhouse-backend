@@ -5,7 +5,6 @@ import de.hablijack.greenhouse.ai.rag.service.DocumentIngestionService;
 import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
