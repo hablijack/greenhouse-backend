@@ -1,8 +1,10 @@
 package de.hablijack.greenhouse.ai.llm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 
+@RegisterForReflection
 public class EmbeddingResponse {
 
   @JsonProperty("object")
@@ -17,6 +19,7 @@ public class EmbeddingResponse {
   @JsonProperty("usage")
   public Usage usage;
 
+  @RegisterForReflection
   public static class EmbeddingData {
     @JsonProperty("object")
     public String object;
@@ -28,6 +31,7 @@ public class EmbeddingResponse {
     public List<Double> embedding;
   }
 
+  @RegisterForReflection
   public static class Usage {
     @JsonProperty("prompt_tokens")
     public Integer promptTokens;

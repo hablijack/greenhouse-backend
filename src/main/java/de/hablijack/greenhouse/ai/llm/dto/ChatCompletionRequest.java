@@ -2,8 +2,10 @@ package de.hablijack.greenhouse.ai.llm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 
+@RegisterForReflection
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class ChatCompletionRequest {
 
@@ -33,6 +35,7 @@ public class ChatCompletionRequest {
     this.messages = messages;
   }
 
+  @RegisterForReflection
   public static class ResponseFormat {
     @JsonProperty("type")
     public String type;

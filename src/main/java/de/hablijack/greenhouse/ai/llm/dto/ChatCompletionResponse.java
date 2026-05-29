@@ -1,8 +1,10 @@
 package de.hablijack.greenhouse.ai.llm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 
+@RegisterForReflection
 public class ChatCompletionResponse {
 
   @JsonProperty("id")
@@ -23,6 +25,7 @@ public class ChatCompletionResponse {
   @JsonProperty("usage")
   public Usage usage;
 
+  @RegisterForReflection
   public static class Choice {
     @JsonProperty("index")
     public Integer index;
@@ -34,6 +37,7 @@ public class ChatCompletionResponse {
     public String finishReason;
   }
 
+  @RegisterForReflection
   public static class Usage {
     @JsonProperty("prompt_tokens")
     public Integer promptTokens;
