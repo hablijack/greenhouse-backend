@@ -25,6 +25,11 @@ public class RagDataInitializer {
 
   @PostConstruct
   public void init() {
+    LOG.info("RAG initialization scheduled in background thread");
+    Thread.startVirtualThread(this::initInternal);
+  }
+
+  private void initInternal() {
     try {
       if (PlantKnowledgeDocument.count() > 0) {
         LOG.info("RAG documents already exist, skipping initialization");
