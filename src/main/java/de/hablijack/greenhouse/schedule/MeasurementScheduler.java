@@ -65,7 +65,7 @@ public class MeasurementScheduler {
             } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
               measurement.value = ((JsonNumber) value).doubleValue();
             }
-            if (measurement.value != null && measurement.value > -40.0 && measurement.value != 85.0) {
+            if (measurement.value != null && measurement.value > -100.0 && measurement.value != 85.0) {
               measurement.timestamp = new Date();
               measurement.persist();
             }
