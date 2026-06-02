@@ -78,7 +78,7 @@ public class AiService {
         - Light intensity: %.1f lux
     - CO2 level: %.1f ppm
 
-    Please analyze these values and provide care recommendations.
+    Bitte analysiere diese Werte und gib Pflegeempfehlungen auf Deutsch.
     """,
         data.plantType,
         data.temperature,

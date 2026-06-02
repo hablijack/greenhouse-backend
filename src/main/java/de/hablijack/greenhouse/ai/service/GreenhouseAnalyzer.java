@@ -70,7 +70,7 @@ public class GreenhouseAnalyzer {
     String summary = buildSummary(data, warnings, recommendations);
 
     if (recommendations.isEmpty()) {
-      recommendations.add("All sensor values are within optimal ranges for " + data.plantType + ".");
+      recommendations.add("Alle Sensorwerte liegen im optimalen Bereich für " + data.plantType + ".");
     }
 
     return new AiRecommendationResponse(
@@ -107,12 +107,12 @@ public class GreenhouseAnalyzer {
         ? TEMP_CUCUMBER_MAX : TEMP_TOMATO_MAX;
 
     if (temp < min) {
-      warnings.add("Temperature too low (" + temp + "C). Ideal range: " + min + "-" + max + "C.");
-      recommendations.add("Increase greenhouse temperature to " + min + "-" + max + "C for " + plantType + ".");
+      warnings.add("Temperatur zu niedrig (" + temp + "°C). Idealbereich: " + min + "-" + max + "°C.");
+      recommendations.add("Erhöhe die Gewächshaustemperatur auf " + min + "-" + max + "°C für " + plantType + ".");
       return "too_low";
     } else if (temp > max) {
-      warnings.add("Temperature too high (" + temp + "C). Ideal range: " + min + "-" + max + "C.");
-      recommendations.add("Increase ventilation or shade to reduce temperature for " + plantType + ".");
+      warnings.add("Temperatur zu hoch (" + temp + "°C). Idealbereich: " + min + "-" + max + "°C.");
+      recommendations.add("Erhöhe die Belüftung oder Beschattung, um die Temperatur für " + plantType + " zu senken.");
       return "too_high";
     }
     return "optimal";
@@ -121,16 +121,16 @@ public class GreenhouseAnalyzer {
   private String analyzeHumidity(double humidity, String plantType,
       List<String> recommendations, List<String> warnings) {
     if (humidity > HUMIDITY_FUNGAL_RISK) {
-      warnings.add("Critical: Humidity at " + humidity + "% - high fungal disease risk for " + plantType + ".");
-      recommendations.add("Increase airflow and reduce humidity below 75% to prevent fungal diseases.");
+      warnings.add("Kritisch: Luftfeuchtigkeit bei " + humidity + "% - hohes Pilzrisiko für " + plantType + ".");
+      recommendations.add("Erhöhe die Luftzirkulation und senke die Luftfeuchtigkeit unter 75%, um Pilzkrankheiten vorzubeugen.");
       return "critical_high";
     } else if (humidity > HUMIDITY_IDEAL_MAX) {
-      warnings.add("Humidity too high (" + humidity + "%). Elevates disease risk.");
-      recommendations.add("Improve ventilation to lower humidity. Consider a dehumidifier.");
+      warnings.add("Luftfeuchtigkeit zu hoch (" + humidity + "%). Erhöhtes Krankheitsrisiko.");
+      recommendations.add("Verbessere die Belüftung, um die Luftfeuchtigkeit zu senken. Erwäge einen Luftentfeuchter.");
       return "high";
     } else if (humidity < HUMIDITY_IDEAL_MIN) {
-      warnings.add("Humidity too low (" + humidity + "%). Ideal range: 50-75%.");
-      recommendations.add("Increase humidity through misting or humidifier for optimal growth.");
+      warnings.add("Luftfeuchtigkeit zu niedrig (" + humidity + "%). Idealbereich: 50-75%.");
+      recommendations.add("Erhöhe die Luftfeuchtigkeit durch Besprühen oder einen Luftbefeuchter für optimales Wachstum.");
       return "low";
     }
     return "optimal";
@@ -139,16 +139,16 @@ public class GreenhouseAnalyzer {
   private String analyzeSoilMoisture(double moisture, String plantType,
       List<String> recommendations, List<String> warnings) {
     if (moisture > SOIL_OVERWATERED) {
-      warnings.add("Critical: Overwatering detected (" + moisture + "% soil moisture). Root rot risk.");
-      recommendations.add("Stop watering immediately. Improve drainage and let soil dry out.");
+      warnings.add("Kritisch: Überwässerung erkannt (" + moisture + "% Bodenfeuchte). Wurzelfäule-Risiko.");
+      recommendations.add("Stelle das Gießen sofort ein. Verbessere die Drainage und lasse die Erde austrocknen.");
       return "critical_high";
     } else if (moisture > SOIL_MOISTURE_IDEAL_MAX) {
-      warnings.add("Soil moisture elevated (" + moisture + "%). Risk of overwatering.");
-      recommendations.add("Reduce watering frequency. Check drainage.");
+      warnings.add("Bodenfeuchte erhöht (" + moisture + "%). Risiko der Überwässerung.");
+      recommendations.add("Reduziere die Bewässerungshäufigkeit. Überprüfe die Drainage.");
       return "high";
     } else if (moisture < SOIL_MOISTURE_IDEAL_MIN) {
-      warnings.add("Soil too dry (" + moisture + "%). Ideal range: 40-75%.");
-      recommendations.add("Increase watering frequency for " + plantType + ".");
+      warnings.add("Boden zu trocken (" + moisture + "%). Idealbereich: 40-75%.");
+      recommendations.add("Erhöhe die Bewässerungshäufigkeit für " + plantType + ".");
       return "low";
     }
     return "optimal";
@@ -158,12 +158,12 @@ public class GreenhouseAnalyzer {
   private String analyzeLight(double light, String plantType,
       List<String> recommendations, List<String> warnings) {
     if (light < LIGHT_IDEAL_MIN) {
-      warnings.add("Light intensity too low (" + light + " lux). Plants need more light.");
-      recommendations.add("Increase supplemental lighting or move plants to brighter location.");
+      warnings.add("Lichtintensität zu niedrig (" + light + " Lux). Pflanzen benötigen mehr Licht.");
+      recommendations.add("Erhöhe die Zusatzbeleuchtung oder stelle die Pflanzen an einen helleren Ort.");
       return "too_low";
     } else if (light > LIGHT_IDEAL_MAX) {
-      warnings.add("Light intensity very high (" + light + " lux). Risk of leaf burn.");
-      recommendations.add("Use shade cloth or move light-sensitive plants away from direct light.");
+      warnings.add("Lichtintensität sehr hoch (" + light + " Lux). Risiko von Blattverbrennungen.");
+      recommendations.add("Verwende Schattiergewebe oder stelle lichtempfindliche Pflanzen aus direktem Licht.");
       return "too_high";
     }
     return "optimal";
@@ -173,12 +173,12 @@ public class GreenhouseAnalyzer {
   private String analyzeCo2(double co2, String plantType,
       List<String> recommendations, List<String> warnings) {
     if (co2 < CO2_IDEAL_MIN) {
-      warnings.add("CO2 level low (" + co2 + " ppm). May limit photosynthesis.");
-      recommendations.add("Improve greenhouse ventilation or consider CO2 supplementation.");
+      warnings.add("CO2-Gehalt niedrig (" + co2 + " ppm). Kann die Photosynthese einschränken.");
+      recommendations.add("Verbessere die Gewächshausbelüftung oder erwäge CO2-Anreicherung.");
       return "low";
     } else if (co2 > CO2_IDEAL_MAX) {
-      warnings.add("CO2 level elevated (" + co2 + " ppm). Ensure adequate ventilation.");
-      recommendations.add("Increase air exchange rate to maintain healthy CO2 levels.");
+      warnings.add("CO2-Gehalt erhöht (" + co2 + " ppm). Stelle ausreichende Belüftung sicher.");
+      recommendations.add("Erhöhe den Luftaustausch, um gesunde CO2-Werte zu erhalten.");
       return "high";
     }
     return "optimal";
@@ -188,18 +188,18 @@ public class GreenhouseAnalyzer {
   private String buildSummary(SensorDataRequest data, List<String> warnings,
       List<String> recommendations) {
     StringBuilder summary = new StringBuilder();
-    summary.append("Analysis for ").append(data.plantType).append(": ");
+    summary.append("Analyse für ").append(data.plantType).append(": ");
 
     if (warnings.isEmpty()) {
-      summary.append("All conditions are optimal.");
+      summary.append("Alle Bedingungen sind optimal.");
     } else {
-      summary.append(warnings.size()).append(" area(s) need attention.");
+      summary.append(warnings.size()).append(" Bereich(e) benötigen Aufmerksamkeit.");
     }
 
-    summary.append(" Temperature ").append(data.temperature).append("C,");
-    summary.append(" humidity ").append(data.humidity).append("%,");
-    summary.append(" soil moisture ").append(data.soilMoisture).append("%,");
-    summary.append(" light ").append(data.lightIntensity).append(" lux,");
+    summary.append(" Temperatur ").append(data.temperature).append("°C,");
+    summary.append(" Luftfeuchtigkeit ").append(data.humidity).append("%,");
+    summary.append(" Bodenfeuchte ").append(data.soilMoisture).append("%,");
+    summary.append(" Licht ").append(data.lightIntensity).append(" Lux,");
     summary.append(" CO2 ").append(data.co2Level).append(" ppm.");
 
     return summary.toString();

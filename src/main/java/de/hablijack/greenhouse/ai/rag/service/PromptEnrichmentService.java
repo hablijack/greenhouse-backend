@@ -21,11 +21,6 @@ public class PromptEnrichmentService {
     this.config = config;
   }
 
-  PromptEnrichmentService() {
-    this.vectorSearchService = null;
-    this.config = null;
-  }
-
   public String enrichPrompt(String userQuery, String plantType) {
     if (!config.rag().enabled()) {
       LOG.debug("RAG is disabled, returning unenriched prompt");
@@ -58,7 +53,7 @@ public class PromptEnrichmentService {
 
   public String buildSystemPrompt(String plantType) {
     StringBuilder sb = new StringBuilder();
-    sb.append("You are an expert greenhouse assistant with deep knowledge of plant care.\n");
+    sb.append("You are an expert greenhouse assistant with deep knowledge of plant care. Always respond in German language.\n");
     if (plantType != null && !plantType.isBlank()) {
       sb.append("Plant type: ").append(plantType).append("\n");
     }

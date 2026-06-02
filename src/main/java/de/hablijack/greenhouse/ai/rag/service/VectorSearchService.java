@@ -28,11 +28,6 @@ public class VectorSearchService {
     this.config = config;
   }
 
-  VectorSearchService() {
-    this.embeddingService = null;
-    this.config = null;
-  }
-
   public List<PlantKnowledgeDocument> findSimilarDocuments(String query, int maxResults) {
     float[] queryEmbedding = embeddingService.generateEmbedding(query);
     return findByVectorSimilarity(queryEmbedding, maxResults);

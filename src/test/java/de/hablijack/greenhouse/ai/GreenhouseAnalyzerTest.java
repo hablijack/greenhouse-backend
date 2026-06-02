@@ -34,8 +34,8 @@ class GreenhouseAnalyzerTest {
     AiRecommendationResponse result = analyzer.analyze(data);
     assertEquals("high", result.urgency);
     assertTrue(result.recommendations.stream()
-        .anyMatch(r -> r.toLowerCase().contains("fungal")
-        || r.toLowerCase().contains("airflow")));
+        .anyMatch(r -> r.contains("Pilz")
+        || r.contains("Luftzirkulation")));
   }
 
   @Test
@@ -45,8 +45,8 @@ class GreenhouseAnalyzerTest {
     AiRecommendationResponse result = analyzer.analyze(data);
     assertEquals("high", result.urgency);
     assertTrue(result.recommendations.stream()
-        .anyMatch(r -> r.toLowerCase().contains("overwater")
-        || r.toLowerCase().contains("watering")));
+        .anyMatch(r -> r.contains("Überwässerung")
+        || r.contains("Gießen")));
   }
 
   @Test
@@ -56,9 +56,9 @@ class GreenhouseAnalyzerTest {
     AiRecommendationResponse result = analyzer.analyze(data);
     assertTrue(result.urgency.equals("high") || result.urgency.equals("medium"));
     assertTrue(result.recommendations.stream()
-        .anyMatch(r -> r.toLowerCase().contains("ventilation")
-        || r.toLowerCase().contains("shade")
-        || r.toLowerCase().contains("temperature")));
+        .anyMatch(r -> r.contains("Belüftung")
+        || r.contains("Beschattung")
+        || r.contains("Temperatur")));
   }
 
   @Test
@@ -67,8 +67,9 @@ class GreenhouseAnalyzerTest {
         "tomato", 24.0, 65.0, 55.0, 50.0, 800.0);
     AiRecommendationResponse result = analyzer.analyze(data);
     assertTrue(result.recommendations.stream()
-        .anyMatch(r -> r.toLowerCase().contains("light")
-        || r.toLowerCase().contains("bright")));
+        .anyMatch(r -> r.contains("Licht")
+        || r.contains("Beleuchtung")
+        || r.contains("helleren")));
   }
 
   @Test
