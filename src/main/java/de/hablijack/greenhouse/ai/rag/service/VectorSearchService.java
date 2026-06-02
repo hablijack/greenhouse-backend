@@ -46,7 +46,7 @@ public class VectorSearchService {
     String vectorLiteral = arrayToPgVector(queryVector);
     String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at "
         + "FROM greenhouse.plant_knowledge_document "
-        + "ORDER BY embedding <=> ?1::vector "
+        + "ORDER BY embedding <=> CAST(?1 AS vector) "
         + "LIMIT ?2";
 
     var query = entityManager.createNativeQuery(sql, PlantKnowledgeDocument.class);
@@ -64,7 +64,7 @@ public class VectorSearchService {
     String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at "
         + "FROM greenhouse.plant_knowledge_document "
         + "WHERE plant_type = ?1 "
-        + "ORDER BY embedding <=> ?2::vector "
+        + "ORDER BY embedding <=> CAST(?2 AS vector) "
         + "LIMIT ?3";
 
     var query = entityManager.createNativeQuery(sql, PlantKnowledgeDocument.class);
@@ -78,7 +78,7 @@ public class VectorSearchService {
   public void updateEmbedding(Long documentId, float[] embedding) {
     String vectorLiteral = arrayToPgVector(embedding);
     String sql = "UPDATE greenhouse.plant_knowledge_document "
-        + "SET embedding = ?1::vector, updated_at = NOW() "
+        + "SET embedding = CAST(?1 AS vector), updated_at = NOW() "
         + "WHERE id = ?2";
 
     entityManager.createNativeQuery(sql)
