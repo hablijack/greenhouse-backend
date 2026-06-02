@@ -45,6 +45,10 @@ public class FanControlScheduler {
   @ConfigProperty(name = "telegram.bot.chatid")
   String chatId;
 
+  @ConfigProperty(name = "fan.min.on.time.ms", defaultValue = "180000")
+  long minFanOnTimeMs;
+  @ConfigProperty(name = "fan.min.off.time.ms", defaultValue = "180000")
+  long minFanOffTimeMs;
   @ConfigProperty(name = "fan.maximum.temp", defaultValue = "29")
   int maximumTemp;
   @ConfigProperty(name = "fan.maximum.humidity", defaultValue = "90")
@@ -63,6 +67,7 @@ public class FanControlScheduler {
   String cronActivationRange;
 
   volatile long lastForcedOffTimestamp = 0;
+  volatile long lastSwitchTimestamp = 0;
 
   @Scheduled(every = "10s", concurrentExecution = SKIP)
   void switchFansConditionally() {
@@ -99,17 +104,22 @@ public class FanControlScheduler {
       // Only consider normal logic if within allowed time and brightness
       if (fan.value) {
         // Hysteresis: use lower thresholds to decide when to turn OFF
-        shouldBeOn = currentTemp.value >= hysteresisTempOff
+        // Enforce minimum ON time to prevent rapid cycling
+        shouldBeOn = System.currentTimeMillis() - lastSwitchTimestamp < minFanOnTimeMs
+            || currentTemp.value >= hysteresisTempOff
             || currentHumidity.value >= hysteresisHumidityOff;
       } else if (!isInCooldown()) {
         // Upper thresholds to decide when to turn ON (only if not in cooldown)
-        shouldBeOn = currentTemp.value >= maximumTemp
-            || currentHumidity.value >= maximumHumidity;
+        // Enforce minimum OFF time to prevent rapid cycling
+        shouldBeOn = System.currentTimeMillis() - lastSwitchTimestamp >= minFanOffTimeMs
+            && (currentTemp.value >= maximumTemp
+                || currentHumidity.value >= maximumHumidity);
       }
     }
 
     if (shouldBeOn != fan.value) {
       switchRelay(fan, shouldBeOn);
+      lastSwitchTimestamp = System.currentTimeMillis();
     }
   }
 
