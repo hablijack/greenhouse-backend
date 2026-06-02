@@ -122,7 +122,8 @@ public class GreenhouseAnalyzer {
       List<String> recommendations, List<String> warnings) {
     if (humidity > HUMIDITY_FUNGAL_RISK) {
       warnings.add("Kritisch: Luftfeuchtigkeit bei " + humidity + "% - hohes Pilzrisiko für " + plantType + ".");
-      recommendations.add("Erhöhe die Luftzirkulation und senke die Luftfeuchtigkeit unter 75%, um Pilzkrankheiten vorzubeugen.");
+      recommendations.add(
+          "Erhöhe die Luftzirkulation und senke die Luftfeuchtigkeit unter 75%, um Pilzkrankheiten vorzubeugen.");
       return "critical_high";
     } else if (humidity > HUMIDITY_IDEAL_MAX) {
       warnings.add("Luftfeuchtigkeit zu hoch (" + humidity + "%). Erhöhtes Krankheitsrisiko.");
@@ -130,7 +131,8 @@ public class GreenhouseAnalyzer {
       return "high";
     } else if (humidity < HUMIDITY_IDEAL_MIN) {
       warnings.add("Luftfeuchtigkeit zu niedrig (" + humidity + "%). Idealbereich: 50-75%.");
-      recommendations.add("Erhöhe die Luftfeuchtigkeit durch Besprühen oder einen Luftbefeuchter für optimales Wachstum.");
+      recommendations.add(
+          "Erhöhe die Luftfeuchtigkeit durch Besprühen oder einen Luftbefeuchter für optimales Wachstum.");
       return "low";
     }
     return "optimal";

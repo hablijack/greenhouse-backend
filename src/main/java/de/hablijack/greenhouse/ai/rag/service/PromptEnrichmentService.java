@@ -53,7 +53,8 @@ public class PromptEnrichmentService {
 
   public String buildSystemPrompt(String plantType) {
     StringBuilder sb = new StringBuilder();
-    sb.append("You are an expert greenhouse assistant with deep knowledge of plant care. Always respond in German language.\n");
+    sb.append("You are an expert greenhouse assistant with deep knowledge of plant care. ");
+    sb.append("Always respond in German language.\n");
     if (plantType != null && !plantType.isBlank()) {
       sb.append("Plant type: ").append(plantType).append("\n");
     }
