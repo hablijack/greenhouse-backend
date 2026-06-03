@@ -189,21 +189,9 @@ public class GreenhouseAnalyzer {
   @SuppressWarnings("PMD.UnusedFormalParameter")
   private String buildSummary(SensorDataRequest data, List<String> warnings,
       List<String> recommendations) {
-    StringBuilder summary = new StringBuilder();
-    summary.append("Analyse für ").append(data.plantType).append(": ");
-
     if (warnings.isEmpty()) {
-      summary.append("Alle Bedingungen sind optimal.");
-    } else {
-      summary.append(warnings.size()).append(" Bereich(e) benötigen Aufmerksamkeit.");
+      return data.plantType + ": Alle Bedingungen sind optimal.";
     }
-
-    summary.append(" Temperatur ").append(data.temperature).append("°C,");
-    summary.append(" Luftfeuchtigkeit ").append(data.humidity).append("%,");
-    summary.append(" Bodenfeuchte ").append(data.soilMoisture).append("%,");
-    summary.append(" Licht ").append(data.lightIntensity).append(" Lux,");
-    summary.append(" CO2 ").append(data.co2Level).append(" ppm.");
-
-    return summary.toString();
+    return data.plantType + ": " + warnings.size() + " Bereich(e) benötigen Aufmerksamkeit.";
   }
 }

@@ -33,6 +33,9 @@ public class PlantKnowledgeDocument extends PanacheEntity {
   @Column(name = "updated_at", nullable = false)
   public Instant updatedAt;
 
+  @Column(name = "embedding", columnDefinition = "vector")
+  public float[] embedding;
+
   public PlantKnowledgeDocument() {
     this.createdAt = Instant.now();
     this.updatedAt = Instant.now();

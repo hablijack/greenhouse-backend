@@ -60,26 +60,17 @@ public class PromptEnrichmentService {
     }
     sb.append("""
     Provide:
-        - risk assessment
-    - actionable recommendations
-    - short explanation
-    - urgency level (low, medium, or high)
+        - urgency level (low, medium, or high)
 
     Output valid JSON with the following structure:
         {
-      "summary": "brief analysis summary",
-          "recommendations": ["recommendation1", "recommendation2"],
-          "urgency": "low|medium|high",
-          "riskAssessment": "detailed risk assessment"
+      "summary": "single sentence with assessment and actionable tip in German",
+          "urgency": "low|medium|high"
     }
 
-    Consider these factors:
-        - Temperature ranges optimal for the plant
-    - Humidity requirements and disease risk
-    - Soil moisture and overwatering warning
-    - Light intensity requirements
-    - CO2 levels for healthy growth
-        """);
+    Do NOT list individual sensor values. Do NOT output recommendations separately.
+    """);
+
     return sb.toString();
   }
 
