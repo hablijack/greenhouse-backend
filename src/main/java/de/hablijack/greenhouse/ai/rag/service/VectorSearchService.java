@@ -44,7 +44,7 @@ public class VectorSearchService {
   public List<PlantKnowledgeDocument> findByVectorSimilarity(float[] queryVector,
       int maxResults) {
     String vectorLiteral = arrayToPgVector(queryVector);
-    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at "
+    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at, embedding "
         + "FROM greenhouse.plant_knowledge_document "
         + "ORDER BY embedding <=> CAST(?1 AS vector) "
         + "LIMIT ?2";
@@ -61,7 +61,7 @@ public class VectorSearchService {
       String plantType,
       int maxResults) {
     String vectorLiteral = arrayToPgVector(queryVector);
-    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at "
+    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at, embedding "
         + "FROM greenhouse.plant_knowledge_document "
         + "WHERE plant_type = ?1 "
         + "ORDER BY embedding <=> CAST(?2 AS vector) "
