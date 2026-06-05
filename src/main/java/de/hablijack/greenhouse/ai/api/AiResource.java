@@ -76,7 +76,7 @@ public class AiResource {
     LOG.info("POST /ask-ai question: {}", request.question);
     try {
       String answer = aiService.askQuestion(request);
-      return Response.ok(java.util.Map.of("answer", answer, "question", request.question)).build();
+      return Response.ok(Map.of("answer", answer, "question", request.question)).build();
     } catch (LlmException e) {
       LOG.error("LLM unavailable for question", e);
       return Response.status(Response.Status.SERVICE_UNAVAILABLE)

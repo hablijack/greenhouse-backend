@@ -18,6 +18,8 @@ public class EmbeddingBackfillInitializer {
 
   private static final Logger LOG = LoggerFactory.getLogger(EmbeddingBackfillInitializer.class);
 
+  private static final int BACKFILL_LOG_INTERVAL = 10;
+
   private final EmbeddingService embeddingService;
   private final VectorSearchService vectorSearchService;
 
@@ -54,7 +56,7 @@ public class EmbeddingBackfillInitializer {
               doc.plantType, doc.title, doc.content, doc.category);
           vectorSearchService.updateEmbedding(doc.id, embedding);
           successCount++;
-          if (successCount % 10 == 0) {
+          if (successCount % BACKFILL_LOG_INTERVAL == 0) {
             LOG.info("Backfilled {}/{} embeddings", successCount, missingCount);
           }
         } catch (Exception e) {

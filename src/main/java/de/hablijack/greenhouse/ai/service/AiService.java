@@ -88,7 +88,7 @@ public class AiService {
 
       String llmJson = llmService.chat(systemPrompt, enrichedQuery, true);
       Map<String, AiRecommendationResponse> llmResults = objectMapper.readValue(
-          llmJson, new TypeReference<Map<String, AiRecommendationResponse>>() {});
+          llmJson, new TypeReference<Map<String, AiRecommendationResponse>>() { });
 
       Map<String, AiRecommendationResponse> merged = new HashMap<>();
       for (SensorDataRequest req : requests) {
