@@ -139,7 +139,8 @@ public class AiService {
           local != null ? local.summary : "Keine",
           local != null ? local.urgency : "unbekannt"));
     }
-    sb.append("Fasse für jede Pflanze die Analyse und Pflegeempfehlung in einem einzigen Satz auf Deutsch zusammen. Gib keine einzelnen Messwerte aus.");
+    sb.append("Fasse für jede Pflanze die Analyse und Pflegeempfehlung in einem einzigen Satz auf Deutsch zusammen. ")
+        .append("Gib keine einzelnen Messwerte aus.");
     return sb.toString();
   }
 
