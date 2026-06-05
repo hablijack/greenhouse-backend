@@ -7,14 +7,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Spotbugs
-          command: ./mvnw clean compile spotbugs:check
-      - run:
-          name: PMD
-          command: ./mvnw clean compile pmd:check
-      - run:
-          name: Checkstyle
-          command: ./mvnw clean compile checkstyle:check
+          name: Static Analysis (Spotbugs, PMD, Checkstyle)
+          command: ./mvnw clean compile spotbugs:check pmd:check checkstyle:check
 
   build:
     machine:
@@ -49,9 +43,9 @@ jobs:
       - run:
           name: Build and push Docker Image to Dockerhub
           command: |
-            docker build -t hablijack/greenhouse-backend:2.30.5 .
+            docker build -t hablijack/greenhouse-backend:2.30.6 .
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push hablijack/greenhouse-backend:2.30.5
+            docker push hablijack/greenhouse-backend:2.30.6
 
 workflows:
   version: 2
