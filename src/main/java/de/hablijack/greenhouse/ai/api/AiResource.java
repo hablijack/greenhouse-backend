@@ -2,6 +2,7 @@ package de.hablijack.greenhouse.ai.api;
 
 import de.hablijack.greenhouse.ai.api.dto.AiRecommendationResponse;
 import de.hablijack.greenhouse.ai.api.dto.AskAiRequest;
+import de.hablijack.greenhouse.ai.api.dto.BatchSensorDataResponse;
 import de.hablijack.greenhouse.ai.api.dto.ErrorResponse;
 import de.hablijack.greenhouse.ai.api.dto.SensorDataRequest;
 import de.hablijack.greenhouse.ai.llm.LlmException;
@@ -14,6 +15,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +43,24 @@ public class AiResource {
       return Response.ok(fallback).build();
     } catch (Exception e) {
       LOG.error("Error analyzing sensor data", e);
+      return Response.serverError()
+          .entity(new ErrorResponse("analysis_error",
+          "Failed to analyze sensor data: " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()))
+          .build();
+    }
+  }
+
+  @POST
+  @Path("/sensor-data/batch")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response analyzeSensorDataBatch(List<SensorDataRequest> requests) {
+    LOG.info("POST /sensor-data/batch for {} plants", requests.size());
+    try {
+      Map<String, AiRecommendationResponse> results = aiService.analyzeBatch(requests);
+      return Response.ok(new BatchSensorDataResponse(results)).build();
+    } catch (Exception e) {
+      LOG.error("Error analyzing batch sensor data", e);
       return Response.serverError()
           .entity(new ErrorResponse("analysis_error",
           "Failed to analyze sensor data: " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()))

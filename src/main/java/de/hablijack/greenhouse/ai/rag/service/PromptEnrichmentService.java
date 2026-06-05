@@ -74,6 +74,38 @@ public class PromptEnrichmentService {
     return sb.toString();
   }
 
+  public String buildBatchSystemPrompt(List<String> plantTypes) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("You are an expert greenhouse assistant with deep knowledge of plant care. ");
+    sb.append("Always respond in German language.\n");
+    sb.append("Plant types to analyze: ").append(String.join(", ", plantTypes)).append("\n");
+    sb.append("""
+        Analyze each plant separately and provide a summary and urgency for each.
+
+        Output valid JSON where each key is a plant name and each value has the following structure:
+            {
+              "summary": "single sentence with assessment and actionable tip in German",
+              "urgency": "low|medium|high"
+            }
+
+        Example:
+            {
+              "Tomaten": {
+                "summary": "Temperatur leicht erhöht, Belüftung prüfen.",
+                "urgency": "medium"
+              },
+              "Salat": {
+                "summary": "Alle Werte im optimalen Bereich.",
+                "urgency": "low"
+              }
+            }
+
+        Do NOT list individual sensor values. Do NOT output recommendations separately.
+        """);
+
+    return sb.toString();
+  }
+
   private String formatDocument(PlantKnowledgeDocument doc) {
     return String.format("[%s] %s%n%s",
         doc.category != null ? doc.category : "General",
