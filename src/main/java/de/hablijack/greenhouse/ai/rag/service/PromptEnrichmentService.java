@@ -59,17 +59,17 @@ public class PromptEnrichmentService {
       sb.append("Plant type: ").append(plantType).append("\n");
     }
     sb.append("""
-    Provide:
-        - urgency level (low, medium, or high)
+        Provide:
+            - urgency level (low, medium, or high)
 
-    Output valid JSON with the following structure:
-        {
-      "summary": "single sentence with assessment and actionable tip in German",
-          "urgency": "low|medium|high"
-    }
+        Output valid JSON with the following structure:
+            {
+          "summary": "single sentence with assessment and actionable tip in German",
+              "urgency": "low|medium|high"
+        }
 
-    Do NOT list individual sensor values. Do NOT output recommendations separately.
-    """);
+        Do NOT list individual sensor values. Do NOT output recommendations separately.
+        """);
 
     return sb.toString();
   }
