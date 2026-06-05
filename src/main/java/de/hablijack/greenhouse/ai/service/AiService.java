@@ -83,7 +83,7 @@ public class AiService {
 
     try {
       String batchPrompt = buildBatchPrompt(requests, localAnalyses);
-      String enrichedQuery = promptEnrichmentService.enrichPrompt(batchPrompt, null);
+      String enrichedQuery = promptEnrichmentService.enrichBatchPrompt(batchPrompt, plantTypes);
       String systemPrompt = promptEnrichmentService.buildBatchSystemPrompt(plantTypes);
 
       String llmJson = llmService.chat(systemPrompt, enrichedQuery, true);

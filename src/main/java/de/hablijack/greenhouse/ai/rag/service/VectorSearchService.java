@@ -28,11 +28,13 @@ public class VectorSearchService {
     this.config = config;
   }
 
+  @Transactional
   public List<PlantKnowledgeDocument> findSimilarDocuments(String query, int maxResults) {
     float[] queryEmbedding = embeddingService.generateEmbedding(query);
     return findByVectorSimilarity(queryEmbedding, maxResults);
   }
 
+  @Transactional
   public List<PlantKnowledgeDocument> findSimilarDocuments(String query, String plantType,
       int maxResults) {
     float[] queryEmbedding = embeddingService.generateEmbedding(query);
@@ -40,7 +42,6 @@ public class VectorSearchService {
   }
 
   @SuppressWarnings("unchecked")
-  @Transactional
   public List<PlantKnowledgeDocument> findByVectorSimilarity(float[] queryVector,
       int maxResults) {
     String vectorLiteral = arrayToPgVector(queryVector);
@@ -56,7 +57,6 @@ public class VectorSearchService {
   }
 
   @SuppressWarnings("unchecked")
-  @Transactional
   public List<PlantKnowledgeDocument> findByVectorSimilarity(float[] queryVector,
       String plantType,
       int maxResults) {

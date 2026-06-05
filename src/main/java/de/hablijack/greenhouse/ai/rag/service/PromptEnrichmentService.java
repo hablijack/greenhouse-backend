@@ -3,6 +3,7 @@ package de.hablijack.greenhouse.ai.rag.service;
 import de.hablijack.greenhouse.ai.config.AiConfig;
 import de.hablijack.greenhouse.ai.rag.entity.PlantKnowledgeDocument;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -49,6 +50,36 @@ public class PromptEnrichmentService {
     return String.format(
         "Relevant plant knowledge:%n%s%n%nUser query: %s",
         knowledgeContext, userQuery);
+  }
+
+  public String enrichBatchPrompt(String batchPrompt, List<String> plantTypes) {
+    if (!config.rag().enabled()) {
+      LOG.debug("RAG is disabled, returning unenriched batch prompt");
+      return batchPrompt;
+    }
+
+    List<PlantKnowledgeDocument> allDocs = new ArrayList<>();
+    for (String plantType : plantTypes) {
+      List<PlantKnowledgeDocument> docs = vectorSearchService.findSimilarDocuments(
+          plantType, plantType, config.rag().maxDocuments());
+      allDocs.addAll(docs);
+    }
+
+    if (allDocs.isEmpty()) {
+      LOG.debug("No relevant documents found for batch query");
+      return batchPrompt;
+    }
+
+    String knowledgeContext = allDocs.stream()
+        .distinct()
+        .map(this::formatDocument)
+        .collect(Collectors.joining("\n---\n"));
+
+    LOG.debug("Enriched batch prompt with {} unique documents for {} plant types",
+        allDocs.size(), plantTypes.size());
+    return String.format(
+        "Relevant plant knowledge:%n%s%n%nUser query: %s",
+        knowledgeContext, batchPrompt);
   }
 
   public String buildSystemPrompt(String plantType) {
