@@ -15,6 +15,7 @@ public class Sensor extends PanacheEntity {
   private static final int DAYS_A_MONTH = 7;
   private static final int ONE_DAY = 1;
   private static final int DAY_TO_MS_FACTOR = 86400000;
+  private static final int HOUR_TO_MS_FACTOR = 3600000;
 
   @Column(name = "identifier", nullable = false, unique = true)
   public String identifier;
@@ -91,6 +92,11 @@ public class Sensor extends PanacheEntity {
       days = ONE_DAY;
     }
     Date ago = new Date(System.currentTimeMillis() - (days * DAY_TO_MS_FACTOR));
+    return Measurement.list("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago);
+  }
+
+  public List<Measurement> findMeasurementsWithinHours(int hours) {
+    Date ago = new Date(System.currentTimeMillis() - ((long) hours * HOUR_TO_MS_FACTOR));
     return Measurement.list("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago);
   }
 }

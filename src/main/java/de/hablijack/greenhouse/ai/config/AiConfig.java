@@ -14,6 +14,13 @@ public interface AiConfig {
 
   RagConfig rag();
 
+  ShadowConfig shadow();
+
+  interface ShadowConfig {
+    @WithDefault("false")
+    boolean enabled();
+  }
+
   interface LlmConfig {
     @WithName("base-url")
     String baseUrl();

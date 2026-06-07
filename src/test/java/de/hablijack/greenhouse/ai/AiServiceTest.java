@@ -13,6 +13,13 @@ import de.hablijack.greenhouse.ai.rag.service.PromptEnrichmentService;
 import de.hablijack.greenhouse.ai.rag.service.VectorSearchService;
 import de.hablijack.greenhouse.ai.service.AiService;
 import de.hablijack.greenhouse.ai.service.GreenhouseAnalyzer;
+import de.hablijack.greenhouse.ai.service.HistoryData;
+import de.hablijack.greenhouse.ai.service.SensorHistoryService;
+import de.hablijack.greenhouse.ai.service.SensorTrend;
+import de.hablijack.greenhouse.ai.service.SensorTrend.TrendDirection;
+import de.hablijack.greenhouse.ai.service.TimeContext;
+import de.hablijack.greenhouse.service.SensorService;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +34,12 @@ class AiServiceTest {
 
   @Mock
   PromptEnrichmentService promptEnrichmentService;
+
+  @Mock
+  SensorHistoryService sensorHistoryService;
+
+  @Mock
+  SensorService sensorService;
 
   @Mock
   VectorSearchService vectorSearchService;
@@ -45,18 +58,35 @@ class AiServiceTest {
   void setUp() {
     objectMapper = new ObjectMapper();
     greenhouseAnalyzer = new GreenhouseAnalyzer();
+
+    TimeContext time = new TimeContext(14, 6);
+    HistoryData mockHistory = new HistoryData(
+        new SensorTrend(24, 20, 28, 24, 0.1, TrendDirection.STABLE, 100),
+        new SensorTrend(65, 50, 70, 62, 0.2, TrendDirection.STABLE, 100),
+        new SensorTrend(55, 40, 60, 52, -0.1, TrendDirection.STABLE, 100),
+        new SensorTrend(500, 200, 800, 450, 10, TrendDirection.RISING, 100),
+        new SensorTrend(800, 500, 1000, 750, 15, TrendDirection.STABLE, 100),
+        time);
+
+    when(sensorHistoryService.fetchHistory(any())).thenReturn(mockHistory);
+
+    lenient().when(sensorService.getCurrentSensorValues()).thenReturn(Map.of(
+        "air_temp_inside", 25.0, "air_humidity_inside", 65.0,
+        "brightness", 500.0, "co2", 800.0,
+        "soil_humidity_line1", 55.0));
+
     aiService = new AiService(llmService, promptEnrichmentService,
-        greenhouseAnalyzer, objectMapper);
+        greenhouseAnalyzer, sensorHistoryService, sensorService, objectMapper);
   }
 
   @Test
   void testAnalyzeSensorDataFallsBackToLocalWhenLlmFails() {
     SensorDataRequest request = new SensorDataRequest(
-        "tomato", 25.0, 65.0, 55.0, 500.0, 800.0);
+        "tomato", 25.0, 65.0, 55.0, 500.0, 800.0, 14, 6);
 
     when(promptEnrichmentService.enrichPrompt(anyString(), anyString()))
         .thenReturn("test enriched query");
-    when(promptEnrichmentService.buildSystemPrompt(anyString()))
+    when(promptEnrichmentService.buildSystemPrompt(anyString(), anyString(), anyString()))
         .thenReturn("test system prompt");
     when(llmService.chatAsJson(anyString(), anyString(), eq(AiRecommendationResponse.class)))
         .thenThrow(new RuntimeException("LLM unavailable"));
@@ -70,7 +100,7 @@ class AiServiceTest {
   @Test
   void testAnalyzeSensorDataWithLocalOnly() {
     SensorDataRequest request = new SensorDataRequest(
-        "tomato", 35.0, 90.0, 55.0, 500.0, 800.0);
+        "tomato", 35.0, 90.0, 55.0, 500.0, 800.0, 14, 6);
 
     AiRecommendationResponse result = aiService.analyzeWithLocalOnly(request);
     assertEquals("high", result.urgency);

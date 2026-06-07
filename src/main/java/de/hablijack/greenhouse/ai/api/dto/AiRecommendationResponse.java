@@ -56,5 +56,26 @@ public class AiRecommendationResponse {
 
     @JsonProperty("co2Status")
     public String co2Status;
+
+    @JsonProperty("timeOfDay")
+    public String timeOfDay;
+
+    @JsonProperty("season")
+    public String season;
+
+    @JsonProperty("temperatureTrend")
+    public String temperatureTrend;
+
+    @JsonProperty("humidityTrend")
+    public String humidityTrend;
+
+    @JsonProperty("soilMoistureTrend")
+    public String soilMoistureTrend;
+
+    @JsonProperty("lightTrend")
+    public String lightTrend;
+
+    @JsonProperty("co2Trend")
+    public String co2Trend;
   }
 }

@@ -83,11 +83,24 @@ public class PromptEnrichmentService {
   }
 
   public String buildSystemPrompt(String plantType) {
+    return buildSystemPrompt(plantType, null, null);
+  }
+
+  public String buildSystemPrompt(String plantType, String timeOfDay, String season) {
     StringBuilder sb = new StringBuilder();
     sb.append("You are an expert greenhouse assistant with deep knowledge of plant care. ");
     sb.append("Always respond in German language.\n");
     if (plantType != null && !plantType.isBlank()) {
       sb.append("Plant type: ").append(plantType).append("\n");
+    }
+    if (timeOfDay != null && season != null) {
+      sb.append("Tageszeit: ").append(timeOfDay)
+          .append(", Jahreszeit: ").append(season).append("\n");
+      sb.append("""
+          Berücksichtige die Tageszeit und Jahreszeit bei deiner Analyse.
+          Zum Beispiel: Morgens sind niedrigere Temperaturen akzeptabel, mittags nicht.
+          Im Sommer liegt der Fokus auf Kühlung, im Winter auf Heizung.
+          """);
     }
     sb.append("""
         Provide:
@@ -106,10 +119,19 @@ public class PromptEnrichmentService {
   }
 
   public String buildBatchSystemPrompt(List<String> plantTypes) {
+    return buildBatchSystemPrompt(plantTypes, null, null);
+  }
+
+  public String buildBatchSystemPrompt(List<String> plantTypes, String timeOfDay, String season) {
     StringBuilder sb = new StringBuilder();
     sb.append("You are an expert greenhouse assistant with deep knowledge of plant care. ");
     sb.append("Always respond in German language.\n");
     sb.append("Plant types to analyze: ").append(String.join(", ", plantTypes)).append("\n");
+    if (timeOfDay != null && season != null) {
+      sb.append("Tageszeit: ").append(timeOfDay)
+          .append(", Jahreszeit: ").append(season).append("\n");
+      sb.append("Berücksichtige die Tageszeit und Jahreszeit bei der Analyse.\n");
+    }
     sb.append("""
         Analyze each plant separately and provide a summary and urgency for each.
 
