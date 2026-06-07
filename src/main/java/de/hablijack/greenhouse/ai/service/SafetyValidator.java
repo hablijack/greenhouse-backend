@@ -3,8 +3,8 @@ package de.hablijack.greenhouse.ai.service;
 import de.hablijack.greenhouse.ai.api.dto.RelayDecision.RelayAction;
 import de.hablijack.greenhouse.entity.Relay;
 import de.hablijack.greenhouse.entity.RelayLog;
-import de.hablijack.greenhouse.entity.Sensor;
 import de.hablijack.greenhouse.service.SensorService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -33,6 +33,18 @@ public class SafetyValidator {
   private static final double ABSOLUTE_MAX_SOIL = 95.0;
   private static final double ABSOLUTE_MIN_SOIL = 15.0;
 
+  private static final double DEFAULT_TEMPERATURE = 25.0;
+  private static final double DEFAULT_HUMIDITY = 60.0;
+  private static final double DEFAULT_BRIGHTNESS = 500.0;
+  private static final double DEFAULT_CO2 = 800.0;
+  private static final int RECENT_LOG_LIMIT = 100;
+  private static final long MS_PER_HOUR = 3600_000;
+  private static final double HIGH_TEMP_EMERGENCY = 38.0;
+  private static final int LIGHT_OFF_NIGHT_START = 6;
+  private static final int LIGHT_OFF_NIGHT_END = 20;
+  private static final int SOIL_SENSOR_COUNT = 6;
+  private static final double MIN_BRIGHTNESS_FOR_LIGHT_ON = 100.0;
+
   private final SensorService sensorService;
 
   public SafetyValidator(SensorService sensorService) {
@@ -45,10 +57,10 @@ public class SafetyValidator {
     List<String> overrides = new ArrayList<>();
 
     var sensorValues = sensorService.getCurrentSensorValues();
-    double temperature = sensorValues.getOrDefault("air_temp_inside", 25.0);
-    double humidity = sensorValues.getOrDefault("air_humidity_inside", 60.0);
-    double brightness = sensorValues.getOrDefault("brightness", 500.0);
-    double co2 = sensorValues.getOrDefault("co2", 800.0);
+    double temperature = sensorValues.getOrDefault("air_temp_inside", DEFAULT_TEMPERATURE);
+    double humidity = sensorValues.getOrDefault("air_humidity_inside", DEFAULT_HUMIDITY);
+    double brightness = sensorValues.getOrDefault("brightness", DEFAULT_BRIGHTNESS);
+    double co2 = sensorValues.getOrDefault("co2", DEFAULT_CO2);
     int hour = LocalTime.now().getHour();
 
     for (RelayAction action : decisions) {
@@ -121,7 +133,7 @@ public class SafetyValidator {
     }
 
     double soilMoisture = 0;
-    for (int i = 1; i <= 6; i++) {
+    for (int i = 1; i <= SOIL_SENSOR_COUNT; i++) {
       String key = "soil_humidity_line" + i;
       if (sensorValues.containsKey(key)) {
         soilMoisture = Math.max(soilMoisture, sensorValues.get(key));
@@ -132,7 +144,7 @@ public class SafetyValidator {
           + ABSOLUTE_MAX_SOIL + "% – blockiert";
     }
 
-    List<RelayLog> recentLogs = RelayLog.getRecentLog(100);
+    List<RelayLog> recentLogs = RelayLog.getRecentLog(RECENT_LOG_LIMIT);
     long todayCount = recentLogs.stream()
         .filter(log -> log.relay.identifier.equals(relay.identifier))
         .filter(log -> log.value)
@@ -162,7 +174,7 @@ public class SafetyValidator {
       long elapsed = System.currentTimeMillis() - lastLog.get().timestamp.getTime();
       if (elapsed < IRRIGATION_COOLDOWN_MS) {
         return relay.identifier + " (" + relay.name + "): Cooldown von "
-            + (IRRIGATION_COOLDOWN_MS / 3600_000) + "h noch nicht abgelaufen – blockiert";
+            + (IRRIGATION_COOLDOWN_MS / MS_PER_HOUR) + "h noch nicht abgelaufen – blockiert";
       }
     }
 
@@ -181,7 +193,7 @@ public class SafetyValidator {
 
     boolean hasSolarPower = brightness >= MIN_BRIGHTNESS_FOR_FAN;
     boolean withinTimeWindow = hour >= FAN_ACTIVE_START_HOUR && hour <= FAN_ACTIVE_END_HOUR;
-    boolean isEmergency = temperature > 38.0 || humidity > 95.0;
+    boolean isEmergency = temperature > HIGH_TEMP_EMERGENCY || humidity > ABSOLUTE_MAX_HUMIDITY;
 
     if (!isEmergency && !hasSolarPower) {
       return relay.identifier + " (" + relay.name + "): Helligkeit " + (int) brightness
@@ -197,17 +209,19 @@ public class SafetyValidator {
   }
 
   private String validateLight(RelayAction action, Relay relay, double brightness, int hour) {
-    if (action.desiredState && (hour < 6 || hour > 20)) {
+    if (action.desiredState && (hour < LIGHT_OFF_NIGHT_START || hour > LIGHT_OFF_NIGHT_END)) {
       return relay.identifier + " (" + relay.name + "): Licht zur Nachtzeit ("
           + hour + " Uhr) – blockiert";
     }
-    if (!action.desiredState && brightness < 100 && hour >= 6 && hour <= 20) {
+    if (!action.desiredState && brightness < MIN_BRIGHTNESS_FOR_LIGHT_ON
+        && hour >= LIGHT_OFF_NIGHT_START && hour <= LIGHT_OFF_NIGHT_END) {
       return relay.identifier + " (" + relay.name + "): Kaum Tageslicht ("
           + (int) brightness + " lux) tagsüber – Licht EIN erzwungen";
     }
     return null;
   }
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public record ValidationResult(
       List<RelayAction> approved,
       List<String> blocked,
@@ -237,7 +251,7 @@ public class SafetyValidator {
                 .map(p -> " (Puls: " + p.durationLabel() + ")")
                 .orElse("");
           }
-          sb.append(String.format("• %s → %s%s\n  └ %s\n",
+          sb.append(String.format("• %s → %s%s%n  └ %s%n",
               a.relayId, a.desiredState ? "EIN" : "AUS", pulseInfo, a.reason));
         }
       }

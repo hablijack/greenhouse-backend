@@ -910,7 +910,8 @@ public class RagDataInitializer {
                 + "Brightness at night should be below 50 lux - higher values suggest light leak or sensor fault. "
                 + "Battery voltage below 3.0V indicates the sensor node needs maintenance. "
                 + "If all soil moisture sensors read identically (within 1%), there may be a communication fault. "
-                + "Sudden 20%+ swings in any sensor within 5 minutes likely indicate a sensor fault, not a real change.",
+                + "Sudden 20%+ swings in any sensor within 5 minutes "
+                + "likely indicate a sensor fault, not a real change.",
             "sensor_plausibility")
 
     );

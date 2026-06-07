@@ -4,12 +4,12 @@ import de.hablijack.greenhouse.ai.api.dto.AiRecommendationResponse;
 import de.hablijack.greenhouse.ai.api.dto.AiRecommendationResponse.SensorAnalysis;
 import de.hablijack.greenhouse.ai.api.dto.SensorDataRequest;
 import de.hablijack.greenhouse.ai.service.SensorTrend.TrendDirection;
-import de.hablijack.greenhouse.ai.service.TimeContext.Season;
 import de.hablijack.greenhouse.ai.service.TimeContext.TimeOfDay;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +61,16 @@ public class GreenhouseAnalyzer {
   private static final double CO2_IDEAL_MAX = 1200.0;
   private static final double CO2_HIGH = 1500.0;
 
+  private static final int MAX_SEVERITY = 4;
+  private static final int HIGH_SEVERITY_THRESHOLD = 3;
+  private static final int MEDIUM_SEVERITY_THRESHOLD = 2;
+  private static final int TEMP_TREND_MARGIN = 3;
+  private static final double HUMIDITY_MARGIN = 5.0;
+  private static final double NIGHT_LIGHT_THRESHOLD = 50.0;
+  private static final double MARGIN_100 = 100.0;
+  private static final double HIGH_TEMP_COMBINED = 28.0;
+  private static final double HIGH_TEMP_NIGHT = 24.0;
+
   public AiRecommendationResponse analyze(SensorDataRequest data) {
     return analyze(data, null);
   }
@@ -77,11 +87,11 @@ public class GreenhouseAnalyzer {
     analysis.season = time.seasonLabel();
 
     if (history != null) {
-      analysis.temperatureTrend = history.temperature.direction.name().toLowerCase();
-      analysis.humidityTrend = history.humidity.direction.name().toLowerCase();
-      analysis.soilMoistureTrend = history.soilMoisture.direction.name().toLowerCase();
-      analysis.lightTrend = history.light.direction.name().toLowerCase();
-      analysis.co2Trend = history.co2.direction.name().toLowerCase();
+      analysis.temperatureTrend = history.temperature.direction.name().toLowerCase(Locale.ROOT);
+      analysis.humidityTrend = history.humidity.direction.name().toLowerCase(Locale.ROOT);
+      analysis.soilMoistureTrend = history.soilMoisture.direction.name().toLowerCase(Locale.ROOT);
+      analysis.lightTrend = history.light.direction.name().toLowerCase(Locale.ROOT);
+      analysis.co2Trend = history.co2.direction.name().toLowerCase(Locale.ROOT);
     }
 
     analyzeTemperature(data.temperature, data.plantType, time, history, recommendations, warnings, analysis);
@@ -102,12 +112,12 @@ public class GreenhouseAnalyzer {
         analysis.co2Status);
 
     int boost = countTrendWorsening(analysis, history);
-    highestSeverity = Math.min(highestSeverity + boost, 4);
+    highestSeverity = Math.min(highestSeverity + boost, MAX_SEVERITY);
 
     String urgency;
-    if (highestSeverity >= 3) {
+    if (highestSeverity >= HIGH_SEVERITY_THRESHOLD) {
       urgency = "high";
-    } else if (highestSeverity >= 2) {
+    } else if (highestSeverity >= MEDIUM_SEVERITY_THRESHOLD) {
       urgency = "medium";
     } else {
       urgency = "low";
@@ -128,7 +138,9 @@ public class GreenhouseAnalyzer {
   }
 
   private int countTrendWorsening(SensorAnalysis analysis, HistoryData history) {
-    if (history == null) return 0;
+    if (history == null) {
+      return 0;
+    }
     int boost = 0;
 
     if ("too_high".equals(analysis.temperatureStatus)
@@ -151,23 +163,29 @@ public class GreenhouseAnalyzer {
     int max = 0;
     for (String s : statuses) {
       int sev = switch (s) {
-        case "critical_high" -> 4;
-        case "too_high", "too_low" -> 3;
-        case "high", "low" -> 2;
+        case "critical_high" -> MAX_SEVERITY;
+        case "too_high", "too_low" -> HIGH_SEVERITY_THRESHOLD;
+        case "high", "low" -> MEDIUM_SEVERITY_THRESHOLD;
         case "slightly_high", "slightly_low" -> 1;
         default -> 0;
       };
-      if (sev > max) max = sev;
+      if (sev > max) {
+        max = sev;
+      }
     }
     return max;
   }
 
+  @SuppressFBWarnings("IMPROPER_UNICODE")
   private void analyzeTemperature(double temp, String plantType, TimeContext time,
       HistoryData history, List<String> recommendations, List<String> warnings,
       SensorAnalysis analysis) {
 
-    boolean isCucumber = plantType != null && plantType.equalsIgnoreCase("cucumber");
-    double min, lowThreshold, max, highThreshold;
+    boolean isCucumber = plantType != null && plantType.toLowerCase(Locale.ROOT).equals("cucumber");
+    double min;
+    double lowThreshold;
+    double max;
+    double highThreshold;
 
     switch (time.timeOfDay) {
       case NIGHT, LATE_NIGHT -> {
@@ -195,6 +213,7 @@ public class GreenhouseAnalyzer {
         highThreshold = TEMP_EVENING_HIGH;
       }
       default -> {
+        LOG.warn("Unknown timeOfDay: {}, using NOON defaults", time.timeOfDay);
         min = TEMP_NOON_MIN;
         lowThreshold = TEMP_NOON_LOW;
         max = TEMP_NOON_MAX;
@@ -235,11 +254,12 @@ public class GreenhouseAnalyzer {
 
     if (history != null) {
       TrendDirection trend = history.temperature.direction;
-      if (trend == TrendDirection.RISING_FAST && temp > max - 3) {
+      if (trend == TrendDirection.RISING_FAST && temp > max - TEMP_TREND_MARGIN) {
         warnings.add("Temperatur steigt schnell an (" + history.temperature.rateOfChange
             + "°C/24h). Überhitzung droht.");
-        recommendations.add("Temperatur steigt schnell an. Frühzeitig Lüftung öffnen, bevor die Temperatur kritisch wird.");
-      } else if (trend == TrendDirection.FALLING_FAST && temp < min + 3) {
+        recommendations.add(
+            "Temperatur steigt schnell an. Frühzeitig Lüftung öffnen, bevor die Temperatur kritisch wird.");
+      } else if (trend == TrendDirection.FALLING_FAST && temp < min + TEMP_TREND_MARGIN) {
         warnings.add("Temperatur fällt schnell (" + history.temperature.rateOfChange
             + "°C/24h). Frostgefahr steigt.");
         recommendations.add("Temperatur fällt schnell. Heizung und Isolation überprüfen.");
@@ -247,6 +267,7 @@ public class GreenhouseAnalyzer {
     }
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private void analyzeHumidity(double humidity, String plantType, TimeContext time,
       HistoryData history, List<String> recommendations, List<String> warnings,
       SensorAnalysis analysis) {
@@ -273,12 +294,13 @@ public class GreenhouseAnalyzer {
     }
 
     if (history != null && history.humidity.direction == TrendDirection.RISING_FAST
-        && humidity > HUMIDITY_IDEAL_MAX - 5) {
+        && humidity > HUMIDITY_IDEAL_MAX - HUMIDITY_MARGIN) {
       warnings.add("Luftfeuchtigkeit steigt schnell. Pilzgefahr nimmt zu.");
       recommendations.add("Belüftung vorbeugend erhöhen.");
     }
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private void analyzeSoilMoisture(double moisture, String plantType, TimeContext time,
       HistoryData history, List<String> recommendations, List<String> warnings,
       SensorAnalysis analysis) {
@@ -317,6 +339,7 @@ public class GreenhouseAnalyzer {
     }
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private void analyzeLight(double light, String plantType, TimeContext time,
       HistoryData history, List<String> recommendations, List<String> warnings,
       SensorAnalysis analysis) {
@@ -324,7 +347,7 @@ public class GreenhouseAnalyzer {
     boolean isNight = time.timeOfDay == TimeOfDay.NIGHT || time.timeOfDay == TimeOfDay.LATE_NIGHT;
 
     if (isNight) {
-      if (light > 50) {
+      if (light > NIGHT_LIGHT_THRESHOLD) {
         warnings.add("Licht zur Nachtzeit (" + light + " lux). Stört den Pflanzenrhythmus.");
         recommendations.add("Pflanzenlicht und Fremdlichtquellen in der Nacht vermeiden.");
         analysis.lightStatus = "high";
@@ -351,12 +374,13 @@ public class GreenhouseAnalyzer {
     }
 
     if (history != null && history.light.direction == TrendDirection.FALLING_FAST
-        && light < LIGHT_IDEAL_MIN + 100) {
+        && light < LIGHT_IDEAL_MIN + MARGIN_100) {
       warnings.add("Licht nimmt schnell ab. Zusatzbeleuchtung vorbereiten.");
       recommendations.add("Zusatzbeleuchtung rechtzeitig aktivieren.");
     }
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private void analyzeCo2(double co2, String plantType, TimeContext time,
       HistoryData history, List<String> recommendations, List<String> warnings,
       SensorAnalysis analysis) {
@@ -382,22 +406,23 @@ public class GreenhouseAnalyzer {
     }
 
     if (history != null && history.co2.direction == TrendDirection.RISING_FAST
-        && co2 > CO2_IDEAL_MAX - 100) {
+        && co2 > CO2_IDEAL_MAX - MARGIN_100) {
       warnings.add("CO2 steigt schnell an. Belüftungssystem prüfen.");
       recommendations.add("Lüftung vorbeugend öffnen.");
     }
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private void analyzeCombinedRisks(SensorDataRequest data, TimeContext time,
       HistoryData history, List<String> recommendations, List<String> warnings) {
 
-    boolean highTemp = data.temperature > 28;
+    boolean highTemp = data.temperature > HIGH_TEMP_COMBINED;
     boolean lowHumidity = data.humidity < HUMIDITY_IDEAL_MIN;
     boolean highHumidity = data.humidity > HUMIDITY_IDEAL_MAX;
     boolean drySoil = data.soilMoisture < SOIL_MOISTURE_IDEAL_MIN;
     boolean wetSoil = data.soilMoisture > SOIL_MOISTURE_IDEAL_MAX;
     boolean lowLight = data.lightIntensity < LIGHT_IDEAL_MIN;
-    boolean highTempNight = data.temperature > 24
+    boolean highTempNight = data.temperature > HIGH_TEMP_NIGHT
         && (time.timeOfDay == TimeOfDay.NIGHT || time.timeOfDay == TimeOfDay.LATE_NIGHT);
 
     if (highTemp && drySoil) {
@@ -431,7 +456,7 @@ public class GreenhouseAnalyzer {
     }
   }
 
-  @SuppressFBWarnings("IMPROPER_UNICODE")
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private void addSeasonalTips(String plantType, TimeContext time,
       List<String> recommendations, List<String> warnings) {
     String tip = switch (time.season) {
@@ -455,7 +480,7 @@ public class GreenhouseAnalyzer {
     recommendations.add(tip);
   }
 
-  @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE")
+  @SuppressWarnings("PMD.UnusedFormalParameter")
   private String buildSummary(SensorDataRequest data, TimeContext time,
       List<String> warnings, List<String> recommendations) {
     StringBuilder sb = new StringBuilder();

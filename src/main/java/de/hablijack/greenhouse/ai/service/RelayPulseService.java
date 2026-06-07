@@ -6,6 +6,7 @@ import de.hablijack.greenhouse.entity.RelayLog;
 import de.hablijack.greenhouse.service.SatelliteService;
 import de.hablijack.greenhouse.webclient.SatelliteClient;
 import de.hablijack.greenhouse.webclient.TelegramClient;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ public class RelayPulseService {
   private static final Logger LOG = LoggerFactory.getLogger(RelayPulseService.class);
 
   public static final long IRRIGATION_PULSE_MS = 60_000;
+  public static final long MS_PER_SECOND = 1000;
   public static final String PULSE_INITIATOR = "AI-PULSE";
   public static final String PULSE_INITIATOR_SHADOW = "AI-PULSE-SHADOW";
 
@@ -104,14 +106,18 @@ public class RelayPulseService {
   @Transactional
   void persistRelaySwitch(Relay relay, String initiator, boolean state) {
     Relay freshRelay = Relay.findByIdentifier(relay.identifier);
-    if (freshRelay == null) return;
+    if (freshRelay == null) {
+      return;
+    }
     freshRelay.value = state;
     new RelayLog(freshRelay, initiator, new Date(), state).persist();
   }
 
   private long getPulseDuration(RelayAction action, Relay relay) {
     String id = relay.identifier;
-    if (!action.desiredState) return 0;
+    if (!action.desiredState) {
+      return 0;
+    }
     if (id.startsWith("relay_line") && !id.equals("relay_line7") && !id.equals("relay_line8")) {
       return IRRIGATION_PULSE_MS;
     }
@@ -127,11 +133,16 @@ public class RelayPulseService {
     }
   }
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public record PulsePlan(RelayAction action, Relay relay, long durationMs, boolean shadow) {
     public String durationLabel() {
-      if (durationMs <= 0) return "dauerhaft";
-      if (durationMs < 60_000) return durationMs / 1000 + "s";
-      return durationMs / 60_000 + "min";
+      if (durationMs <= 0) {
+        return "dauerhaft";
+      }
+      if (durationMs < IRRIGATION_PULSE_MS) {
+        return durationMs / MS_PER_SECOND + "s";
+      }
+      return durationMs / IRRIGATION_PULSE_MS + "min";
     }
   }
 }

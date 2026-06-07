@@ -1,5 +1,8 @@
 package de.hablijack.greenhouse.ai.service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class SensorTrend {
 
   public final double current;

@@ -21,6 +21,12 @@ public class SensorHistoryService {
   private static final String BRIGHTNESS = "brightness";
   private static final String CO2 = "co2";
 
+  private static final int MIN_DATA_POINTS = 10;
+  private static final double RISING_FAST_THRESHOLD = 3.0;
+  private static final double RISING_THRESHOLD = 0.5;
+  private static final double FALLING_FAST_THRESHOLD = -3.0;
+  private static final double FALLING_THRESHOLD = -0.5;
+
   public HistoryData fetchHistory(TimeContext timeContext) {
     LOG.debug("Fetching sensor history for last {} hours", HISTORY_HOURS);
 
@@ -85,7 +91,7 @@ public class SensorHistoryService {
   }
 
   private double computeRateOfChange(List<Measurement> measurements) {
-    if (measurements.size() < 10) {
+    if (measurements.size() < MIN_DATA_POINTS) {
       return 0;
     }
 
@@ -100,10 +106,18 @@ public class SensorHistoryService {
   }
 
   private TrendDirection classifyTrend(double rateOfChange) {
-    if (rateOfChange > 3.0) return TrendDirection.RISING_FAST;
-    if (rateOfChange > 0.5) return TrendDirection.RISING;
-    if (rateOfChange < -3.0) return TrendDirection.FALLING_FAST;
-    if (rateOfChange < -0.5) return TrendDirection.FALLING;
+    if (rateOfChange > RISING_FAST_THRESHOLD) {
+      return TrendDirection.RISING_FAST;
+    }
+    if (rateOfChange > RISING_THRESHOLD) {
+      return TrendDirection.RISING;
+    }
+    if (rateOfChange < FALLING_FAST_THRESHOLD) {
+      return TrendDirection.FALLING_FAST;
+    }
+    if (rateOfChange < FALLING_THRESHOLD) {
+      return TrendDirection.FALLING;
+    }
     return TrendDirection.STABLE;
   }
 }

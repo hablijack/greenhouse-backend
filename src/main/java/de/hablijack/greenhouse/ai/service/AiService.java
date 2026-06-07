@@ -6,7 +6,6 @@ import de.hablijack.greenhouse.ai.api.dto.AiRecommendationResponse;
 import de.hablijack.greenhouse.ai.api.dto.AskAiRequest;
 import de.hablijack.greenhouse.ai.api.dto.RelayDecision;
 import de.hablijack.greenhouse.ai.api.dto.SensorDataRequest;
-import de.hablijack.greenhouse.ai.api.dto.AiRecommendationResponse.SensorAnalysis;
 import de.hablijack.greenhouse.ai.llm.LlmService;
 import de.hablijack.greenhouse.ai.rag.service.PromptEnrichmentService;
 import de.hablijack.greenhouse.service.SensorService;
@@ -14,6 +13,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -163,14 +163,14 @@ public class AiService {
         Aktuelle Relay-Zustände:
         %s
         Zeitkontext: %s (Stunde %d), %s (Monat %d)
-        
+
         Trends der letzten 24h:
         - Temperatur: %s, %+.1f°C Änderung, Spanne [%.1f-%.1f]°C
         - Luftfeuchte: %s, Spanne [%.1f-%.1f]%%
         - Bodenfeuchte: %s, Spanne [%.1f-%.1f]%%
         - Licht: %s, Spanne [%.1f-%.1f] lux
         - CO2: %s, Spanne [%.1f-%.1f] ppm
-        
+
         Entscheide für jedes Relay, ob es EIN oder AUS sein soll.
         Berücksichtige Tageszeit, Jahreszeit, Trends und kombinierte Risiken.
         """,
@@ -178,16 +178,16 @@ public class AiService {
         relayStateBuilder.toString(),
         time.timeOfDayLabel(), time.hourOfDay,
         time.seasonLabel(), time.month,
-        history.temperature.direction.name().toLowerCase(),
+        history.temperature.direction.name().toLowerCase(Locale.ROOT),
         history.temperature.rateOfChange,
         history.temperature.min, history.temperature.max,
-        history.humidity.direction.name().toLowerCase(),
+        history.humidity.direction.name().toLowerCase(Locale.ROOT),
         history.humidity.min, history.humidity.max,
-        history.soilMoisture.direction.name().toLowerCase(),
+        history.soilMoisture.direction.name().toLowerCase(Locale.ROOT),
         history.soilMoisture.min, history.soilMoisture.max,
-        history.light.direction.name().toLowerCase(),
+        history.light.direction.name().toLowerCase(Locale.ROOT),
         history.light.min, history.light.max,
-        history.co2.direction.name().toLowerCase(),
+        history.co2.direction.name().toLowerCase(Locale.ROOT),
         history.co2.min, history.co2.max);
 
     String enrichedQuery = promptEnrichmentService.enrichPrompt(prompt, "general");
@@ -196,7 +196,7 @@ public class AiService {
 
     try {
       RelayDecision decision = llmService.chatAsJson(systemPrompt, enrichedQuery, RelayDecision.class);
-      LOG.info("AI shadow decision: {} relay actions proposed", 
+      LOG.info("AI shadow decision: {} relay actions proposed",
           decision.relays != null ? decision.relays.size() : 0);
       return decision;
     } catch (Exception e) {
@@ -223,15 +223,15 @@ public class AiService {
 
         """,
         time.timeOfDayLabel(), time.seasonLabel(), time.hourOfDay, time.month,
-        history.temperature.direction.name().toLowerCase(),
+        history.temperature.direction.name().toLowerCase(Locale.ROOT),
         history.temperature.min, history.temperature.max, history.temperature.rateOfChange,
-        history.humidity.direction.name().toLowerCase(),
+        history.humidity.direction.name().toLowerCase(Locale.ROOT),
         history.humidity.min, history.humidity.max,
-        history.soilMoisture.direction.name().toLowerCase(),
+        history.soilMoisture.direction.name().toLowerCase(Locale.ROOT),
         history.soilMoisture.min, history.soilMoisture.max,
-        history.light.direction.name().toLowerCase(),
+        history.light.direction.name().toLowerCase(Locale.ROOT),
         history.light.min, history.light.max,
-        history.co2.direction.name().toLowerCase(),
+        history.co2.direction.name().toLowerCase(Locale.ROOT),
         history.co2.min, history.co2.max));
 
     for (SensorDataRequest data : requests) {
@@ -296,16 +296,16 @@ public class AiService {
         data.co2Level,
         time.timeOfDayLabel(), time.hourOfDay,
         time.seasonLabel(), time.month,
-        history.temperature.direction.name().toLowerCase(),
+        history.temperature.direction.name().toLowerCase(Locale.ROOT),
         history.temperature.rateOfChange,
         history.temperature.min, history.temperature.max,
-        history.humidity.direction.name().toLowerCase(),
+        history.humidity.direction.name().toLowerCase(Locale.ROOT),
         history.humidity.min, history.humidity.max,
-        history.soilMoisture.direction.name().toLowerCase(),
+        history.soilMoisture.direction.name().toLowerCase(Locale.ROOT),
         history.soilMoisture.min, history.soilMoisture.max,
-        history.light.direction.name().toLowerCase(),
+        history.light.direction.name().toLowerCase(Locale.ROOT),
         history.light.min, history.light.max,
-        history.co2.direction.name().toLowerCase(),
+        history.co2.direction.name().toLowerCase(Locale.ROOT),
         history.co2.min, history.co2.max);
   }
 

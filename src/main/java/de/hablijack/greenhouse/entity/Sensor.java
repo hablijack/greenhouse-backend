@@ -95,6 +95,7 @@ public class Sensor extends PanacheEntity {
     return Measurement.list("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago);
   }
 
+  @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
   public List<Measurement> findMeasurementsWithinHours(int hours) {
     Date ago = new Date(System.currentTimeMillis() - ((long) hours * HOUR_TO_MS_FACTOR));
     return Measurement.list("sensor = ?1 AND timestamp >= ?2 ORDER BY timestamp", this, ago);
