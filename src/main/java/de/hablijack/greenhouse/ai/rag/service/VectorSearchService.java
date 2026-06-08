@@ -6,6 +6,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +90,16 @@ public class VectorSearchService {
     return mapToDocuments(query.getResultList());
   }
 
+  private static Instant toInstant(Object value) {
+    if (value instanceof Instant instant) {
+      return instant;
+    }
+    if (value instanceof Timestamp timestamp) {
+      return timestamp.toInstant();
+    }
+    return null;
+  }
+
   private List<PlantKnowledgeDocument> mapToDocuments(List<Object[]> rows) {
     return rows.stream().map(row -> {
       PlantKnowledgeDocument doc = new PlantKnowledgeDocument();
@@ -96,8 +108,8 @@ public class VectorSearchService {
       doc.title = (String) row[2];
       doc.content = (String) row[COL_CONTENT];
       doc.category = (String) row[COL_CATEGORY];
-      doc.createdAt = ((java.sql.Timestamp) row[COL_CREATED_AT]).toInstant();
-      doc.updatedAt = ((java.sql.Timestamp) row[COL_UPDATED_AT]).toInstant();
+      doc.createdAt = toInstant(row[COL_CREATED_AT]);
+      doc.updatedAt = toInstant(row[COL_UPDATED_AT]);
       doc.embedding = null;
       return doc;
     }).toList();
