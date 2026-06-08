@@ -17,7 +17,7 @@ public class LlmService {
   private static final Logger LOG = LoggerFactory.getLogger(LlmService.class);
 
   private static final double DEFAULT_TEMPERATURE = 0.3;
-  private static final int DEFAULT_MAX_TOKENS = 1024;
+  private static final int DEFAULT_MAX_TOKENS = 4096;
   private static final int JSON_CODE_FENCE_PREFIX_LENGTH = 7;
   private static final int CODE_FENCE_PREFIX_LENGTH = 3;
   private static final long MILLIS_PER_SECOND = 1000L;
