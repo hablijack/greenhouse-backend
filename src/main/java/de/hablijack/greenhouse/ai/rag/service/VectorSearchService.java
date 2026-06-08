@@ -16,6 +16,10 @@ public class VectorSearchService {
   private static final Logger LOG = LoggerFactory.getLogger(VectorSearchService.class);
 
   private static final int PARAM_INDEX_MAX_RESULTS = 3;
+  private static final int COL_CONTENT = 3;
+  private static final int COL_CATEGORY = 4;
+  private static final int COL_CREATED_AT = 5;
+  private static final int COL_UPDATED_AT = 6;
 
   @PersistenceContext
   EntityManager entityManager;
@@ -30,30 +34,40 @@ public class VectorSearchService {
 
   @Transactional
   public List<PlantKnowledgeDocument> findSimilarDocuments(String query, int maxResults) {
-    float[] queryEmbedding = embeddingService.generateEmbedding(query);
-    return findByVectorSimilarity(queryEmbedding, maxResults);
+    try {
+      float[] queryEmbedding = embeddingService.generateEmbedding(query);
+      return findByVectorSimilarity(queryEmbedding, maxResults);
+    } catch (Exception e) {
+      LOG.error("Vector search failed for query: {}", query, e);
+      return List.of();
+    }
   }
 
   @Transactional
   public List<PlantKnowledgeDocument> findSimilarDocuments(String query, String plantType,
       int maxResults) {
-    float[] queryEmbedding = embeddingService.generateEmbedding(query);
-    return findByVectorSimilarity(queryEmbedding, plantType, maxResults);
+    try {
+      float[] queryEmbedding = embeddingService.generateEmbedding(query);
+      return findByVectorSimilarity(queryEmbedding, plantType, maxResults);
+    } catch (Exception e) {
+      LOG.error("Vector search failed for query (plantType={}): {}", plantType, query, e);
+      return List.of();
+    }
   }
 
   @SuppressWarnings("unchecked")
   public List<PlantKnowledgeDocument> findByVectorSimilarity(float[] queryVector,
       int maxResults) {
     String vectorLiteral = arrayToPgVector(queryVector);
-    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at, embedding "
+    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at "
         + "FROM greenhouse.plant_knowledge_document "
         + "ORDER BY embedding <=> CAST(?1 AS vector) "
         + "LIMIT ?2";
 
-    var query = entityManager.createNativeQuery(sql, PlantKnowledgeDocument.class);
+    var query = entityManager.createNativeQuery(sql);
     query.setParameter(1, vectorLiteral);
     query.setParameter(2, maxResults);
-    return query.getResultList();
+    return mapToDocuments(query.getResultList());
   }
 
   @SuppressWarnings("unchecked")
@@ -61,17 +75,32 @@ public class VectorSearchService {
       String plantType,
       int maxResults) {
     String vectorLiteral = arrayToPgVector(queryVector);
-    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at, embedding "
+    String sql = "SELECT id, plant_type, title, content, category, created_at, updated_at "
         + "FROM greenhouse.plant_knowledge_document "
         + "WHERE plant_type = ?1 "
         + "ORDER BY embedding <=> CAST(?2 AS vector) "
         + "LIMIT ?3";
 
-    var query = entityManager.createNativeQuery(sql, PlantKnowledgeDocument.class);
+    var query = entityManager.createNativeQuery(sql);
     query.setParameter(1, plantType);
     query.setParameter(2, vectorLiteral);
     query.setParameter(PARAM_INDEX_MAX_RESULTS, maxResults);
-    return query.getResultList();
+    return mapToDocuments(query.getResultList());
+  }
+
+  private List<PlantKnowledgeDocument> mapToDocuments(List<Object[]> rows) {
+    return rows.stream().map(row -> {
+      PlantKnowledgeDocument doc = new PlantKnowledgeDocument();
+      doc.id = ((Number) row[0]).longValue();
+      doc.plantType = (String) row[1];
+      doc.title = (String) row[2];
+      doc.content = (String) row[COL_CONTENT];
+      doc.category = (String) row[COL_CATEGORY];
+      doc.createdAt = ((java.sql.Timestamp) row[COL_CREATED_AT]).toInstant();
+      doc.updatedAt = ((java.sql.Timestamp) row[COL_UPDATED_AT]).toInstant();
+      doc.embedding = null;
+      return doc;
+    }).toList();
   }
 
   @Transactional

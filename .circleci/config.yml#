@@ -1,0 +1,55 @@
+version: 2.1
+
+jobs:
+  qualitygate:
+    docker:
+      - image: cimg/openjdk:25.0
+    steps:
+      - checkout
+      - run:
+          name: Static Analysis (Spotbugs, PMD, Checkstyle)
+          command: ./mvnw clean compile spotbugs:check pmd:check checkstyle:check
+
+  build:
+    machine:
+      image: ubuntu-2404:2025.09.1
+    resource_class: arm.medium
+    working_directory: ~/repo
+    environment:
+      GRAALVM_HOME: /home/circleci/repo/.graalvm/
+      JAVA_HOME: /home/circleci/repo/.graalvm
+
+    steps:
+      - checkout
+      - run:
+          name: add graalvm to path
+          command: export PATH=${GRAALVM_HOME}/bin:$PATH
+      - run:
+          name: Download GraalVM archive
+          command: curl https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.1/graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz -O -J -L
+      - run:
+          name: Unpack downloaded GraalVM archive
+          command: tar xfz graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz
+      - run:
+          name: Move directory
+          command: mv graalvm-community-openjdk-25.0.1+8.1 .graalvm
+      - run:
+          name: Cleanup GraalVM installer
+          command: rm graalvm-community-jdk-25.0.1_linux-aarch64_bin.tar.gz
+      - run:
+          name: Build (Native)
+          command: ./mvnw install -Dnative -DskipTests -Dmaven.test.skip=true -Dquarkus.native.container-build=false
+          no_output_timeout: 30m
+      - run:
+          name: Build and push Docker Image to Dockerhub
+          command: |
+            docker build -t hablijack/greenhouse-backend:3.1.2 .
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push hablijack/greenhouse-backend:3.1.2
+
+workflows:
+  version: 2
+  qualitygate_and_build:
+    jobs:
+      - qualitygate
+      - build
