@@ -34,6 +34,14 @@ public class RagDataInitializer {
   }
 
   @Transactional
+  public void reimportAll() {
+    LOG.info("Reimporting all RAG documents - deleting existing documents");
+    PlantKnowledgeDocument.deleteAll();
+    LOG.info("Existing documents deleted, re-ingesting all documents");
+    ingestAllDocuments();
+  }
+
+  @Transactional
   void initInternal() {
     try {
       if (PlantKnowledgeDocument.count() > 0) {
@@ -42,7 +50,15 @@ public class RagDataInitializer {
       }
 
       LOG.info("Initializing advanced greenhouse RAG knowledge base");
+      ingestAllDocuments();
+    } catch (Exception e) {
+      LOG.error("Failed to initialize RAG knowledge base (application will continue): {}",
+          e.getMessage(), e);
+    }
+  }
 
+  private void ingestAllDocuments() {
+    try {
       List<DocumentIngestionService.DocumentInput> documents = new ArrayList<>();
 
       documents.addAll(initTomatoDocuments());
