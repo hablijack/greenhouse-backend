@@ -86,6 +86,42 @@ public class PromptEnrichmentService {
     return buildSystemPrompt(plantType, null, null);
   }
 
+  public String buildRelayDecisionSystemPrompt(String timeOfDay, String season) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("You are an expert greenhouse assistant controlling relay switches in a smart greenhouse. ");
+    sb.append("Always respond in German language.\n");
+    if (timeOfDay != null && season != null) {
+      sb.append("Tageszeit: ").append(timeOfDay)
+          .append(", Jahreszeit: ").append(season).append("\n");
+      sb.append("""
+          Berücksichtige die Tageszeit und Jahreszeit bei deiner Analyse.
+          Zum Beispiel: Morgens sind niedrigere Temperaturen akzeptabel, mittags nicht.
+          Im Sommer liegt der Fokus auf Kühlung, im Winter auf Heizung.
+          """);
+    }
+    sb.append("""
+        Entscheide für jedes Relay, ob es EIN (true) oder AUS (false) sein soll.
+        Berücksichtige Tageszeit, Jahreszeit, Trends und kombinierte Risiken.
+
+        Output valid JSON with the following structure:
+        {
+          "summary": "single sentence explaining the overall assessment in German",
+          "relays": [
+            {
+              "relayId": "relay_line1",
+              "desiredState": true,
+              "reason": "Kurze Begründung auf Deutsch"
+            }
+          ]
+        }
+
+        "relays" MUST list EVERY relay from the user query — do not skip any.
+        Set "desiredState" to true if the relay should be EIN, false for AUS.
+        """);
+
+    return sb.toString();
+  }
+
   public String buildSystemPrompt(String plantType, String timeOfDay, String season) {
     StringBuilder sb = new StringBuilder();
     sb.append("You are an expert greenhouse assistant with deep knowledge of plant care. ");

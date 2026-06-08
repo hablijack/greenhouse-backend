@@ -21,6 +21,8 @@ public class LlmService {
   private static final int JSON_CODE_FENCE_PREFIX_LENGTH = 7;
   private static final int CODE_FENCE_PREFIX_LENGTH = 3;
   private static final long MILLIS_PER_SECOND = 1000L;
+  private static final int LOG_TRUNCATE_LENGTH = 500;
+  private static final int LOG_JSON_TRUNCATE_LENGTH = 1000;
 
   private final LlmClient llmClient;
   private final AiConfig config;
@@ -38,6 +40,11 @@ public class LlmService {
   }
 
   public String chat(String systemPrompt, String userPrompt, boolean expectJson) {
+    LOG.info("LLM call: expectJson={}, systemPromptLen={}, userPromptLen={}",
+        expectJson, systemPrompt.length(), userPrompt.length());
+    LOG.debug("LLM system prompt: {}", truncate(systemPrompt, LOG_TRUNCATE_LENGTH));
+    LOG.debug("LLM user prompt: {}", truncate(userPrompt, LOG_TRUNCATE_LENGTH));
+
     ChatCompletionRequest request = new ChatCompletionRequest();
     request.messages = List.of(
         ChatMessage.system(systemPrompt),
@@ -61,6 +68,8 @@ public class LlmService {
       } else if (json.startsWith("```")) {
         cleaned = json.substring(CODE_FENCE_PREFIX_LENGTH, json.lastIndexOf("```")).trim();
       }
+      LOG.debug("Raw LLM response ({} chars), cleaned JSON: {}",
+          json.length(), truncate(cleaned, LOG_JSON_TRUNCATE_LENGTH));
       return objectMapper.readValue(cleaned, responseType);
     } catch (Exception e) {
       LOG.error("Failed to parse LLM response as {}: {}", responseType.getSimpleName(), json, e);
@@ -69,7 +78,18 @@ public class LlmService {
   }
 
   public float[] generateEmbedding(String text) {
+    LOG.info("Generating embedding for text ({} chars)", text.length());
     return executeEmbeddingWithRetry(text, 0);
+  }
+
+  private static String truncate(String s, int maxLen) {
+    if (s == null) {
+      return null;
+    }
+    if (s.length() <= maxLen) {
+      return s;
+    }
+    return s.substring(0, maxLen) + "...";
   }
 
   private String executeWithRetry(ChatCompletionRequest request, int attempt) {
@@ -79,6 +99,8 @@ public class LlmService {
       if (content == null || content.isBlank()) {
         throw new LlmException("LLM returned empty response");
       }
+      LOG.info("LLM response received ({} chars, attempt {})", content.length(), attempt + 1);
+      LOG.debug("LLM response content: {}", truncate(content, LOG_JSON_TRUNCATE_LENGTH));
       return content;
     } catch (Exception e) {
       if (attempt < config.llm().maxRetries()) {

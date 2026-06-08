@@ -24,6 +24,7 @@ public class AiService {
 
   private static final Logger LOG = LoggerFactory.getLogger(AiService.class);
 
+  private static final int LOG_QUERY_TRUNCATE_LENGTH = 800;
   private final LlmService llmService;
   private final PromptEnrichmentService promptEnrichmentService;
   private final GreenhouseAnalyzer greenhouseAnalyzer;
@@ -191,8 +192,14 @@ public class AiService {
         history.co2.min, history.co2.max);
 
     String enrichedQuery = promptEnrichmentService.enrichPrompt(prompt, "general");
-    String systemPrompt = promptEnrichmentService.buildSystemPrompt(
-        "general", time.timeOfDayLabel(), time.seasonLabel());
+    String systemPrompt = promptEnrichmentService.buildRelayDecisionSystemPrompt(
+        time.timeOfDayLabel(), time.seasonLabel());
+
+    LOG.debug("Enriched query ({} chars): {}",
+        enrichedQuery.length(),
+        enrichedQuery.length() > LOG_QUERY_TRUNCATE_LENGTH
+            ? enrichedQuery.substring(0, LOG_QUERY_TRUNCATE_LENGTH) + "..."
+            : enrichedQuery);
 
     try {
       RelayDecision decision = llmService.chatAsJson(systemPrompt, enrichedQuery, RelayDecision.class);
