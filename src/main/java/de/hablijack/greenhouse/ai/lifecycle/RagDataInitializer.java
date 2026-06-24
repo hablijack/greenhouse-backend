@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 @Startup
 @ApplicationScoped
+@SuppressWarnings("checkstyle:LineLength")
 public class RagDataInitializer {
 
   private static final Logger LOG = LoggerFactory.getLogger(RagDataInitializer.class);
@@ -48,7 +49,6 @@ public class RagDataInitializer {
         LOG.info("RAG documents already exist, skipping initialization");
         return;
       }
-
       LOG.info("Initializing advanced greenhouse RAG knowledge base");
       ingestAllDocuments();
     } catch (Exception e) {
@@ -89,7 +89,6 @@ public class RagDataInitializer {
       documents.addAll(initTrendInterpretationDocuments());
 
       documentIngestionService.ingestBatch(documents);
-
       LOG.info("Advanced greenhouse RAG initialized with {} documents", documents.size());
     } catch (Exception e) {
       LOG.error("Failed to initialize RAG knowledge base (application will continue): {}",
@@ -102,78 +101,31 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initTomatoDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato vegetative growth climate",
-            "During vegetative growth tomatoes prefer 22-28°C daytime temperatures "
-                + "and 18-22°C nighttime temperatures. Humidity should remain between "
-                + "60-75%. Excess humidity increases fungal disease risk while low humidity "
-                + "increases transpiration stress and calcium deficiency risk.",
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato vegetative growth climate",
+            "Daytime 22-28°C, nighttime 18-22°C. Humidity 60-75%. Above 75% fungal risk, below 60% calcium deficiency risk.",
             "tomato_climate"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato flowering climate management",
-            "During flowering tomatoes require 21-27°C daytime and 16-20°C nighttime "
-                + "temperatures. Humidity above 80% reduces pollen viability and causes "
-                + "poor fruit set. Maintain strong airflow and moderate humidity "
-                + "to maximize pollination success.",
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato flowering climate management",
+            "Daytime 21-27°C, nighttime 16-20°C. Humidity below 80% for pollen viability. Maintain strong airflow for pollination.",
             "tomato_flowering"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato fruiting nutrient management",
-            "During fruiting tomatoes require elevated potassium and calcium levels. "
-                + "Reduce excessive nitrogen during heavy fruit production. "
-                + "Calcium deficiencies during fruit expansion cause blossom-end rot. "
-                + "Maintain stable irrigation to support nutrient transport.",
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato fruiting nutrient management",
+            "Increase K and Ca, reduce N during heavy fruiting. Ca deficiency causes blossom-end rot. Maintain stable irrigation.",
             "tomato_nutrients"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato irrigation strategy",
-            "Tomatoes require deep irrigation with moderate dry-back cycles. "
-                + "Frequent shallow watering weakens root development. "
-                + "Allow moderate substrate drying between irrigation cycles "
-                + "to improve oxygen availability in the root zone.",
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato irrigation strategy",
+            "Deep irrigation with dry-back cycles. Avoid shallow frequent watering. Allow moderate drying between cycles for root oxygenation.",
             "tomato_irrigation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato heat stress response",
-            "Temperatures above 32°C cause tomato pollen sterility, flower abortion, "
-                + "reduced fruit set, and elevated transpiration stress. "
-                + "Immediately increase ventilation and cooling during heat stress events.",
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato heat stress response",
+            "Above 32°C: pollen sterility, flower abortion, reduced fruit set. Immediately increase ventilation and cooling.",
             "tomato_heat"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato pruning and airflow",
-            "Prune indeterminate tomatoes regularly to maintain airflow and light penetration. "
-                + "Remove lower leaves touching the soil to reduce fungal disease risk. "
-                + "Proper pruning improves fruit quality and reduces humidity accumulation.",
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato pruning and airflow",
+            "Prune indeterminate tomatoes regularly. Remove lower leaves touching soil. Improves airflow and reduces fungal risk.",
             "tomato_pruning"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato pollination strategy",
-            "Tomatoes are self-pollinating but require vibration for efficient pollen release. "
-                + "High humidity causes pollen clumping and poor pollination. "
-                + "Use airflow, bumblebees, or mechanical vibration to improve fruit set.",
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato pollination strategy",
+            "Self-pollinating, needs vibration for pollen release. Humidity >80% causes pollen clumping. Use airflow or mechanical vibration.",
             "tomato_pollination"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato blossom-end rot diagnosis",
-            "Blossom-end rot is primarily caused by calcium transport disruption rather "
-                + "than lack of calcium in soil. High VPD, irregular irrigation, root stress, "
-                + "and excessive salinity increase blossom-end rot risk.",
-            "tomato_diagnostics")
-
-    );
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato blossom-end rot diagnosis",
+            "Caused by Ca transport disruption, not soil Ca. High VPD, irregular irrigation, root stress, and high salinity increase risk.",
+            "tomato_diagnostics"));
   }
 
   // ===========================================================================
@@ -181,40 +133,19 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initCucumberDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "cucumber",
-            "Cucumber climate management",
-            "Cucumbers thrive between 22-30°C daytime temperatures and "
-                + "18-22°C nighttime temperatures. Temperatures below 15°C slow growth "
-                + "while temperatures above 35°C increase bitter fruit formation.",
+        new DocumentIngestionService.DocumentInput("cucumber", "Cucumber climate management",
+            "Daytime 22-30°C, nighttime 18-22°C. Below 15°C growth slows. Above 35°C causes bitter fruit.",
             "cucumber_climate"),
-
-        new DocumentIngestionService.DocumentInput(
-            "cucumber",
-            "Cucumber irrigation requirements",
-            "Cucumbers require consistently moist substrates but should not remain waterlogged. "
-                + "Irregular irrigation causes bitter fruits and poor fruit development. "
-                + "Drip irrigation is preferred to maintain stable root-zone moisture.",
+        new DocumentIngestionService.DocumentInput("cucumber", "Cucumber irrigation requirements",
+            "Consistently moist, never waterlogged. Irregular irrigation causes bitter fruit and poor development. Drip irrigation preferred.",
             "cucumber_irrigation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "cucumber",
-            "Cucumber humidity and disease",
-            "Humidity above 85% increases powdery mildew and downy mildew risk in cucumbers. "
-                + "Ensure continuous airflow and proper plant spacing to reduce disease pressure.",
+        new DocumentIngestionService.DocumentInput("cucumber", "Cucumber humidity and disease",
+            "Humidity below 85%. Above 85% increases powdery and downy mildew risk. Ensure continuous airflow.",
             "cucumber_humidity"),
-
-        new DocumentIngestionService.DocumentInput(
-            "cucumber",
-            "Cucumber trellising and airflow",
-            "Vertical trellising improves airflow, reduces disease pressure, "
-                + "improves fruit quality, and simplifies harvesting operations.",
-            "cucumber_pruning")
-
-    );
+        new DocumentIngestionService.DocumentInput("cucumber", "Cucumber trellising and airflow",
+            "Vertical trellising improves airflow, reduces disease, improves fruit quality, and simplifies harvesting.",
+            "cucumber_pruning"));
   }
 
   // ===========================================================================
@@ -222,42 +153,19 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initClimateDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Greenhouse climate balancing",
-            "Optimal greenhouse climate management balances temperature, humidity, "
-                + "CO2, airflow, and light simultaneously. Stable conditions reduce "
-                + "plant stress and improve growth consistency.",
+        new DocumentIngestionService.DocumentInput("general", "Greenhouse climate balancing",
+            "Balance temperature, humidity, CO2, airflow, and light simultaneously. Stable conditions reduce plant stress.",
             "climate"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Greenhouse ventilation strategy",
-            "When outside temperature is significantly lower than greenhouse temperature, "
-                + "aggressive ventilation efficiently removes heat and humidity. "
-                + "Roof ventilation removes accumulated hot air most effectively.",
+        new DocumentIngestionService.DocumentInput("general", "Greenhouse ventilation strategy",
+            "When outside is cooler than inside, aggressive ventilation removes heat and humidity efficiently. Roof ventilation works best.",
             "ventilation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Humidity management strategy",
-            "Maintain greenhouse humidity between 55-75% for most crops. "
-                + "Humidity above 85% dramatically increases fungal disease risk "
-                + "while humidity below 40% increases transpiration stress.",
+        new DocumentIngestionService.DocumentInput("general", "Humidity management strategy",
+            "Target 55-75% for most crops. Above 85% fungal risk, below 40% transpiration stress.",
             "humidity"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "CO2 enrichment strategy",
-            "CO2 concentrations between 800-1200 ppm improve photosynthesis "
-                + "under high light conditions. CO2 above 1500 ppm provides "
-                + "limited additional benefit and may indicate insufficient ventilation.",
-            "co2")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "CO2 enrichment strategy",
+            "Target 800-1200 ppm for photosynthesis. Above 1500 ppm limited benefit, may indicate insufficient ventilation.",
+            "co2"));
   }
 
   // ===========================================================================
@@ -265,72 +173,28 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initSensorInterpretationDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "High greenhouse temperature interpretation",
-            "Greenhouse temperatures above 30°C increase transpiration demand "
-                + "and stress sensitive crops. Tomatoes experience pollination problems "
-                + "while cucumbers may produce bitter fruits.",
+        new DocumentIngestionService.DocumentInput("general", "High greenhouse temperature interpretation",
+            "Above 30°C increases transpiration stress. Tomato pollination fails, cucumbers produce bitter fruit.",
             "sensor_interpretation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Dry soil moisture interpretation",
-            "Multiple dry soil moisture sensors during high greenhouse temperatures "
-                + "indicate elevated drought stress risk and possible calcium transport problems.",
+        new DocumentIngestionService.DocumentInput("general", "Dry soil moisture interpretation",
+            "Multiple dry sensors + high temperature = elevated drought stress and Ca transport risk.",
             "soil_moisture"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Combined stress interpretation",
-            "High temperature combined with dry substrate conditions significantly "
-                + "increases plant stress, nutrient transport disruption, and fruit quality problems.",
+        new DocumentIngestionService.DocumentInput("general", "Combined stress interpretation",
+            "High temperature + dry substrate = severe plant stress, nutrient disruption, and fruit quality problems.",
             "combined_stress"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Outside climate cooling opportunity",
-            "If outside temperature is at least 5°C lower than inside greenhouse temperature, "
-                + "ventilation can rapidly reduce heat stress and humidity accumulation.",
+        new DocumentIngestionService.DocumentInput("general", "Outside climate cooling opportunity",
+            "If outside is 5°C below inside, ventilation rapidly reduces heat stress and humidity.",
             "cooling"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Time-of-day temperature interpretation",
-            "The same temperature must be interpreted differently depending on the time of day. "
-                + "In the early morning (5-9am) plants have naturally cooled overnight, so 12-15°C is acceptable. "
-                + "At midday (10am-4pm) plants are photosynthesizing actively and need warmth; "
-                + "12°C at noon is dangerously cold and indicates a heating failure. "
-                + "High temperatures at night (above 24°C) prevent plants from resting and recovering. "
-                + "Always consider the time of day when evaluating whether a temperature is problematic.",
+        new DocumentIngestionService.DocumentInput("general", "Time-of-day temperature interpretation",
+            "Morning (5-9am): 12-15°C acceptable. Noon (10am-4pm): 12°C is dangerously cold. Night: above 24°C prevents plant rest.",
             "time_of_day_sensor"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Seasonal greenhouse management",
-            "Greenhouse management must adapt to the current season. In winter (Dec-Feb) the focus is on "
-                + "heating, insulation, and supplemental lighting due to short daylight hours and cold temperatures. "
-                + "In spring (Mar-May) watch for sudden temperature swings between warm days and cold nights. "
-                + "In summer (Jun-Aug) prioritize cooling, shading, ventilation, and morning CO2 enrichment. "
-                + "In autumn (Sep-Nov) reduce irrigation as temperatures drop and prepare heating systems. "
-                + "Season-appropriate strategies prevent plant stress and save energy.",
+        new DocumentIngestionService.DocumentInput("general", "Seasonal greenhouse management",
+            "Winter: heat+insulate+supplemental light. Spring: watch temperature swings. Summer: cool+shade+ventilate+morning CO2. Autumn: reduce irrigation, prepare heating.",
             "seasonal_management"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Day-night temperature differential for plant growth",
-            "Many greenhouse crops benefit from a day-night temperature differential (DIF). "
-                + "A cooler night (4-8°C below daytime) promotes strong stems, compact growth, "
-                + "and better fruit set in tomatoes. "
-                + "Consistently warm nights cause elongation, weak growth, and poor fruit quality. "
-                + "However, night temperatures below 10°C damage sensitive crops. "
-                + "The ideal night temperature for tomatoes is 16-20°C, for cucumbers 18-22°C.",
-            "dif_temperature")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Day-night temperature differential",
+            "4-8°C cooler night promotes strong stems and fruit set. Tomato night 16-20°C, cucumber 18-22°C. Below 10°C damages sensitive crops.",
+            "dif_temperature"));
   }
 
   // ===========================================================================
@@ -338,33 +202,16 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initVpdDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "VPD greenhouse management",
-            "Vapor Pressure Deficit controls transpiration and nutrient transport. "
-                + "Low VPD increases fungal disease risk while high VPD increases "
-                + "water stress and calcium deficiency risk.",
+        new DocumentIngestionService.DocumentInput("general", "VPD greenhouse management",
+            "VPD controls transpiration and nutrient transport. Low VPD = fungal risk. High VPD = water stress and Ca deficiency.",
             "vpd"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "High VPD conditions",
-            "High temperature combined with moderate or low humidity increases VPD "
-                + "and causes excessive transpiration demand. "
-                + "Plants may wilt despite adequate irrigation.",
+        new DocumentIngestionService.DocumentInput("general", "High VPD conditions",
+            "High temp + low/medium humidity = high VPD, excessive transpiration demand. Plants wilt despite adequate irrigation.",
             "vpd_high"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Low VPD conditions",
-            "Low VPD caused by excessive humidity reduces transpiration "
-                + "and increases fungal disease pressure and edema risk.",
-            "vpd_low")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Low VPD conditions",
+            "Low VPD from excessive humidity reduces transpiration, increases fungal disease and edema risk.",
+            "vpd_low"));
   }
 
   // ===========================================================================
@@ -372,39 +219,19 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initAutomationDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Ventilation automation rules",
-            "If greenhouse temperature exceeds 30°C and outside air is cooler, "
-                + "increase ventilation immediately. "
-                + "Prioritize heat stress prevention over CO2 retention.",
+        new DocumentIngestionService.DocumentInput("general", "Ventilation automation rules",
+            "If temperature >30°C and outside is cooler, ventilate immediately. Prioritize heat stress prevention over CO2 retention.",
             "automation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Irrigation automation rules",
-            "If substrate moisture sensors indicate dry conditions during high temperature periods, "
-                + "increase irrigation frequency while monitoring root-zone oxygen levels.",
+        new DocumentIngestionService.DocumentInput("general", "Irrigation automation rules",
+            "If dry substrate during high temperature, increase irrigation frequency but monitor root-zone oxygen.",
             "automation_irrigation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Humidity automation strategy",
-            "Reduce humidity aggressively during nighttime and early morning periods "
-                + "to prevent fungal disease outbreaks and condensation.",
+        new DocumentIngestionService.DocumentInput("general", "Humidity automation strategy",
+            "Reduce humidity aggressively at night and early morning to prevent fungal outbreaks and condensation.",
             "automation_humidity"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Greenhouse AI reasoning strategy",
-            "Always prioritize prevention of irreversible plant stress. "
-                + "High temperature damage occurs faster than moderate CO2 reduction.",
-            "reasoning")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Greenhouse AI reasoning strategy",
+            "Prevent irreversible plant stress first. High temperature damage occurs faster than moderate CO2 reduction impacts.",
+            "reasoning"));
   }
 
   // ===========================================================================
@@ -412,31 +239,16 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initDiseaseDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Fungal disease prevention",
-            "Fungal diseases thrive under high humidity, leaf wetness, and poor airflow. "
-                + "Maintain airflow, avoid overhead irrigation, and reduce nighttime humidity.",
+        new DocumentIngestionService.DocumentInput("general", "Fungal disease prevention",
+            "High humidity, leaf wetness, poor airflow enable fungal diseases. Maintain airflow, avoid overhead irrigation, reduce night humidity.",
             "disease"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Root rot conditions",
-            "Overwatering combined with low oxygen conditions promotes root rot pathogens. "
-                + "Plants may wilt despite wet substrate conditions.",
+        new DocumentIngestionService.DocumentInput("general", "Root rot conditions",
+            "Overwatering + low oxygen = root rot pathogens. Plants wilt despite wet substrate.",
             "root_rot"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato late blight prevention",
-            "Late blight spreads rapidly under cool humid conditions. "
-                + "Maintain airflow and avoid prolonged leaf wetness periods.",
-            "tomato_blight")
-
-    );
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato late blight prevention",
+            "Late blight spreads rapidly in cool humid conditions. Maintain airflow, avoid prolonged leaf wetness.",
+            "tomato_blight"));
   }
 
   // ===========================================================================
@@ -444,31 +256,16 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initPestDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Spider mite management",
-            "Spider mites thrive under hot dry greenhouse conditions. "
-                + "Increase humidity temporarily and introduce predatory mites if necessary.",
+        new DocumentIngestionService.DocumentInput("general", "Spider mite management",
+            "Thrives in hot dry conditions. Increase humidity temporarily, introduce predatory mites.",
             "pests"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Whitefly greenhouse management",
-            "Whiteflies reproduce rapidly in warm protected environments. "
-                + "Monitor undersides of leaves and use sticky traps for early detection.",
+        new DocumentIngestionService.DocumentInput("general", "Whitefly greenhouse management",
+            "Reproduces rapidly in warm environments. Monitor leaf undersides, use sticky traps for early detection.",
             "whitefly"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Fungus gnat prevention",
-            "Excessively wet substrates promote fungus gnat reproduction. "
-                + "Allow moderate substrate drying between irrigation cycles.",
-            "fungus_gnat")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Fungus gnat prevention",
+            "Wet substrates promote fungus gnats. Allow moderate drying between irrigation cycles.",
+            "fungus_gnat"));
   }
 
   // ===========================================================================
@@ -476,24 +273,13 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initHydroponicDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Hydroponic pH management",
-            "Most greenhouse crops prefer nutrient solution pH between 5.5 and 6.5. "
-                + "Incorrect pH reduces nutrient availability and causes deficiency symptoms.",
+        new DocumentIngestionService.DocumentInput("general", "Hydroponic pH management",
+            "Target pH 5.5-6.5. Incorrect pH reduces nutrient availability and causes deficiency symptoms.",
             "hydroponics"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Hydroponic EC management",
-            "Excessively high EC increases salinity stress and root damage. "
-                + "Low EC reduces nutrient availability and plant vigor.",
-            "ec")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Hydroponic EC management",
+            "High EC = salinity stress and root damage. Low EC = reduced nutrient availability.",
+            "ec"));
   }
 
   // ===========================================================================
@@ -501,31 +287,16 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initLightingDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Greenhouse lighting management",
-            "Low light conditions reduce photosynthesis and fruit quality. "
-                + "During cloudy periods reduce irrigation frequency to prevent overwatering.",
+        new DocumentIngestionService.DocumentInput("general", "Greenhouse lighting management",
+            "Low light reduces photosynthesis. During cloudy periods reduce irrigation to prevent overwatering.",
             "lighting"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Supplemental LED strategy",
-            "Supplemental LED lighting improves winter production and "
-                + "maintains consistent plant growth during low solar radiation periods.",
+        new DocumentIngestionService.DocumentInput("general", "Supplemental LED strategy",
+            "LED lighting improves winter production and maintains growth during low solar radiation.",
             "led"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Daily light integral management",
-            "Daily Light Integral strongly influences crop yield and fruit quality. "
-                + "Tomatoes require high cumulative light levels for maximum productivity.",
-            "dli")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Daily light integral management",
+            "DLI strongly influences yield. Tomatoes need high cumulative light for maximum productivity.",
+            "dli"));
   }
 
   // ===========================================================================
@@ -533,30 +304,16 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initDiagnosticsDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Leaf yellowing diagnostics",
-            "Uniform leaf yellowing may indicate nitrogen deficiency or root stress. "
-                + "Yellowing combined with wet substrate suggests root disease.",
+        new DocumentIngestionService.DocumentInput("general", "Leaf yellowing diagnostics",
+            "Uniform yellowing = N deficiency or root stress. Yellowing + wet substrate = root disease.",
             "diagnostics"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Wilting diagnostics",
-            "Wilting during hot conditions may indicate excessive transpiration demand. "
-                + "Wilting despite wet soil suggests root damage or oxygen deficiency.",
+        new DocumentIngestionService.DocumentInput("general", "Wilting diagnostics",
+            "Wilting in heat = excessive transpiration. Wilting despite wet soil = root damage or O2 deficiency.",
             "wilting"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Leaf curl diagnostics",
-            "Leaf curl under high temperatures often indicates excessive VPD and water stress.",
-            "leaf_curl")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Leaf curl diagnostics",
+            "Leaf curl under high temperature = excessive VPD and water stress.",
+            "leaf_curl"));
   }
 
   // ===========================================================================
@@ -564,31 +321,16 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initEmergencyDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Emergency heat response",
-            "When greenhouse temperatures exceed 35°C immediately maximize ventilation, "
-                + "deploy shading systems, and ensure adequate irrigation availability.",
+        new DocumentIngestionService.DocumentInput("general", "Emergency heat response",
+            "Above 35°C: immediately max ventilation, deploy shading, ensure irrigation.",
             "emergency"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Emergency drought response",
-            "Dry substrate conditions during heat stress require immediate deep irrigation "
-                + "to restore transpiration and nutrient transport.",
+        new DocumentIngestionService.DocumentInput("general", "Emergency drought response",
+            "Dry substrate + heat stress = immediate deep irrigation to restore transpiration and nutrient transport.",
             "drought"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Emergency humidity response",
-            "Condensation and excessive humidity require aggressive airflow and ventilation "
-                + "to prevent rapid fungal disease outbreaks.",
-            "humidity_emergency")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Emergency humidity response",
+            "Condensation + excessive humidity = aggressive airflow and ventilation to prevent rapid fungal outbreaks.",
+            "humidity_emergency"));
   }
 
   // ===========================================================================
@@ -596,17 +338,10 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initPollinationDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Greenhouse pollination management",
-            "Pollination success depends on moderate humidity, stable temperatures, "
-                + "and adequate airflow. Excess heat and humidity reduce pollen viability.",
-            "pollination")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Greenhouse pollination management",
+            "Moderate humidity, stable temperatures, adequate airflow needed. Excess heat and humidity reduce pollen viability.",
+            "pollination"));
   }
 
   // ===========================================================================
@@ -614,24 +349,13 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initYieldOptimizationDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Yield optimization strategy",
-            "Stable environmental conditions produce higher quality fruits "
-                + "than aggressive growth strategies with fluctuating climate conditions.",
+        new DocumentIngestionService.DocumentInput("general", "Yield optimization strategy",
+            "Stable conditions produce higher quality than aggressive growth with fluctuating climate.",
             "yield"),
-
-        new DocumentIngestionService.DocumentInput(
-            "tomato",
-            "Tomato flavor optimization",
-            "Moderate EC increase during fruit ripening improves sugar concentration "
-                + "and flavor intensity in tomatoes.",
-            "tomato_quality")
-
-    );
+        new DocumentIngestionService.DocumentInput("tomato", "Tomato flavor optimization",
+            "Moderate EC increase during ripening improves sugar concentration and flavor intensity.",
+            "tomato_quality"));
   }
 
   // ===========================================================================
@@ -639,17 +363,10 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initWaterQualityDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Irrigation water quality",
-            "Poor irrigation water quality can cause nutrient lockout and salinity buildup. "
-                + "Monitor pH, bicarbonates, and sodium concentrations regularly.",
-            "water_quality")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Irrigation water quality",
+            "Poor water quality causes nutrient lockout and salinity buildup. Monitor pH, bicarbonates, and sodium.",
+            "water_quality"));
   }
 
   // ===========================================================================
@@ -657,24 +374,13 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initSensorFaultDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Soil temperature sensor anomaly",
-            "Soil temperatures above 45°C are unlikely in normal greenhouse conditions "
-                + "and may indicate sensor calibration or hardware failure.",
+        new DocumentIngestionService.DocumentInput("general", "Soil temperature sensor anomaly",
+            "Soil temperature >45°C unlikely in normal conditions, indicates sensor fault.",
             "sensor_fault"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Sensor validation strategy",
-            "Always compare sensor readings against environmental context. "
-                + "Extreme values inconsistent with surrounding conditions may indicate sensor malfunction.",
-            "sensor_validation")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Sensor validation strategy",
+            "Compare sensor readings against environmental context. Extreme values inconsistent with conditions may be malfunction.",
+            "sensor_validation"));
   }
 
   // ===========================================================================
@@ -682,176 +388,51 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initRelayControlDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Relay overview and mapping",
-            "The greenhouse has 8 controllable relays on the main ESP32 and 1 on the wine satellite. "
-                + "relay_line1 to relay_line6 control irrigation for planting lines 1 through 6. "
-                + "relay_line7 controls the supplemental LED grow lights. "
-                + "relay_line8 controls the ventilation fans. "
-                + "relay_wine_pump controls the irrigation pump for the wine grapes. "
-                + "Each relay is normally in the OFF (false) state and turns ON (true) when activated.",
+        new DocumentIngestionService.DocumentInput("general", "Relay overview and mapping",
+            "8 controllable relays on main ESP32, 1 on wine satellite. Line1-6 = irrigation. Line7 = LED lights. Line8 = fans. relay_wine_pump = grape irrigation. Default state = OFF.",
             "relay_overview"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Irrigation relay control rules",
-            "Each irrigation relay (relay_line1 through relay_line6, relay_wine_pump) waters a specific planting line. "
-                + "Irrigation should be triggered when the corresponding soil moisture sensor drops below 35%. "
-                + "Never irrigate when soil moisture is above 80% - this causes waterlogging and root rot. "
-                + "Irrigation duration should be 15-30 minutes per session. "
-                + "Avoid irrigating during peak midday heat (11am-3pm) to reduce evaporation loss. "
-                + "Morning irrigation (6-9am) is preferred. Reduce winter irrigation frequency by 40%.",
+        new DocumentIngestionService.DocumentInput("general", "Irrigation relay control rules",
+            "Irrigate when soil moisture <35%. Stop at >80% to prevent waterlogging. Duration 15-30min. Avoid 11am-3pm peak heat. Morning (6-9am) preferred. Winter reduce frequency 40%.",
             "relay_irrigation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Fan relay control rules",
-            "relay_line8 controls the ventilation fans. Fans should be activated when: "
-                + "inside temperature exceeds 28°C, or humidity exceeds 80%, or CO2 exceeds 1200ppm. "
-                + "Fans should run continuously during heat waves (above 32°C). "
-                + "Nighttime fan operation (below 20°C inside) should be minimized to retain heat. "
-                + "During winter, use intermittent fan cycles (10min on, 30min off) to balance "
-                + "ventilation with heat retention. Fans must run during high humidity periods (>85%) "
-                + "regardless of temperature to prevent fungal outbreaks.",
+        new DocumentIngestionService.DocumentInput("general", "Fan relay control rules",
+            "Activate when temperature >28°C, humidity >80%, or CO2 >1200ppm. Run continuously during heat waves >32°C. Minimize night operation below 20°C. Winter: intermittent 10min on/30min off.",
             "relay_fans"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Light relay control rules",
-            "relay_line7 controls the supplemental LED grow lights. "
-                + "Lights should be activated when brightness drops below 200 lux during daytime hours (6am-8pm). "
-                + "Lights should NEVER be on during nighttime (9pm-5am) to maintain natural day-night rhythm. "
-                + "In winter, extend lighting period to 12-14 hours total. In summer, use only on cloudy days. "
-                + "Target daily light integral: 15-25 mol/m2/day for tomatoes, 10-15 for lettuce.",
+        new DocumentIngestionService.DocumentInput("general", "Light relay control rules",
+            "Activate when brightness <200 lux during daytime (6am-8pm). NEVER on at night (9pm-5am). Winter: 12-14h total. Summer: cloudy days only. Target DLI: 15-25 mol/m2/day tomatoes, 10-15 lettuce.",
             "relay_lighting"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Relay priority and conflict resolution",
-            "When multiple conditions conflict, follow this priority order (highest first): "
-                + "1. Emergency: never override safety limits. "
-                + "2. Fan operation during critical humidity (>85%) or temperature (>35°C) must always activate. "
-                + "3. Fan and light can run simultaneously - no conflict. "
-                + "4. Irrigation and fan can run simultaneously - no conflict. "
-                + "5. During extreme heat (>35°C) prioritize cooling over CO2 retention and irrigation scheduling. "
-                + "6. During power constraints, fans take priority over lights.",
+        new DocumentIngestionService.DocumentInput("general", "Relay priority and conflict resolution",
+            "Priority: 1. Emergency safety limits. 2. Fan during humidity >85% or temp >35°C. 3. Fan+light compatible. 4. Irrigation+fan compatible. 5. >35°C prioritize cooling over CO2/irrigation. 6. Power constraints: fans before lights.",
             "relay_priority"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Relay automation decision framework",
-            "When deciding whether to activate a relay, consider: "
-                + "1. Current sensor values and their severity. "
-                + "2. Time of day (morning irrigation preferred, lights off at night, fans moderate at night). "
-                + "3. Season (winter: heat retention priority, summer: cooling priority). "
-                + "4. Trend direction (rapidly rising temp needs proactive fan activation). "
-                + "5. Combined risks (high temp + low moisture = urgent irrigation + fan). "
-                + "6. Rate of change - act proactively before thresholds are breached.",
-            "relay_decision_framework")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Relay automation decision framework",
+            "Consider: 1. Sensor severity. 2. Time of day. 3. Season. 4. Trend direction (proactive before threshold breach). 5. Combined risks (high temp+low moisture = urgent). 6. Rate of change.",
+            "relay_decision_framework"));
   }
 
   // ===========================================================================
-  // OPERATIONAL SAFETY LIMITS (Duty Cycles, Power, Sensor Failure)
+  // OPERATIONAL SAFETY LIMITS
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initOperationalSafetyDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Irrigation duty cycle limits - sensor failure protection",
-            "CRITICAL: Irrigation relays (relay_line1-6, relay_wine_pump) have hard operational limits "
-                + "to prevent flooding from sensor failures or LLM hallucinations: "
-                + "MAXIMUM IRRIGATIONS PER DAY: 3 cycles per line. "
-                + "MAXIMUM ON DURATION PER CYCLE: 60 seconds (60000ms). "
-                + "MINIMUM COOLDOWN BETWEEN CYCLES: 4 hours. "
-                + "If a soil moisture sensor reports 'dry' (below 30%) but the relay has already "
-                + "irrigated 3 times today, do NOT irrigate again - the sensor is likely faulty. "
-                + "Instead, flag the sensor as potentially defective. "
-                + "Total daily irrigation budget per line: max 180 seconds (3 x 60s). "
-                + "These limits are NEVER overridden - they prevent catastrophic overwatering.",
+        new DocumentIngestionService.DocumentInput("general", "Irrigation duty cycle limits - sensor failure protection",
+            "CRITICAL: Max 3 cycles/day per line. Max ON duration: 60s per cycle. Min cooldown: 4h. Total daily budget: 180s. If sensor reads <30% but 3 cycles reached, do NOT irrigate—sensor likely faulty.",
             "operational_irrigation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Fan duty cycle limits - power management",
-            "CRITICAL: The ventilation fan (relay_line8) runs on solar battery power. "
-                + "Operational limits to prevent battery drain: "
-                + "MAXIMUM CONTINUOUS ON DURATION: 4 hours (14400000ms). "
-                + "MINIMUM COOLDOWN AFTER MAX DURATION: 5 minutes (300000ms). "
-                + "MINIMUM ON TIME: 3 minutes (180000ms) - prevents rapid cycling. "
-                + "MINIMUM OFF TIME: 3 minutes (180000ms) - allows settling. "
-                + "Hysteresis ON threshold: temperature >= 29°C OR humidity >= 90%. "
-                + "Hysteresis OFF threshold: temperature <= 27°C AND humidity <= 85%. "
-                + "If fan has run for 4 hours continuously, force it OFF for 5 minutes cooldown. "
-                + "These limits protect the battery and fan motor from damage.",
+        new DocumentIngestionService.DocumentInput("general", "Fan duty cycle limits - power management",
+            "CRITICAL: Max continuous ON: 4h. Min cooldown after max: 5min. Min ON time: 3min. Min OFF time: 3min. Hysteresis ON: >=29°C or >=90% humidity. Hysteresis OFF: <=27°C AND <=85%.",
             "operational_fan"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Fan power availability - solar dependency",
-            "CRITICAL: Fans require sufficient solar power to operate without draining the battery. "
-                + "Fans should ONLY be activated when BOTH conditions are met: "
-                + "1. Brightness sensor >= 2500 lux (sufficient sunlight for solar panels). "
-                + "2. Current time is within the activation window: 8:00-17:00 (8am-5pm). "
-                + "If brightness is below 2500 lux OR outside 8am-5pm, fans must remain OFF "
-                + "regardless of temperature or humidity, UNLESS emergency conditions exist. "
-                + "Emergency exception: if temperature exceeds 38°C OR humidity exceeds 95%, "
-                + "fans may run briefly (max 10 minutes) even without solar power. "
-                + "This solar-gated operation prevents battery depletion during cloudy periods and at night.",
+        new DocumentIngestionService.DocumentInput("general", "Fan power availability - solar dependency",
+            "CRITICAL: Fans need brightness >=2500 lux AND time 8am-5pm. Otherwise fans OFF unless emergency: temp >38°C or humidity >95% allows max 10min fan without solar.",
             "operational_fan_power"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Sensor failure detection and handling",
-            "CRITICAL: Detect and handle sensor failures to prevent incorrect relay actions. "
-                + "A sensor is likely faulty if: "
-                + "1. Reading has not changed by more than 1% in the last 24 hours (stuck sensor). "
-                + "2. Reading is outside physically plausible range (e.g. temperature > 60°C inside greenhouse). "
-                + "3. Multiple related sensors disagree wildly (e.g. one soil line at 20% while all others at 60%). "
-                + "4. Reading shows sudden impossible jumps (>20% change in 5 minutes). "
-                + "When a sensor is suspected faulty: "
-                + "- Do NOT act on its readings for relay decisions. "
-                + "- Fall back to other sensors of the same type if available (e.g. other soil lines). "
-                + "- If no fallback sensor exists, use the last reliable reading. "
-                + "- Flag the sensor for human inspection. "
-                + "A stuck-dry sensor is especially dangerous - it would cause endless irrigation. "
-                + "Track each relay's daily cycle count to detect this condition.",
+        new DocumentIngestionService.DocumentInput("general", "Sensor failure detection and handling",
+            "CRITICAL: Sensor likely faulty if: no change >1% in 24h, physically impossible reading, wild disagreement with peers, sudden >20% jump in 5min. If faulty: do NOT act on its readings. Fall back to other sensors or last reliable value. A stuck-dry sensor causes endless irrigation—track daily cycle count.",
             "operational_sensor_failure"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Manual override detection",
-            "If a human has manually toggled a relay, the LLM must NOT override that action. "
-                + "Check RelayLog.isLastActionManualActivated(relay) - if true, the last action "
-                + "was performed by a human via the web interface. "
-                + "When a relay has been manually activated: skip automated control for that relay "
-                + "until a human manually turns it off again. "
-                + "This prevents the LLM from fighting with manual operator decisions. "
-                + "The only exception is the safety layer - hard safety limits still apply regardless.",
+        new DocumentIngestionService.DocumentInput("general", "Manual override detection",
+            "If a human manually toggled a relay (check RelayLog.isLastActionManualActivated), do NOT override. Skip automated control until manually turned off. Exception: hard safety limits still apply.",
             "operational_manual_override"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Hysteresis to prevent rapid relay cycling",
-            "All relays must use hysteresis (different ON and OFF thresholds) to prevent rapid cycling: "
-                + "IRRIGATION: ON at <35% soil moisture, OFF at >55% (20% hysteresis band). "
-                + "FAN: ON at >=29°C, OFF at <=27°C (2°C hysteresis). "
-                + "FAN humidity: ON at >=90%, OFF at <=85% (5% hysteresis). "
-                + "LIGHT: ON at <200 lux, OFF at >400 lux. "
-                + "Minimum time between state changes: 3 minutes for fans, 4 hours for irrigation. "
-                + "Hysteresis prevents relays from oscillating on/off rapidly, "
-                + "which damages relay hardware and stresses plants.",
-            "operational_hysteresis")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Hysteresis to prevent rapid relay cycling",
+            "Irrigation ON <35%, OFF >55%. Fan temp ON >=29°C, OFF <=27°C. Fan humidity ON >=90%, OFF <=85%. Light ON <200 lux, OFF >400 lux. Min between changes: 3min fans, 4h irrigation.",
+            "operational_hysteresis"));
   }
 
   // ===========================================================================
@@ -859,78 +440,25 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initSafetyLimitDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Temperature safety limits - never exceed",
-            "Absolute safety limits that must never be exceeded: "
-                + "Minimum safe temperature: 5°C (all plants risk frost damage below this). "
-                + "Maximum safe temperature: 40°C (all plants risk severe heat damage above this). "
-                + "Activate emergency heating when temp drops below 8°C. "
-                + "Activate emergency cooling when temp exceeds 38°C. "
-                + "These are hard safety limits - not advisory thresholds.",
+        new DocumentIngestionService.DocumentInput("general", "Temperature safety limits - never exceed",
+            "Min safe: 5°C (frost damage). Max safe: 40°C (severe heat damage). Emergency heat at <8°C. Emergency cooling at >38°C. Hard limits—not advisory.",
             "safety_temperature"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Humidity safety limits - never exceed",
-            "Absolute humidity safety limits: "
-                + "Minimum safe humidity: 20% (below this causes desiccation and severe stress). "
-                + "Maximum safe humidity: 95% (above this causes condensation and immediate mold risk). "
-                + "Activate humidification below 30%. Activate dehumidification above 90%. "
-                + "These are hard safety limits for all crops.",
+        new DocumentIngestionService.DocumentInput("general", "Humidity safety limits - never exceed",
+            "Min safe: 20% (desiccation). Max safe: 95% (condensation, mold). Activate humidification below 30%, dehumidification above 90%. Hard limits for all crops.",
             "safety_humidity"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "CO2 safety limits - never exceed",
-            "CO2 safety limits for plant and human safety: "
-                + "Minimum safe CO2: 200 ppm (below this severely limits photosynthesis). "
-                + "Maximum safe CO2 for plants: 2000 ppm (above this causes stomatal closure). "
-                + "Maximum safe CO2 for humans: 5000 ppm (workplace safety limit). "
-                + "Activate ventilation above 1500 ppm CO2. "
-                + "CO2 enrichment should target 800-1200 ppm during daylight hours only.",
+        new DocumentIngestionService.DocumentInput("general", "CO2 safety limits - never exceed",
+            "Min safe: 200 ppm. Max plant safe: 2000 ppm (stomatal closure). Max human safe: 5000 ppm. Ventilate above 1500 ppm. Enrich to 800-1200 ppm during daylight only.",
             "safety_co2"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Soil moisture safety limits - never exceed",
-            "Soil moisture safety limits: "
-                + "Minimum safe soil moisture: 15% (below this roots dehydrate and die). "
-                + "Maximum safe soil moisture: 95% (above this causes root asphyxiation). "
-                + "Activate emergency irrigation below 20%. "
-                + "Stop all irrigation above 85% to prevent waterlogging.",
+        new DocumentIngestionService.DocumentInput("general", "Soil moisture safety limits - never exceed",
+            "Min safe: 15% (root death). Max safe: 95% (root asphyxiation). Emergency irrigation below 20%. Stop irrigation above 85%.",
             "safety_soil_moisture"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Emergency response protocol",
-            "When any sensor exceeds a safety limit: "
-                + "1. IMMEDIATELY activate the appropriate relay to counter the condition. "
-                + "2. If temperature >38°C: fans ON, lights OFF, check irrigation. "
-                + "3. If temperature <8°C: heaters ON, close all ventilation. "
-                + "4. If humidity >90%: fans ON, reduce irrigation. "
-                + "5. If humidity <30%: reduce ventilation, consider humidification. "
-                + "6. If CO2 >2000ppm: fans ON immediately. "
-                + "7. If soil moisture <18%: irrigate immediately regardless of time. "
-                + "Emergency actions override all scheduled operations.",
+        new DocumentIngestionService.DocumentInput("general", "Emergency response protocol",
+            "If >38°C: fans ON, lights OFF, check irrigation. If <8°C: heaters ON, close vents. If humidity >90%: fans ON, reduce irrigation. If <30%: reduce ventilation. If CO2 >2000ppm: fans ON immediately. If soil moisture <18%: irrigate immediately. Emergency overrides all scheduled operations.",
             "emergency_protocol"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Sensor drift and plausibility checks",
-            "If a sensor reading seems implausible, compare with related sensors: "
-                + "Air temperature and soil temperature should be within 5-10°C of each other. "
-                + "Brightness at night should be below 50 lux - higher values suggest light leak or sensor fault. "
-                + "Battery voltage below 3.0V indicates the sensor node needs maintenance. "
-                + "If all soil moisture sensors read identically (within 1%), there may be a communication fault. "
-                + "Sudden 20%+ swings in any sensor within 5 minutes "
-                + "likely indicate a sensor fault, not a real change.",
-            "sensor_plausibility")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Sensor drift and plausibility checks",
+            "Air and soil temp within 5-10°C. Night brightness <50 lux. Battery <3.0V = maintenance needed. All soil sensors identical within 1% = communication fault. Sudden >20% swing in 5min = likely sensor fault.",
+            "sensor_plausibility"));
   }
 
   // ===========================================================================
@@ -938,57 +466,16 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initThresholdTablesDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Complete sensor threshold reference for all crops",
-            "Central threshold reference for relay control decisions: "
-                + "TEMPERATURE daytime optimal: 20-28°C (most crops), 22-30°C (cucumber, melon). "
-                + "TEMPERATURE nighttime optimal: 15-20°C (most crops), 18-22°C (cucumber, melon). "
-                + "TEMPERATURE too cold: <12°C daytime, <8°C nighttime. "
-                + "TEMPERATURE too hot: >32°C daytime, >25°C nighttime. "
-                + "HUMIDITY optimal: 55-75% all crops. "
-                + "HUMIDITY fungal risk: >85% all crops. "
-                + "HUMIDITY too dry: <40% all crops. "
-                + "SOIL MOISTURE optimal: 40-75% all crops. "
-                + "SOIL MOISTURE too dry: <30%. "
-                + "SOIL MOISTURE waterlogged: >85%. "
-                + "LIGHT minimum for growth: 200 lux. "
-                + "LIGHT too bright: >1500 lux (risk of leaf burn). "
-                + "CO2 optimal: 800-1200 ppm during daylight. "
-                + "CO2 too low: <400 ppm. CO2 too high: >1500 ppm.",
+        new DocumentIngestionService.DocumentInput("general", "Complete sensor threshold reference for all crops",
+            "TEMP day optimal: 20-28°C (most), 22-30°C (cucumber/melon). TEMP night optimal: 15-20°C (most), 18-22°C (cucumber/melon). TEMP cold: <12°C day, <8°C night. TEMP hot: >32°C day, >25°C night. HUMIDITY optimal 55-75%, fungal >85%, dry <40%. SOIL optimal 40-75%, dry <30%, waterlogged >85%. LIGHT min 200 lux, too bright >1500 lux. CO2 optimal 800-1200, low <400, high >1500.",
             "threshold_reference"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Time-of-day temperature thresholds for relay decisions",
-            "Temperature thresholds vary by time of day for relay control: "
-                + "NIGHT (21-4): heat if <10°C, fans off unless humidity >90%, lights OFF. "
-                + "MORNING (5-9): heat if <12°C, minimal ventilation, lights ON if dark. "
-                + "NOON (10-16): fans ON if >28°C, shade if >30°C, lights OFF. "
-                + "EVENING (17-20): fans reduce gradually, lights ON if dark. "
-                + "These time-aware thresholds prevent unnecessary relay cycling "
-                + "while ensuring plants get appropriate conditions throughout the day.",
+        new DocumentIngestionService.DocumentInput("general", "Time-of-day temperature thresholds",
+            "Night (21-4): heat if <10°C, fans off unless humidity >90%, lights OFF. Morning (5-9): heat if <12°C, min ventilation, lights ON if dark. Noon (10-16): fans ON if >28°C, shade if >30°C, lights OFF. Evening (17-20): fans reduce gradually, lights ON if dark.",
             "threshold_time_of_day"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Seasonal threshold adjustments for relay control",
-            "Thresholds shift by season for optimal relay management: "
-                + "WINTER (Dec-Feb): heating active at <15°C daytime, <12°C nighttime. "
-                + "Lights on 6am-8pm daily. Fans limited to prevent heat loss. "
-                + "Irrigation reduced by 40%. Target humidity 60-70%. "
-                + "SPRING (Mar-May): heating at <12°C night, fans at >26°C day. "
-                + "Lights supplemental only. Irrigation normal. "
-                + "SUMMER (Jun-Aug): no heating needed. Fans at >25°C aggressive cooling. "
-                + "Lights off except cloudy days. CO2 enrichment pre-dawn. "
-                + "AUTUMN (Sep-Nov): heating at <10°C night. Fans reduced. "
-                + "Lights increasing as days shorten. Irrigation reduced 20%.",
-            "threshold_seasonal")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Seasonal threshold adjustments for relay control",
+            "Winter: heat at <15°C day/<12°C night, lights 6am-8pm, fans limited, irrigation -40%, humidity 60-70%. Spring: heat at <12°C night, fans at >26°C day, lights supplemental, irrigation normal. Summer: fans at >25°C aggressive, lights off except cloudy, CO2 pre-dawn. Autumn: heat at <10°C night, fans reduced, lights increasing, irrigation -20%.",
+            "threshold_seasonal"));
   }
 
   // ===========================================================================
@@ -996,46 +483,19 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initLettuceDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "lettuce",
-            "Lettuce climate requirements",
-            "Lettuce is a cool-season crop. Optimal daytime temperature: 15-22°C. "
-                + "Nighttime temperature: 10-15°C. Temperatures above 25°C cause bolting, bitter flavor, "
-                + "and poor head formation. Lettuce tolerates light frost (down to -2°C) but is damaged "
-                + "by hard frost. Humidity should be 60-75%. Low humidity causes tipburn on leaf edges.",
+        new DocumentIngestionService.DocumentInput("lettuce", "Lettuce climate requirements",
+            "Daytime 15-22°C, nighttime 10-15°C. Above 25°C causes bolting and bitter flavor. Tolerates -2°C light frost. Humidity 60-75%, low humidity causes tipburn.",
             "lettuce_climate"),
-
-        new DocumentIngestionService.DocumentInput(
-            "lettuce",
-            "Lettuce irrigation requirements",
-            "Lettuce has shallow roots and requires frequent, light irrigation. "
-                + "Soil moisture should remain consistently at 60-80%. Unlike tomatoes, lettuce cannot "
-                + "tolerate dry-back cycles. Uneven irrigation causes tipburn and poor growth. "
-                + "In hot weather (>22°C), irrigate twice daily. Reduce irrigation in cool weather.",
+        new DocumentIngestionService.DocumentInput("lettuce", "Lettuce irrigation requirements",
+            "Shallow roots, frequent light irrigation. Soil moisture 60-80%. Cannot tolerate dry-back like tomatoes. Above 22°C: irrigate twice daily. Reduce in cool weather.",
             "lettuce_irrigation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "lettuce",
-            "Lettuce light requirements",
-            "Lettuce requires 10-14 hours of light per day at 150-300 µmol/m2/s. "
-                + "Daily light integral target: 10-15 mol/m2/day. Excessive light (>1000 lux) "
-                + "combined with heat causes bolting. Supplemental lighting in winter is beneficial.",
+        new DocumentIngestionService.DocumentInput("lettuce", "Lettuce light requirements",
+            "10-14h/day at 150-300 µmol/m2/s. DLI target 10-15 mol/m2/day. Excessive light >1000 lux + heat = bolting. Winter supplemental lighting beneficial.",
             "lettuce_light"),
-
-        new DocumentIngestionService.DocumentInput(
-            "lettuce",
-            "Lettuce relay control rules",
-            "Lettuce-specific relay decisions for relay_line3 (Salat line): "
-                + "Activate irrigation when soil moisture drops below 55% (higher threshold than tomatoes). "
-                + "Stop irrigation above 85%. Prefer early morning irrigation (6-8am). "
-                + "Activate fans when temperature exceeds 24°C - lettuce is heat sensitive. "
-                + "Supplemental lighting at 200-400 lux during dark winter days.",
-            "lettuce_relay")
-
-    );
+        new DocumentIngestionService.DocumentInput("lettuce", "Lettuce relay control rules for Line3",
+            "Irrigation ON <55% soil moisture (higher threshold than tomatoes), OFF >85%. Morning 6-8am preferred. Fans at >24°C (heat sensitive). Supplemental light at 200-400 lux on dark winter days.",
+            "lettuce_relay"));
   }
 
   // ===========================================================================
@@ -1043,30 +503,13 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initRadishDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "radish",
-            "Radish climate and irrigation",
-            "Radishes are fast-growing cool-season crops (25-35 days to harvest). "
-                + "Optimal temperature: 15-20°C. Above 25°C radishes become woody, pithy, and overly spicy. "
-                + "Night temperature: 8-15°C. Radishes need consistent moisture - fluctuations cause "
-                + "splitting and poor root quality. Soil moisture target: 50-70%. "
-                + "Irrigate daily in warm weather, every 2-3 days in cool weather. "
-                + "Radishes need 6-8 hours of direct light daily. Low light produces leafy tops with small roots.",
+        new DocumentIngestionService.DocumentInput("radish", "Radish climate and irrigation",
+            "Optimal 15-20°C, >25°C causes woody/spicy roots. Night 8-15°C. Soil moisture 50-70% consistently. Irrigate daily in warm, every 2-3 days in cool. 6-8h direct light daily.",
             "radish_care"),
-
-        new DocumentIngestionService.DocumentInput(
-            "radish",
-            "Radish relay control rules",
-            "Radish-specific relay decisions for relay_line5: "
-                + "Irrigation when soil moisture <45% (radishes need consistent moisture). "
-                + "Stop irrigation above 75%. Fans at >24°C to prevent woody roots. "
-                + "Radish season is primarily spring and autumn - adjust fan/heating accordingly.",
-            "radish_relay")
-
-    );
+        new DocumentIngestionService.DocumentInput("radish", "Radish relay control rules for Line5",
+            "Irrigation ON <45% soil moisture, OFF >75%. Fans at >24°C to prevent woody roots. Primary seasons: spring and autumn.",
+            "radish_relay"));
   }
 
   // ===========================================================================
@@ -1074,31 +517,13 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initMelonDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "melon",
-            "Melon climate and management",
-            "Melons are warm-season crops requiring high temperatures: 24-32°C daytime, 18-24°C nighttime. "
-                + "Growth slows below 18°C. Fruits fail to ripen properly below 20°C average. "
-                + "Above 35°C flowers abort and fruit set fails. Humidity: 60-75% during growth, "
-                + "reduce to 50-60% during fruit ripening to maximize sugar content. "
-                + "Melons are deep-rooted and require deep, less frequent irrigation. "
-                + "Soil moisture target: 40-65%. Reduce irrigation during fruit ripening for better flavor.",
+        new DocumentIngestionService.DocumentInput("melon", "Melon climate and management",
+            "Daytime 24-32°C, nighttime 18-24°C. Growth slows <18°C, fruit fails <20°C average. Above 35°C flower abortion. Humidity 60-75% growth, 50-60% ripening. Deep less-frequent irrigation. Soil moisture 40-65%. Reduce irrigation during ripening for flavor.",
             "melon_climate"),
-
-        new DocumentIngestionService.DocumentInput(
-            "melon",
-            "Melon relay control rules",
-            "Melon-specific relay decisions for relay_line6: "
-                + "Irrigation when soil moisture <35% - deep watering. Stop at 70%. "
-                + "Fans at >30°C aggressively. Melons need high heat but also airflow to prevent mildew. "
-                + "Supplemental lighting only during cloudy winter days if greenhouse is used year-round. "
-                + "Melons are summer crops - heating is rarely needed if seasonally appropriate.",
-            "melon_relay")
-
-    );
+        new DocumentIngestionService.DocumentInput("melon", "Melon relay control rules for Line6",
+            "Irrigation ON <35% soil moisture (deep watering), OFF >70%. Fans at >30°C aggressively. Supplemental light only on cloudy winter days. Summer crop—heating rarely needed.",
+            "melon_relay"));
   }
 
   // ===========================================================================
@@ -1106,33 +531,13 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initGrapeDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "grape",
-            "Grape (wine) climate and irrigation",
-            "Wine grapes prefer 22-30°C daytime and 12-18°C nighttime during growing season. "
-                + "Grapes require a distinct temperature differential for optimal sugar development. "
-                + "Above 35°C photosynthesis stops and grapes may sunburn. Below 10°C growth stops. "
-                + "Humidity: 50-65%. High humidity (>75%) increases fungal disease risk (powdery mildew, botrytis). "
-                + "Grapes are drought-tolerant once established. Soil moisture target: 30-55%. "
-                + "Deep, infrequent irrigation encourages deep root growth. "
-                + "Stop irrigation 2-3 weeks before harvest to concentrate sugars.",
+        new DocumentIngestionService.DocumentInput("grape", "Grape (wine) climate and irrigation",
+            "Daytime 22-30°C, nighttime 12-18°C. Needs temp differential for sugar. Above 35°C stops photosynthesis. Humidity 50-65%, >75% fungal risk. Soil moisture 30-55%. Deep infrequent irrigation. Stop 2-3 weeks before harvest for sugar concentration.",
             "grape_care"),
-
-        new DocumentIngestionService.DocumentInput(
-            "grape",
-            "Grape relay control rules for wine pump",
-            "Wine grape irrigation uses relay_wine_pump to pump water from a rain barrel. "
-                + "Irrigate when soil moisture drops below 25% (grapes are drought tolerant). "
-                + "Stop at 55%. Water deeply once every 5-7 days rather than frequent shallow watering. "
-                + "Grapes are outdoor plants - the wine satellite only controls irrigation, not climate. "
-                + "Seasonal pattern: irrigate actively Apr-Sep, minimal Oct-Mar. "
-                + "During wet weather, check rain_indicator sensor before irrigating.",
-            "grape_relay")
-
-    );
+        new DocumentIngestionService.DocumentInput("grape", "Grape relay control rules for wine pump",
+            "Irrigate via relay_wine_pump ON <25% soil moisture, OFF >55%. Deep water every 5-7 days. Active Apr-Sep, minimal Oct-Mar. Check rain_indicator before irrigating in wet weather.",
+            "grape_relay"));
   }
 
   // ===========================================================================
@@ -1140,57 +545,19 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initGrowthStageDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Growth stage seedling management",
-            "Seedlings and young transplants (first 2-3 weeks after planting): "
-                + "Temperature: 2-3°C warmer than mature plants, 22-26°C constant. "
-                + "Humidity: higher at 70-80% to reduce transplant shock. "
-                + "Light: 16 hours/day at moderate intensity (200-400 lux). "
-                + "Soil moisture: consistently moist at 60-75%, never allowed to dry out. "
-                + "CO2: 600-800 ppm to accelerate early growth. "
-                + "Avoid fans directly on seedlings - use gentle indirect airflow.",
+        new DocumentIngestionService.DocumentInput("general", "Growth stage seedling management",
+            "First 2-3 weeks: temperature 22-26°C constant (2-3°C warmer than mature). Humidity 70-80%. Light 16h/day at 200-400 lux. Soil moisture 60-75% consistently. CO2 600-800 ppm. Avoid direct fans on seedlings.",
             "growth_seedling"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Growth stage vegetative management",
-            "Vegetative growth phase (after establishment, before flowering): "
-                + "Temperature standard: 22-28°C daytime, 16-20°C nighttime. "
-                + "Humidity: 60-70%. Increase airflow to strengthen stems. "
-                + "Light: 14-16 hours/day at 300-600 lux. "
-                + "Soil moisture: allow moderate dry-back to 35-40% between irrigation. "
-                + "CO2: 800-1000 ppm during peak light hours for maximum growth.",
+        new DocumentIngestionService.DocumentInput("general", "Growth stage vegetative management",
+            "Temperature 22-28°C day, 16-20°C night. Humidity 60-70%. Light 14-16h/day at 300-600 lux. Allow dry-back to 35-40%. CO2 800-1000 ppm during peak light.",
             "growth_vegetative"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Growth stage flowering and fruiting management",
-            "Flowering and fruiting stage: "
-                + "Temperature: slightly cooler at 20-26°C daytime, 15-18°C nighttime. "
-                + "High temperatures (>30°C) during flowering cause poor fruit set. "
-                + "Humidity: reduce to 50-60% during flowering to improve pollination. "
-                + "Light: maintain 12-14 hours/day - shorten for some short-day plants. "
-                + "Soil moisture: consistent at 50-65%, avoid drought stress during fruit development. "
-                + "CO2: continue 800-1000 ppm during daylight. "
-                + "Good airflow is critical during flowering for pollination and disease prevention.",
+        new DocumentIngestionService.DocumentInput("general", "Growth stage flowering and fruiting management",
+            "Temperature 20-26°C day, 15-18°C night. >30°C during flowering = poor fruit set. Humidity 50-60% for pollination. Light 12-14h/day. Soil moisture 50-65% consistent. CO2 800-1000 ppm daylight. Good airflow critical.",
             "growth_fruiting"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Growth stage ripening and harvest management",
-            "Ripening and harvest stage: "
-                + "Temperature: maintain 20-26°C for fruit ripening - avoid extremes. "
-                + "Humidity: reduce to 50-55% to prevent fruit rot and fungal issues. "
-                + "Reduce irrigation by 30-40% to concentrate flavors (for tomatoes, melons, grapes). "
-                + "Light: maintain 12 hours/day. CO2 enrichment less critical. "
-                + "Increase airflow around ripening fruits to prevent botrytis and rot.",
-            "growth_ripening")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "Growth stage ripening and harvest management",
+            "Temperature 20-26°C. Humidity 50-55%. Reduce irrigation 30-40% to concentrate flavors. Light 12h/day. Increase airflow around fruits to prevent rot.",
+            "growth_ripening"));
   }
 
   // ===========================================================================
@@ -1198,61 +565,18 @@ public class RagDataInitializer {
   // ===========================================================================
 
   private List<DocumentIngestionService.DocumentInput> initTrendInterpretationDocuments() {
-
     return List.of(
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "How to interpret sensor trends",
-            "Historical sensor trends provide critical context for decisions: "
-                + "A rising temperature trend (>3°C/24h) with current temp near 28°C means "
-                + "fans should be activated proactively before the temperature hits 30°C. "
-                + "A falling temperature trend (<-3°C/24h) with current temp near 15°C means "
-                + "heating should be checked proactively. "
-                + "A rapidly falling soil moisture trend indicates irrigation is needed soon, "
-                + "even if current moisture is still in range. "
-                + "Rising humidity trend (>10%/24h) approaching 80% means increase ventilation preemptively. "
-                + "Use trend direction to act proactively rather than reactively.",
+        new DocumentIngestionService.DocumentInput("general", "How to interpret sensor trends",
+            "Rising temp >3°C/24h near 28°C: activate fans proactively. Falling temp <-3°C/24h near 15°C: check heating. Rapidly falling soil moisture: irrigate soon even if in range. Rising humidity >10%/24h approaching 80%: increase ventilation preemptively.",
             "trend_interpretation"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Rate of change thresholds for action",
-            "Rate of change triggers for proactive relay control: "
-                + "Temperature rising >2°C/hour: pre-activate fans, check shading. "
-                + "Temperature falling >2°C/hour: check heating, close vents. "
-                + "Humidity rising >5%/hour: increase ventilation immediately. "
-                + "Soil moisture falling >5%/hour in optimal range: schedule irrigation soon. "
-                + "CO2 rising >100ppm/hour above 1200ppm: ventilation may be insufficient. "
-                + "These rate-of-change triggers enable proactive rather than reactive control.",
+        new DocumentIngestionService.DocumentInput("general", "Rate of change thresholds for action",
+            "Temp rising >2°C/h: pre-activate fans. Temp falling >2°C/h: check heating, close vents. Humidity rising >5%/h: ventilate immediately. Soil moisture falling >5%/h: schedule irrigation soon. CO2 rising >100ppm/h above 1200ppm: ventilation insufficient.",
             "rate_of_change"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "Combined multi-sensor risk matrix",
-            "Combined sensor patterns requiring immediate action: "
-                + "HIGH TEMP (>30°C) + LOW SOIL (<30%): CRITICAL - irrigate AND ventilate NOW. "
-                + "HIGH TEMP (>30°C) + LOW HUMIDITY (<40%): HIGH VPD - humidify AND ventilate. "
-                + "HIGH HUMIDITY (>85%) + LOW LIGHT (<200 lux): FUNGAL RISK - fans ON, lights ON. "
-                + "HIGH HUMIDITY (>85%) + HIGH SOIL (>85%): ROOT ROT RISK - stop irrigation, fans ON. "
-                + "LOW TEMP (<12°C) + HIGH HUMIDITY (>80%): MOLD RISK - heat AND ventilate carefully. "
-                + "LOW CO2 (<350ppm) + HIGH LIGHT (>800 lux): Photosynthesis limited - ventilate or enrich. "
-                + "HIGH TEMP NIGHT (>24°C): Plant stress - ventilate at night if possible. "
-                + "Each combined pattern requires addressing BOTH factors simultaneously.",
+        new DocumentIngestionService.DocumentInput("general", "Combined multi-sensor risk matrix",
+            "HIGH TEMP >30°C + LOW SOIL <30%: CRITICAL - irrigate AND ventilate. HIGH TEMP >30°C + LOW HUMIDITY <40%: high VPD - humidify AND ventilate. HIGH HUMIDITY >85% + LOW LIGHT <200 lux: fungal risk - fans ON. HIGH HUMIDITY >85% + HIGH SOIL >85%: root rot - stop irrigation, fans ON. LOW TEMP <12°C + HIGH HUMIDITY >80%: mold - heat AND ventilate. LOW CO2 <350ppm + HIGH LIGHT >800 lux: ventilate or enrich. HIGH TEMP NIGHT >24°C: plant stress.",
             "risk_matrix"),
-
-        new DocumentIngestionService.DocumentInput(
-            "general",
-            "VPD calculation and interpretation",
-            "Vapor Pressure Deficit (VPD) combines temperature and humidity into a single stress metric: "
-                + "VPD = 0.6108 * exp(17.27 * T / (T + 237.3)) * (1 - RH/100) in kPa. "
-                + "Ideal VPD range: 0.8-1.2 kPa for most crops. "
-                + "Low VPD (<0.4 kPa): transpiration too slow, fungal risk, calcium deficiency risk. "
-                + "High VPD (>1.6 kPa): transpiration too fast, water stress, stomatal closure. "
-                + "Action for low VPD: increase temperature, decrease humidity (ventilate). "
-                + "Action for high VPD: decrease temperature, increase humidity (humidify, reduce ventilation).",
-            "vpd_calculation")
-
-    );
+        new DocumentIngestionService.DocumentInput("general", "VPD calculation and interpretation",
+            "VPD = 0.6108 * exp(17.27*T/(T+237.3)) * (1-RH/100) kPa. Ideal 0.8-1.2 kPa. Low (<0.4): fungal risk, Ca deficiency. High (>1.6): water stress, stomatal closure. Low VPD: increase temp, decrease humidity. High VPD: decrease temp, increase humidity.",
+            "vpd_calculation"));
   }
 }
