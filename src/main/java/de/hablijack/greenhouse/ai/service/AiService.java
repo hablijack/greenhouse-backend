@@ -130,10 +130,8 @@ public class AiService {
         cleaned = llmJson.substring(CODE_FENCE_PREFIX_LENGTH, llmJson.lastIndexOf("```")).trim();
       }
 
-      String sanitizedJson = sanitizeJsonResponse(cleaned);
-
       Map<String, AiRecommendationResponse> llmResults = objectMapper.readValue(
-          sanitizedJson, new TypeReference<Map<String, AiRecommendationResponse>>() { });
+          cleaned, new TypeReference<Map<String, AiRecommendationResponse>>() { });
 
       Map<String, AiRecommendationResponse> merged = new HashMap<>();
       for (SensorDataRequest req : requests) {
@@ -367,35 +365,5 @@ public class AiService {
     llm.plantType = sensorData.plantType;
     llm.analysis = local.analysis;
     return llm;
-  }
-
-  private String sanitizeJsonResponse(String json) {
-    StringBuilder sb = new StringBuilder();
-    boolean inQuotes = false;
-    for (int i = 0; i < json.length(); i++) {
-      char c = json.charAt(i);
-      if (c == '\\' && inQuotes) {
-        sb.append(c);
-        if (i + 1 < json.length()) {
-          i++;
-          sb.append(json.charAt(i));
-        }
-      } else if (c == '\"') {
-        inQuotes = !inQuotes;
-        sb.append(c);
-      } else if (c == '\n' && inQuotes) {
-        sb.append('\\');
-        sb.append('n');
-      } else if (c == '\r' && inQuotes) {
-        sb.append('\\');
-        sb.append('n');
-      } else if (c == '\t' && inQuotes) {
-        sb.append('\\');
-        sb.append('t');
-      } else {
-        sb.append(c);
-      }
-    }
-    return sb.toString();
   }
 }
