@@ -91,6 +91,9 @@ public class AiService {
     Map<String, AiRecommendationResponse> localAnalyses = new HashMap<>();
     List<String> plantTypes = requests.stream()
         .map(r -> r.plantType)
+        .filter(pt -> pt != null && !pt.isBlank())
+        .map(pt -> pt.replaceAll("\n", "").replaceAll("\\s+", " ").trim())
+        .distinct()
         .collect(Collectors.toList());
 
     TimeContext time = TimeContext.from(
@@ -99,7 +102,10 @@ public class AiService {
     HistoryData history = sensorHistoryService.fetchHistory(time);
 
     for (SensorDataRequest req : requests) {
-      localAnalyses.put(req.plantType, greenhouseAnalyzer.analyze(req, history));
+      if (req.plantType != null && !req.plantType.isBlank()) {
+        String cleanPlantType = req.plantType.replaceAll("\n", "").replaceAll("\\s+", " ").trim();
+        localAnalyses.put(cleanPlantType, greenhouseAnalyzer.analyze(req, history));
+      }
     }
 
     try {
@@ -109,17 +115,27 @@ public class AiService {
           plantTypes, time.timeOfDayLabel(), time.seasonLabel());
 
       String llmJson = llmService.chat(systemPrompt, enrichedQuery, true);
+      LOG.debug("LLM raw JSON response ({} chars): {}", llmJson.length(),
+          llmJson.length() > LOG_QUERY_TRUNCATE_LENGTH
+              ? llmJson.substring(0, LOG_QUERY_TRUNCATE_LENGTH) + "..."
+              : llmJson);
+
+      String sanitizedJson = sanitizeJsonResponse(llmJson);
+
       Map<String, AiRecommendationResponse> llmResults = objectMapper.readValue(
-          llmJson, new TypeReference<Map<String, AiRecommendationResponse>>() { });
+          sanitizedJson, new TypeReference<Map<String, AiRecommendationResponse>>() { });
 
       Map<String, AiRecommendationResponse> merged = new HashMap<>();
       for (SensorDataRequest req : requests) {
-        AiRecommendationResponse llmResult = llmResults.get(req.plantType);
+        String cleanPlantType = req.plantType != null
+            ? req.plantType.replaceAll("\n", "").replaceAll("\\s+", " ").trim()
+            : "";
+        AiRecommendationResponse llmResult = llmResults.get(cleanPlantType);
         if (llmResult != null) {
-          llmResult.analysis = localAnalyses.get(req.plantType).analysis;
-          merged.put(req.plantType, llmResult);
+          llmResult.analysis = localAnalyses.get(cleanPlantType).analysis;
+          merged.put(cleanPlantType, llmResult);
         } else {
-          merged.put(req.plantType, localAnalyses.get(req.plantType));
+          merged.put(cleanPlantType, localAnalyses.get(cleanPlantType));
         }
       }
 
@@ -242,7 +258,10 @@ public class AiService {
         history.co2.min, history.co2.max));
 
     for (SensorDataRequest data : requests) {
-      AiRecommendationResponse local = localAnalyses.get(data.plantType);
+      String cleanPlantType = data.plantType != null
+          ? data.plantType.replaceAll("\n", "").replaceAll("\\s+", " ").trim()
+          : "";
+      AiRecommendationResponse local = localAnalyses.get(cleanPlantType);
       sb.append(String.format("""
           === %s ===
           - Temperatur: %.1f°C (aktuell) | %.1f°C (Min) | %.1f°C (Max)
@@ -254,7 +273,7 @@ public class AiService {
           - Dringlichkeit: %s
 
           """,
-          data.plantType,
+          cleanPlantType,
           data.temperature, history.temperature.min, history.temperature.max,
           data.humidity,
           data.soilMoisture,
@@ -335,5 +354,35 @@ public class AiService {
     llm.plantType = sensorData.plantType;
     llm.analysis = local.analysis;
     return llm;
+  }
+
+  private String sanitizeJsonResponse(String json) {
+    StringBuilder sb = new StringBuilder();
+    boolean inQuotes = false;
+    for (int i = 0; i < json.length(); i++) {
+      char c = json.charAt(i);
+      if (c == '\\' && inQuotes) {
+        sb.append(c);
+        if (i + 1 < json.length()) {
+          i++;
+          sb.append(json.charAt(i));
+        }
+      } else if (c == '\"') {
+        inQuotes = !inQuotes;
+        sb.append(c);
+      } else if (c == '\n' && inQuotes) {
+        sb.append('\\');
+        sb.append('n');
+      } else if (c == '\r' && inQuotes) {
+        sb.append('\\');
+        sb.append('n');
+      } else if (c == '\t' && inQuotes) {
+        sb.append('\\');
+        sb.append('t');
+      } else {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 }
