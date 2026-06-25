@@ -25,6 +25,8 @@ public class AiService {
   private static final Logger LOG = LoggerFactory.getLogger(AiService.class);
 
   private static final int LOG_QUERY_TRUNCATE_LENGTH = 800;
+  private static final int JSON_CODE_FENCE_PREFIX_LENGTH = 7;
+  private static final int CODE_FENCE_PREFIX_LENGTH = 3;
   private final LlmService llmService;
   private final PromptEnrichmentService promptEnrichmentService;
   private final GreenhouseAnalyzer greenhouseAnalyzer;
@@ -108,19 +110,27 @@ public class AiService {
       }
     }
 
+    String llmJson = null;
     try {
       String batchPrompt = buildBatchPrompt(requests, localAnalyses, history, time);
       String enrichedQuery = promptEnrichmentService.enrichBatchPrompt(batchPrompt, plantTypes);
       String systemPrompt = promptEnrichmentService.buildBatchSystemPrompt(
           plantTypes, time.timeOfDayLabel(), time.seasonLabel());
 
-      String llmJson = llmService.chat(systemPrompt, enrichedQuery, true);
-      LOG.debug("LLM raw JSON response ({} chars): {}", llmJson.length(),
+      llmJson = llmService.chat(systemPrompt, enrichedQuery, true);
+      LOG.info("LLM raw batch response ({} chars): {}", llmJson.length(),
           llmJson.length() > LOG_QUERY_TRUNCATE_LENGTH
               ? llmJson.substring(0, LOG_QUERY_TRUNCATE_LENGTH) + "..."
               : llmJson);
 
-      String sanitizedJson = sanitizeJsonResponse(llmJson);
+      String cleaned = llmJson;
+      if (llmJson.startsWith("```json")) {
+        cleaned = llmJson.substring(JSON_CODE_FENCE_PREFIX_LENGTH, llmJson.lastIndexOf("```")).trim();
+      } else if (llmJson.startsWith("```")) {
+        cleaned = llmJson.substring(CODE_FENCE_PREFIX_LENGTH, llmJson.lastIndexOf("```")).trim();
+      }
+
+      String sanitizedJson = sanitizeJsonResponse(cleaned);
 
       Map<String, AiRecommendationResponse> llmResults = objectMapper.readValue(
           sanitizedJson, new TypeReference<Map<String, AiRecommendationResponse>>() { });
@@ -143,6 +153,9 @@ public class AiService {
       return merged;
     } catch (Exception e) {
       LOG.warn("Batch LLM analysis failed, falling back to local analysis: {}", e.getMessage());
+      if (llmJson != null) {
+        LOG.warn("Failed LLM batch response ({} chars): {}", llmJson.length(), llmJson);
+      }
       return localAnalyses;
     }
   }
