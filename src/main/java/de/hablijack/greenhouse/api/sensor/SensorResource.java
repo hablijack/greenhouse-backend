@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
 @Path("/api/rest")
-public class SensorResouce {
+public class SensorResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
